@@ -5,6 +5,7 @@ const {NotAuth, isAuth, isAdmin} = require('../utils/filters');
 const Applicant = require("../models").Applicant;
 const Contact = require("../models").Contact;
 const Member = require("../models").Member;
+const Rank = require("../models").Rank;
 const chance = require('chance').Chance();
 const {Op} = require("sequelize");
 const sequelize = require('sequelize');
@@ -125,6 +126,7 @@ router.get('/read', isAuth, async function (req, res, next) {
     });
 });
 
+//Unique KPI Page ID Generation
 router.get('/createpageid', isAuth,async function (req, res, next) {
     await Member.findAll().then(async (mems)=>{
         await mems.forEach((mem)=>{
@@ -148,7 +150,38 @@ router.get('/createpageid', isAuth,async function (req, res, next) {
     })
     res.json({msg: "ok"});
 });
+router.get('/fixmissingdata', isAuth,async function (req, res, next) {
+    let Directorate = {
+        "Baby Steps": "Projects",
+        "Fishing Waste": "Projects",
+        "Gluten-Free": "Projects",
+        "Tourism": "Projects",
+        "Projects": "Projects",
+        LD: "HR",
+        TM: "HR",
+        OD: "HR",
+        Camera: "Multimedia",
+        Visuals: "Multimedia",
+        Presentation: "Multimedia",
+        CR: "Financial",
+        RM: "Financial",
+        Events: "Financial",
+        Sales: "Financial",
+        Marketing: "Marketing",
+        Social: "Marketing"
+    }
+    await Member.findAll().then(async (mems)=>{
+        await mems.forEach((mem)=>{
+            if (!mem.Directorate){
+                mem.Directorate = Directorate[mem.Committee];
+                mem.save();
+            }
+        })
+    })
+    res.json({msg: "ok"});
+});
 
+//KPI Routes
 router.get('/members/kpi', isAuth, async function (req, res, next) {
     if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
         res.redirect("/portal")
@@ -163,6 +196,7 @@ router.get('/members/kpi', isAuth, async function (req, res, next) {
     } else {
         mem = await Member.findAll()
     }
+
         res.render('portal/membersview', {title: "All Members", members: mem});
 
 
@@ -212,6 +246,98 @@ router.get('/members/edit/kpi', isAuth, function (req, res, next) {
         createError(404);
     })
 });
+//End KPI
+// Ranking Routes
+router.get('/members/rank', isAuth, async function (req, res, next) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+        res.redirect("/portal")
+    }
+    let mem;
+    if (req.user.Position === "TM Member"){
+        mem = await Member.findAll({where:
+                {
+                    Committee: req.user.Rep
+                }
+        } )
+    } else {
+        mem = await Member.findAll()
+    }
+
+    res.render('portal/membersrank', {title: "Set Rank", members: mem});
+
+
+});
+
+router.post('/editrank', isAuth, async function (req, res, next) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+        res.redirect("/portal")
+    }
+
+    let {April, May, June, July}=req.body
+    let Months = [isNumeric(April) ? "April" : null, isNumeric(May) ? "May" : null, isNumeric(June) ? "June" : null, isNumeric(July) ? "July" : null]
+    Months = Months.filter(function (el) {
+        return el != null;
+    });
+    let RankValues = {
+        "April": isNumeric(April) ? +April : null,
+        "May": isNumeric(May) ? +May : null,
+        "June": isNumeric(June) ? +June : null,
+        "July": isNumeric(July) ? +July : null
+    }
+    Rank.findAll({
+        where: {
+            MemberId: req.body.id
+        }}).then(ranks => {
+            ranks.forEach(rank=>{
+                if (Months.includes(rank.Month)){
+                    rank.Rank = RankValues[rank.Month]
+                    rank.save()
+                    Months = Months.filter(function (el) {
+                        return el !== rank.Month;
+                    });
+                } else {
+                    rank.destroy()
+                }
+            })
+            Months.forEach(month=>{
+                Rank.create({
+                    MemberId: req.body.id,
+                    Month: month,
+                    Rank: RankValues[month],
+                    Directorate: req.body.directorate
+                })
+            })
+            res.send({msg: "Saved!"});
+        }
+    ).catch(() => {
+        createError(404);
+    })
+});
+
+router.get('/members/edit/rank', isAuth, function (req, res, next) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+        res.redirect("/portal")
+    }
+    let id = req.query.id;
+    console.log(id);
+    Member.findOne({
+        where: {
+            id: id
+        }, include: Rank
+    }).then(mem => {
+        mem.Rank = {}
+        for (let ran of mem.Ranks){
+            mem.Rank[ran.Month] = ran.Rank;
+        }
+        console.log(mem)
+        if(mem){
+            res.render('portal/editrankmodal', {mem: mem});
+        }
+    }).catch(() => {
+        createError(404);
+    })
+});
+//End Rank
 
 router.get('/applicants/all', isAuth, function (req, res, next) {
     if(!(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(req.user.Position) ||req.user.isAdmin)) {

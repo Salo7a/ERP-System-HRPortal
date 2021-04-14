@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Member.hasMany(models.Rank)
     }
   }
   Member.init({
@@ -20,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       isEmail: true
     },
     Committee: DataTypes.STRING,
+    Directorate: DataTypes.STRING,
     Phone: DataTypes.STRING,
     PageID: {
       type: DataTypes.INTEGER(8),
@@ -31,6 +33,14 @@ module.exports = (sequelize, DataTypes) => {
         return JSON.parse(this.getDataValue('KPI'));
       }
     },
+    Seen:{
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    Photo: {
+      type: DataTypes.STRING,
+      defaultValue: "default.png"
+    }
   }, {
     sequelize,
     modelName: 'Member',

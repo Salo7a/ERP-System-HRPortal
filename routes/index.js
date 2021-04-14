@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Contact = require("../models").Contact;
 const Applicant = require("../models").Applicant;
-const Member = require("../models").Member;
+const {Member, Rank} = require("../models");
 const {body, validationResult} = require('express-validator');
 const chance = require('chance').Chance();
 const querystring = require('querystring');
@@ -275,11 +275,56 @@ router.get('/members/performance/:PageID', function (req, res, next) {
     Member.findOne({where:{
         PageID: req.params.PageID
         }}).then(mem=>{
-        res.render('performance', {title: "Performance Report", mem});
+            if (mem.Committee === "TM" && !mem.Seen){
+
+                res.render('portal/kpiprank', {title: "Performance Report", mem});
+            }else {
+                res.render('performance', {title: "Performance Report", mem});
+            }
+
     }).catch(()=>{
         createError(404);
     }
     )
 
 });
+
+router.post('/members/performance/:PageID', function (req, res, next) {
+    Member.findOne({where:{
+            PageID: req.params.PageID
+        }}).then(mem=>{
+        mem.Seen = true;
+        mem.save();
+        res.send(200)
+
+    }).catch(()=>{
+            createError(404);
+        }
+    )
+
+});
+router.get('/members/leaderboard/:Directorate/:Month', function (req, res, next) {
+    console.log("Hi")
+    Rank.findAll({where:{
+            Directorate: req.params.Directorate,
+            Month: req.params.Month
+        },
+        include: Member,
+        order: [
+            ['Rank', 'ASC'],
+        ]}).then(members=>{
+            console.log(members);
+            if (members.length > 3){
+                res.render('leaderboard', {title: "Performance Report", members});
+            } else {
+                res.render('message', {title: "Hmmmm"});
+            }
+
+        }).catch(()=>{
+            createError(404);
+        }
+    )
+
+});
+
 module.exports = router;

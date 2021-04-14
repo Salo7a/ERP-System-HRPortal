@@ -29,38 +29,6 @@
             min-height: 120px;
         }
     </style>
-    <script>function format(time) {
-            // Hours, minutes and seconds
-            let hrs = ~~(time / 3600);
-            let mins = ~~((time % 3600) / 60);
-            let secs = ~~time % 60;
-
-            // Output like "1:01" or "4:03:59" or "123:03:59"
-            let ret = "";
-            if (hrs > 0) {
-                ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
-            }
-            ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-            ret += "" + secs;
-            return ret;
-        }
-
-        <% let questions = {
-            Projects: "What do you know about project management?",
-            OD: "How to ensure that all teams are on the right track? Explain with a specific method.",
-            TM: "How to enhance the performance of the members?",
-            LD: "What is the capacity building program? Mention the steps to conduct a training.",
-            CR: "List the benefits or values that you can offer to the sponsors/partners",
-            RM: "What do you know about product cycle?",
-            Events: "Mention & describe an idea for an event, And list the needed actions for implementing this idea.",
-            Marketing: "Prepare an offline campaign (theme, title, objectives)",
-            Social: "Prepare an online campaign (theme, title, objectives)",
-            Visuals: "List the basic video editing concepts you're familiar with if any (timeline, layers, blending modes...etc.)",
-            Camera: "What are the basics of photography?",
-            Presentation: "Mention 5 pillars will lead person to be a good presenter?"
-        } %>
-        let Answers;
-    </script>
     <!-- Custom CSS Block -->
     <%- block('css').toString() %>
 
@@ -76,7 +44,7 @@
     <% include ../partials/sidebar.ejs %>
     <!-- /.sidebar -->
 
-    <!-- Content Wrapper. Contains page content -->
+    <!-- Content Wrmemer. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
@@ -106,14 +74,6 @@
                         <!-- /.card-tools -->
                     </div>
                     <!-- /.card-header -->
-                    <%
-                    let label = {
-                        Applied: "bg-primary",
-                        Interviewed: "bg-warning",
-                        Rejected: "bg-danger",
-                        Accepted: "bg-success"
-                    }
-                    %>
                     <div class="card-body ">
                         <table id="ind" class="table table-bordered table-hover wrap" role="grid"
                                aria-describedby="example2_info">
@@ -121,45 +81,31 @@
                             <tr role="row">
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>State</th>
+                                <th>Team</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Time</th>
-                                <th>Preferences</th>
+                                <th>Link</th>
                                 <th>Extra</th>
                             </thead>
                             <tbody>
-                            <% applicants.forEach(app =>  { %>
-                                <tr role="row" id="row-<% app.id %>">
-                                    <td><%= app.id %></td>
-                                    <td><%= app.Name %></td>
-                                    <td>
-                                        <div class="badge <%= label[app.State] %>"
-                                             id="state-<%= app.id %>"><%= app.State %></div>
-                                    </td>
-
-                                    <td><a href="mailto:<%= app.Email %>"><%= app.Email %></a></td>
-                                    <td><a href="tel:<%= app.Phone %>"><%= app.Phone %></a></td>
-                                    <td><%= app.Time %></td>
-                                    <td><%= app.First %>, <%= app.Second %></td>
-                                    <td><span data-toggle="tooltip" data-placement="top" title="Info"><button
-                                                    type="button"
-                                                    class="btn btn-primary ModalButton"
-                                                    data-id="<%= app.id %>"
-                                                    data-toggle="modal"
-                                                    data-target="#par">
-                                            <i class="fa fa-info"></i>
-                                        </button></span>
-                                        <% if(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader", "L&D Team Leader"].includes(user.Position) || user.isAdmin){ %>
+                            <% members.forEach(mem =>  { %>
+                                <tr role="row" id="row-<% mem.id %>">
+                                    <td><%= mem.id %></td>
+                                    <td><%= mem.Name %></td>
+                                    <td><%= mem.Committee %></td>
+                                    <td><a href="mailto:<%= mem.Email %>"><%= mem.Email %></a></td>
+                                    <td><a href="tel:<%= mem.Phone %>"><%= mem.Phone %></a></td>
+                                    <td><a href="https://enactus-cu.org/members/performance/<%= mem.PageID %>">Here</a></td>
+                                    <td><% if(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(user.Position) || user.isAdmin){ %>
                                             <span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                         type="button" class="btn btn-secondary EditButton"
                                                         data-toggle="modal"
-                                                        data-target="#pare" data-id="<%= app.id %>">
+                                                        data-target="#meme" data-id="<%= mem.id %>">
                                             <i class="fa fa-cog"></i>
                                         </button></span>
-                                            <form class="SheetSend"> <span data-toggle="tooltip" data-placement="top"
-                                                                           title="Send To Sheet">
-                                                <input type="hidden" name="id" value="<%= app.id %>">
+                                            <form class="MailSend"> <span data-toggle="tooltip" data-placement="top"
+                                                                           title="Send Email">
+                                                <input type="hidden" name="id" value="<%= mem.id %>">
                                                 <button type="submit" class="btn btn-success"><i
                                                             class="fa fa-paper-plane"></i>
                                                 </button> </span>
@@ -181,7 +127,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="pare" tabindex="-1" role="dialog"
+                    <div class="modal fade" id="meme" tabindex="-1" role="dialog"
                          aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content" id="EditModalContent">
@@ -199,7 +145,7 @@
         <!-- /.content -->
     </div>
 
-    <!-- /.content-wrapper -->
+    <!-- /.content-wrmemer -->
     <!--    Footer-->
     <% include ../partials/footer.ejs %>
 
@@ -222,11 +168,9 @@
             Rejected: "bg-danger",
             Accepted: "bg-success"
         }
-        $(document).on('submit', '.editApplicant', function () {
-            let currentform;
-            let badge;
+        $(document).on('submit', '.editRank', function () {
             $.ajax({
-                url: '/portal/editapplicant',
+                url: '/portal/editrank',
                 type: 'POST',
                 data: $(this).serialize(),
                 tryCount: 0,
@@ -234,10 +178,6 @@
                 success: function (res) {
                     console.log(res.id + " " + res.State);
                     this.tryCount = 0;
-                    badge = $(`#state-${res.id}`)
-                    badge.text(res.State);
-                    badge.removeClass('bg-primary bg-warning bg-danger bg-success');
-                    badge.addClass(label[res.State]);
                     toastr.success(res.msg);
                 },
                 error: function (xhr, textStatus, errorThrown) {
@@ -260,49 +200,66 @@
             });
             return false;
         });
-        $(document).on('submit', '.SheetSend', function () {
-            $.ajax({
-                url: '/portal/sendtosheet',
-                type: 'POST',
-                data: $(this).serialize(),
-                tryCount: 0,
-                retryLimit: 5,
-                success: function (res) {
-                    this.tryCount = 0;
-                    toastr.success(res.msg);
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    if (textStatus === 'timeout') {
-                        this.tryCount++;
-                        toastr.error("Error! " + xhr.status + " " + textStatus + ", Retrying");
-                        if (this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
-                        }
-                        return;
-                    }
-                    if (xhr.status === 500) {
-                        toastr.error("Error! " + xhr.status + " " + textStatus);
-                    } else {
-                        toastr.error("Error! " + xhr.status + " " + textStatus);
-                    }
-                }
-            });
-            return false;
+        $(document).on('click', '.RankButton', function () {
+            let input = $(this).closest("div.rankmonth").find("input");
+            if ($(this).hasClass("btn-danger")){
+                $(this).removeClass("btn-danger");
+                $(this).addClass("btn-success");
+                input.prop( "disabled", false );
+            } else if ($(this).hasClass("btn-success")){
+                $(this).removeClass("btn-success");
+                $(this).addClass("btn-danger");
+                input.prop( "disabled", true );
+            }
+
         });
-        $(document).on('click', '.ModalButton', function () {
-            let ParId = $(this).data("id");
-            console.log(ParId);
-            $("#InfoModalContent").load(`/portal/applicants/modal?id=${ParId}`);
-        });
+        // $(document).on('submit', '.MailSend', function () {
+        //     $.ajax({
+        //         url: '/portal/sendtosheet',
+        //         type: 'POST',
+        //         data: $(this).serialize(),
+        //         tryCount: 0,
+        //         retryLimit: 5,
+        //         success: function (res) {
+        //             this.tryCount = 0;
+        //             toastr.success(res.msg);
+        //         },
+        //         error: function (xhr, textStatus, errorThrown) {
+        //             if (textStatus === 'timeout') {
+        //                 this.tryCount++;
+        //                 toastr.error("Error! " + xhr.status + " " + textStatus + ", Retrying");
+        //                 if (this.tryCount <= this.retryLimit) {
+        //                     //try again
+        //                     $.ajax(this);
+        //                     return;
+        //                 }
+        //                 return;
+        //             }
+        //             if (xhr.status === 500) {
+        //                 toastr.error("Error! " + xhr.status + " " + textStatus);
+        //             } else {
+        //                 toastr.error("Error! " + xhr.status + " " + textStatus);
+        //             }
+        //         }
+        //     });
+        //     return false;
+        // });
         $(document).on('click', '.EditButton', function () {
-            let ParId = $(this).data("id");
-            console.log(ParId);
-            $("#EditModalContent").load(`/portal/applicants/edit?id=${ParId}`);
+            let MemId = $(this).data("id");
+            console.log(MemId);
+            $("#EditModalContent").load(`/portal/members/edit/rank?id=${MemId}`);
+        });
+        $(document).on('keypress', '.rankinput', function (e) {
+            if (e.which === 37 ||e.which === 32){
+                console.log("Block")
+                return false;
+            }
+            let letter = String.fromCharCode(e.which)
+            return /^\d*\.?\d*$/.test(letter);
         });
     </script>
-    <script> $(function () {
+    <script>
+        $(function () {
             $("#ind").DataTable({
                 stateSave: true,
                 responsive: true,
@@ -317,9 +274,11 @@
                 },
                 "autoWidth": false
             });
+
+
         })
-        // let x = downloadData()
 
     </script>
 </body>
 </html>
+

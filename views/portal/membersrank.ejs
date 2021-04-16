@@ -84,8 +84,8 @@
                                 <th>Team</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Link</th>
-                                <th>Extra</th>
+                                <th>Profile</th>
+                                <th>Rank</th>
                             </thead>
                             <tbody>
                             <% members.forEach(mem =>  { %>
@@ -95,7 +95,7 @@
                                     <td><%= mem.Committee %></td>
                                     <td><a href="mailto:<%= mem.Email %>"><%= mem.Email %></a></td>
                                     <td><a href="tel:<%= mem.Phone %>"><%= mem.Phone %></a></td>
-                                    <td><a href="https://enactus-cu.org/members/performance/<%= mem.PageID %>">Here</a></td>
+                                    <td><a href="/portal/members/profile/<%= mem.id %>">Profile</a></td>
                                     <td><% if(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(user.Position) || user.isAdmin){ %>
                                             <span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                         type="button" class="btn btn-secondary EditButton"

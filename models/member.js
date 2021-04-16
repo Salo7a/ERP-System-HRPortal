@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     Phone: DataTypes.STRING,
     PageID: {
       type: DataTypes.INTEGER(8),
-      unique: true
+      unique: "PageID"
     },
     KPI: {
       type: DataTypes.JSON,

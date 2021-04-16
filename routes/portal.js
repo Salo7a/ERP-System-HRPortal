@@ -1,11 +1,8 @@
 let express = require('express');
 const createError = require("http-errors");
 let router = express.Router();
-const {NotAuth, isAuth, isAdmin} = require('../utils/filters');
-const Applicant = require("../models").Applicant;
-const Contact = require("../models").Contact;
-const Member = require("../models").Member;
-const Rank = require("../models").Rank;
+const {NotAuth, isAuth, isAdmin, imageFilter} = require('../utils/filters');
+const {Applicant, Contact, Member, Rank} = require("../models");
 const chance = require('chance').Chance();
 const {Op} = require("sequelize");
 const sequelize = require('sequelize');
@@ -34,6 +31,17 @@ async function AddToSheet(row){
         return false;
     }
 }
+const multer = require('multer');
+const path = require('path');
+
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/profiles/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+});
 
 function isNumeric(str) {
     if (typeof str != "string") return false // we only process strings!
@@ -597,6 +605,59 @@ router.get('/settings', isAdmin, function (req, res, next) {
     }).catch(() => {
         createError(404);
     })
+});
+
+router.get('/members/profile/:id', isAuth, function (req, res, next) {
+    let id = req.params.id;
+    Member.findOne({
+        where: {
+            id: id
+        }
+    }).then(mem => {
+        if(mem){
+            res.render('portal/MemberProfile', {title: `${mem.Name}'s Profile`,mem});
+        }
+    }).catch(() => {
+        createError(404);
+    })
+});
+
+router.post('/members/profile/:id', isAuth, function (req, res, next) {
+    let upload = multer({storage: storage, fileFilter: imageFilter}).single('profile_image');
+    let MemberId = req.params.id
+    upload(req, res, function (err) {
+        // req.file contains information of uploaded file
+        // req.body contains information of text fields, if there were any
+
+        if (req.fileValidationError) {
+            return res.send(req.fileValidationError);
+        } else if (!req.file) {
+            return res.send('Please select an image to upload');
+        } else if (err instanceof multer.MulterError) {
+            return res.send(err);
+        } else if (err) {
+            return res.send(err);
+        }
+
+        Member.findOne({
+            where: {
+                id: req.params.id
+            }
+
+        })
+            .then(function (member) {
+                member.update({
+                    Photo: req.file.filename,
+                }).then(result => {
+                    res.redirect("/portal/members/rank/");
+                    // res.render('PatientProfile', {
+                    //     title: 'My Profile',
+                    //     success_msg: "successfully added profile picture",
+                    //     user: req.user
+                    // });
+                });
+            })
+    });
 });
 
 module.exports = router;

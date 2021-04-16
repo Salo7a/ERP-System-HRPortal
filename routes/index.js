@@ -303,22 +303,26 @@ router.post('/members/performance/:PageID', function (req, res, next) {
     )
 
 });
-router.get('/members/leaderboard/:Directorate/:Month', function (req, res, next) {
+router.get('/members/leaderboard/', function (req, res, next) {
+    console.log("Hi")
+    res.render('leaderboard', {title: "Leaderboard"});
+});
+
+router.get('/members/leaderboard/:Directorate', function (req, res, next) {
     console.log("Hi")
     Rank.findAll({where:{
             Directorate: req.params.Directorate,
-            Month: req.params.Month
+            Month: "April"
         },
         include: Member,
         order: [
             ['Rank', 'ASC'],
         ]}).then(members=>{
-            console.log(members);
-            if (members.length > 3){
-                res.render('leaderboard', {title: "Performance Report", members});
-            } else {
-                res.render('message', {title: "Hmmmm"});
-            }
+            // if (members.length > 3){
+                res.render('singleleaderboard', {title: "Leaderboard", members});
+            // } else {
+            //     res.render('message', {title: "Hmmmm"});
+            // }
 
         }).catch(()=>{
             createError(404);

@@ -1,0 +1,258 @@
+<% let questions = {
+    Projects: "What do you know about project management?",
+    OD: "How to ensure that all teams are on the right track? Explain with a specific method.",
+    TM: "How to enhance the performance of the members?",
+    LD: "What is the capacity building program? Mention the steps to conduct a training.",
+    CR: "List the benefits or values that you can offer to the sponsors/partners",
+    RM: "What do you know about product cycle?",
+    Events: "Mention & describe an idea for an event, And list the needed actions for implementing this idea.",
+    Marketing: "Prepare an offline campaign (theme, title, objectives)",
+    Social: "Prepare an online campaign (theme, title, objectives)",
+    Visuals: "List the basic video editing concepts you're familiar with if any (timeline, layers, blending modes...etc.)",
+    Camera: "What are the basics of photography?",
+    Presentation: "Mention 5 pillars will lead person to be a good presenter?"
+} %>
+<%
+let label = {
+    Applied: "bg-primary",
+    Interviewed: "bg-warning",
+    Rejected: "bg-danger",
+    Accepted: "bg-success"
+}
+%>
+
+<tr role="row" id="row-<% app.id %>">
+    <td><%= app.id %></td>
+    <td><%= app.Name %></td>
+    <td>
+        <div class="badge <%= label[app.State] %>"><%= app.State %></div>
+    </td>
+
+    <td><a href="mailto:<%= app.Email %>"><%= app.Email %></a></td>
+    <td><a href="tel:<%= app.Phone %>"><%= app.Phone %></a></td>
+    <td><%= app.Time %></td>
+    <td><%= app.First %>, <%= app.Second %></td>
+    <td><span data-toggle="tooltip" data-placement="top" title="Info"><button
+                    type="button"
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#par-<%= app.id %>">
+                                            <i class="fa fa-info"></i>
+                                        </button></span>
+        <span data-toggle="tooltip" data-placement="top" title="Actions"><button
+                    type="button" class="btn btn-secondary" data-toggle="modal"
+                    data-target="#pare-<%= app.id %>">
+                                            <i class="fa fa-cog"></i>
+                                        </button></span>
+        <form class="SheetSend"> <span data-toggle="tooltip" data-placement="top"
+                                       title="Send To Sheet"><button type="button"
+                                                                     class="btn btn-success">
+                                            <i class="fa fa-paper-plane"></i> </button> <input type="hidden" name="id"
+                                                                                               value="<%= app.id %>"></span>
+        </form>
+    </td>
+    <div class="modal fade" id="pare-<%= app.id %>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">#<%= app.id %> -
+                        <% app.Name %>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" class="editApplicant">
+                    <div class="modal-body">
+
+                        <input type="hidden" name="id" value="<%= app.id %>">
+                        <label>State</label>
+                        <div class="form-group">
+
+
+                            <select class="form-control" name="State">
+                                <option
+                                <% if (app.State === "Applied"){ %> selected
+                                        <% } %>
+                                >Applied
+                                </option>
+                                <option
+                                <% if (app.State === "Interviewed"){ %> selected
+                                        <% } %>
+                                >Interviewed
+                                </option>
+                                <option
+                                <% if (app.State === "Accepted"){ %> selected
+                                        <% } %>
+                                >Accepted
+                                </option>
+                                <option
+                                <% if (app.State === "Rejected"){ %> selected
+                                        <% } %>
+                                >Rejected
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Interview Date</label>
+                            <input type="date" class="form-control" name="IDate"
+                                   value="<%= app.IDate %>">
+                        </div>
+                        <div class="form-group">
+                            <label>Interview Date</label>
+                            <input type="Time" class="form-control" name="ITime"
+                                   value="<%= app.ITime %>">
+                        </div>
+                        <div class="form-group">
+                            <label>Arrival Time</label>
+                            <input type="Time" class="form-control" name="ATime"
+                                   value="<%= app.ATime %>">
+
+                        </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea name="Notes" class="form-control"
+                                      placeholder="Notes"
+                                      cols="30" rows="10"><%= app.Notes %></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Cancel
+                        </button>
+                        <input type="submit" value="Save"
+                               class="btn btn-outline-success">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="par-<%= app.id %>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">#<%= app.id %>
+                        - <%= app.Name %></h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="infoForm">
+                        <h6>Personal Info</h6>
+                        <hr>
+                        <ul>
+                            <li>CU Student: <%= app.CUStudent %></li>
+                            <li>Academic Year: <%= app.Academic %></li>
+                            <li>Faculty: <%= app.Faculty %></li>
+                            <li>Major: <%= app.Major %></li>
+                            <li>Minor: <%= app.Minor %></li>
+                            <li>English: <%= app.English %></li>
+                            <li>Application Start: <%= app.Start %></li>
+                            <li>Application End: <%= app.End %></li>
+                        </ul>
+                        <label>Extra-Curricular Activities</label>
+                        <textarea disabled class="form-control"><%= app.Excur %></textarea>
+                        <div class="form-group">
+                            <label>Courses & Workshops Attended</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Courses %></textarea>
+                        </div>
+                        <br>
+                        <label>Team</label>
+                        <hr>
+                        <br><h6>Questions: <%= app.First %></h6>
+
+                        <div class="form-group">
+                            <label>What do you know about this team?</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.Team[0] %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <%= questions[app.First] %>
+                            </label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.Team[1] %></textarea>
+                        </div>
+                        <br> <h6>Questions: <%= app.Second %></h6>
+
+                        <div class="form-group">
+                            <label>What do you know about this team?</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.Team[2] %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <%= questions[app.Second] %>
+                            </label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.Team[3] %></textarea>
+                        </div>
+                        <br><h6>General</h6>
+                        <hr>
+
+                        <div class="form-group">
+                            <label>What does the word “Entrepreneur“ mean?</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.General[0] %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>In your opinion, What is Leadership ? and what makes a
+                                good leader
+                                ?</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.General[1] %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>What is a non-profit organization?</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.General[2] %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Why did you apply for Enactus?</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.General[3] %></textarea>
+                        </div>
+                        <br>
+                        <h6>Situational</h6>
+                        <hr>
+
+                        <div class="form-group">
+                            <label>Give an example of a problem you have faced in the past,
+                                either as a
+                                part of a team or as an individual. How did you solve the
+                                problem?
+                            </label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.Situational[0] %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Describe a time when a team member has annoyed
+                                you.</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.Situational[1] %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>How do you manage your time to achieve results and
+                                work-life
+                                balance?</label>
+                            <textarea disabled
+                                      class="form-control"><%= app.Answers.Situational[2] %></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</tr>

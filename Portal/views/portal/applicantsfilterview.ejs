@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel='icon' href='/favicon.ico' type='image/x-icon'/>
+    <title> <%= settings["WebsiteName"].Value %> || <%= title %></title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.5.2/css/colReorder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.6/css/fixedHeader.dataTables.min.css">
+    <style>
+        h6{
+            font-size: 16px !important;
+            font-weight: bold !important;
+        }
+        textarea{
+            width: 100%;
+            height: fit-content;
+            min-height: 120px;
+        }
+    </style>
+    <script>function format(time) {
+            // Hours, minutes and seconds
+            let hrs = ~~(time / 3600);
+            let mins = ~~((time % 3600) / 60);
+            let secs = ~~time % 60;
+
+            // Output like "1:01" or "4:03:59" or "123:03:59"
+            let ret = "";
+            if (hrs > 0) {
+                ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+            }
+            ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+            ret += "" + secs;
+            return ret;
+        }
+        let questions = {
+            Projects: "What do you know about project management?",
+            OD:"How to ensure that all teams are on the right track? Explain with a specific method.",
+            TM:"How to enhance the performance of the members?",
+            LD:"What is the capacity building program? Mention the steps to conduct a training.",
+            CR:"List the benefits or values that you can offer to the sponsors/partners",
+            RM:"What do you know about product cycle?",
+            Events:"Mention & describe an idea for an event, And list the needed actions for implementing this idea.",
+            Marketing: "Prepare an offline campaign (theme, title, objectives)",
+            Social: "Prepare an online campaign (theme, title, objectives)",
+            Visuals: "List the basic video editing concepts you're familiar with if any (timeline, layers, blending modes...etc.)",
+            Camera: "What are the basics of photography?",
+            Presentation: "Mention 5 pillars will lead person to be a good presenter?"
+        }
+        let Answers;
+    </script>
+    <!-- Custom CSS Block -->
+    <%- block('css').toString() %>
+
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+    <!-- Navbar -->
+    <% include ../partials/navbar.ejs %>
+    <!-- /.navbar -->
+
+    <!-- Sidebar -->
+    <% include  ../partials/sidebar.ejs %>
+    <!-- /.sidebar -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark"><%= title %></h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+
+                <div class="card card-primary col-md-12">
+                    <div class="card-header">
+                        <h3 class="card-title"><%= title %></h3>
+                        <!-- /.card-tools -->
+                    </div>
+                    <!-- /.card-header -->
+
+                    <div class="card-body ">
+                        <table id="ind" class="table table-bordered table-hover" role="grid" aria-describedby="example2_info">
+                            <thead>
+                            <tr role="row">
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>State</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Time</th>
+                                <th>Submitted</th>
+                                <th>Extra</th>
+                            </thead>
+                            <tbody>
+                            <% applicants.forEach(app =>  { %>
+                                <tr role="row" id="row-<%=app.id%>">
+                                    <td><%= app.id %></td>
+                                    <td><%= app.Name %></td>
+                                    <td><%= app.State %></td>
+                                    <td><a href="mailto:<%= app.Email %>"><%= app.Email %></a></td>
+                                    <td><a href="tel:<%= app.Email %>"><%= app.Phone %></a></td>
+                                    <td><%=app.Time%></td>
+                                    <td><% if(app.End != null) {%> Yes <%} else {%> No <%}%></td>
+                                    <td><span data-toggle="tooltip" data-placement="top" title="Delete"><button type="button" data-toggle="modal" data-target="#par-<%=app.id%>" class="btn btn-danger"><i class="fa fa-trash"></i></button></span></td>
+                                    <div class="modal fade" id="par-<%=app.id%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete?</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    #<%=app.id%> - <%=app.Name%>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                                    <form method="post" class="deleteApplicant">
+                                                        <input type="hidden" name="id" value="<%=app.id %>">
+                                                        <input type="submit" value="Yes" class="btn btn-danger deleteButton">
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tr>
+                            <% }); %>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+
+
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+
+    <!-- /.content-wrapper -->
+    <!--    Footer-->
+    <% include ../partials/footer.ejs %>
+
+
+    <!-- Toasts -->
+    <% include ../partials/toasts.ejs %>
+    <!-- Custom JS Block -->
+    <%- block('js').toString() %>
+    <script src="/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+     <script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.5.2/js/dataTables.colReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.7/pagination/select.js"></script>
+    <!-- AJAXSubmit -->
+    <script type="text/javascript" src="/vendor/jquery.ajaxSubmit.min.js"></script>
+    <script type="text/javascript">
+        let FormSubmit = ()=> {$('.deleteApplicant').ajaxSubmit({
+            success: (res) =>{
+                $(`#row-${res.id}`).remove();
+                $(`#par-${res.id}`).modal('toggle');
+                toastr.success(res.msg);
+            },
+            error: (res)=>{
+                toastr.error(res.msg);
+            }
+
+        });}
+        FormSubmit();
+        $(document).on('submit','.deleteApplicant',function(){
+            FormSubmit();
+            return false;
+        });
+    </script>
+    <script> $(function () {$("#ind").DataTable({ stateSave: true,
+                        responsive: true,
+                              columnDefs: [
+                                 { responsivePriority: 1, targets: 0 },
+                                 { responsivePriority: 2, targets: -1 },
+                                 { responsivePriority: 3, targets: 1 }
+                              ],
+                             fixedHeader: {
+                                  header: true,
+                                   footer: true
+                             },
+                              "autoWidth": false});})
+
+    </script>
+</body>
+</html>

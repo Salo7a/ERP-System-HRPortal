@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- For Resposive Device -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> <%= settings["WebsiteName"].Value %> || <%= title %></title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+
+    <!-- Main style sheet -->
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <!-- responsive style sheet -->
+    <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+
+    <!-- Animate -->
+    <link rel="stylesheet" type="text/css" href="/vendor/animate.css">
+
+    <!-- Foundation -->
+    <link rel="stylesheet" type="text/css" href="/vendor/foundation.min.css">
+
+    <!-- Other -->
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <!-- Fix Internet Explorer -->
+
+<!--    &lt;!&ndash;[if lt IE 9]>-->
+    <script src="/vendor/html5shiv.js"></script>
+    <script src="/vendor/respond.js"></script>
+<!--    <![endif]&ndash;&gt;-->
+
+</head>
+
+<body>
+<div class="main-page-wrapper">
+    <header class="theme-main-header">
+        <div class="container">
+            <a href="/" class="logo float-left tran4s"><img src="images/logo/logo.png" alt="Logo"></a>
+            <nav class="navbar float-right theme-main-menu one-page-menu">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        Menu
+                        <i class="fa fa-bars" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">HOME</a></li>
+                        <li><a href="/teams">TEAMS</a></li>
+                        <!--                        <li><a href="/projects">PROJECTS</a></li>-->
+                        <li class="active"><a href="/apply">APPLY</a></li>
+                        <li><a href="/contact">CONTACT US</a></li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </nav> <!-- /.theme-feature-menu -->
+        </div>
+    </header>
+
+    <!-- Page Header Banner-->
+    <section class="inner-page-banner">
+        <div class="opacity">
+            <div class="container">
+                <h2>New Member Application</h2>
+            </div>
+        </div>
+    </section>
+
+    <section style="margin-bottom: 20px" id="contact-section">
+        <div class="container send-message">
+            <% if (settings['RecruitmentOpen'].Value === '1'){%>
+            <form id="ApplicationForm" method="post">
+                <div class="box">
+                    <div class="row">
+                        <div class="small-12 medium-12 large-12">
+                            <h4>Apply Now</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="columns small-12 medium-12 large-12">
+                            <label for="fullName">Your Full Name <span style="color:#ff0022;">*</span></label>
+                            <div class="relative input-wrap is-required">
+                                <input id="fullName" type="text" name="name" placeholder="Full Name*">
+
+                                <span class="icon validation small success hide">
+									<span class="fa fa-check"></span>
+								</span>
+                                <span class="icon validation small error hide">
+									<span class="fa fa-remove"></span>
+								</span>
+                            </div>
+                            <div class="is-helpful" data-helper="Ex: John Smith"
+                                 data-error="Please enter your full name."></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="small-12 medium-12 large-12">
+                            <div class="columns small-12 medium-12 large-12">
+                                <label for="email">Your Email<span style="color:#ff0022;">*</span></label>
+                                <div class="relative input-wrap is-required">
+                                    <input id="email" type="email" name="email" placeholder="Email *">
+
+                                    <span class="icon validation small success hide">
+											<span class="fa fa-check"></span>
+										</span>
+                                    <span class="icon validation small error hide">
+											<span class="fa fa-remove"></span>
+										</span>
+                                </div>
+                                <div class="is-helpful" data-helper="Ex: a@b.c"
+                                     data-error="Please enter your email."></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="columns small-12 medium-6 large-6">
+                            <label for="phone">Your Phone Number<span style="color:#ff0022;">*</span></label>
+                            <div class="relative input-wrap is-required">
+                                <input type="tel" name="phone" id="phone" placeholder="Phone Number*">
+
+                                <span class="icon validation small success hide">
+									<span class="fa fa-check"></span>
+								</span>
+                                <span class="icon validation small error hide">
+									<span class="fa fa-remove"></span>
+								</span>
+                            </div>
+                            <div class="is-helpful" data-helper="Ex: 01xxxxxxxxx" data-error="Please enter a valid phone number."></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="columns" style="text-align: center">
+                            <div class="small-12 medium-12 large-12">
+                                <p>You will be asked to answer a series of questions, you will have
+                                    <span style="color: red">30 minutes</span> to attempt all questions, when you are ready to begin press start.</p>
+                                <button type="submit" class="btn hvr-bounce-to-right"
+                                        style="margin-left: auto; margin-right: auto; font-size: 18px; border-radius: 2px; border-width: 2px;">
+                                    Start
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <%} else {%>
+                    <div class="box">
+                        <div class="row">
+                            <div class="small-12 medium-12 large-12">
+                                <h4>Sorry!</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="columns" style="text-align: center">
+                                <div class="small-12 medium-12 large-12">
+                                    <p>The recruitment is
+                                        <span style="color: red">closed</span>, Follow us on Facebook for any updates</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            <%}%>
+        </div>
+    </section>
+
+
+    <!---------Footer---------->
+    <footer>
+        <div class="container">
+            <a href="/" class="logo"><img src="images/logo/logo.png" alt="Logo"></a>
+
+            <ul>
+                <li><a href="https://www.facebook.com/EnactusCairo/" class="tran3s round-border"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+<!--                <li><a href="#" class="tran3s round-border"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>-->
+                <li><a href="https://www.linkedin.com/company/enactus-cairo-university/" class="tran3s round-border"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                <li><a href="https://www.instagram.com/enactuscairo/" class="tran3s round-border"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+            </ul>
+        </div>
+    </footer>
+
+
+    <!---------Pre Loader---------->
+    <div id="loader-wrapper">
+        <div id="preloader_1">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+
+    <!-- Scroll Top Button -->
+    <button class="scroll-top tran3s p-color-bg">
+        <i class="fa fa-long-arrow-up" aria-hidden="true"></i>
+    </button>
+
+
+    <!-- Js Files -->
+
+    <!-- j Query -->
+    <script type="text/javascript" src="/vendor/jquery.2.2.3.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script type="text/javascript" src="/vendor/bootstrap/bootstrap.min.js"></script>
+
+    <!-- Foundation -->
+    <script type="text/javascript" src="/vendor/foundation.min.js"></script>
+
+    <!-- Wow -->
+    <script type="text/javascript" src="/vendor/wow.min.js"></script>
+
+    <!-- Foundation -->
+    <script type="text/javascript" src="/vendor/foundation.min.js"></script>
+
+    <!-- Jquery-UI -->
+    <script type="text/javascript" src="/vendor/jquery-ui.min.js"></script>
+
+    <!-- AJAXSubmit -->
+    <script type="text/javascript" src="/vendor/jquery.ajaxSubmit.min.js"></script>
+
+    <!-- Validation -->
+    <script type="text/javascript" src="/js/validation.js"></script>
+
+    <!-- Toasts -->
+    <% include ../partials/toasts.ejs %>
+
+    <!-- Main js -->
+    <script type="text/javascript" src="/js/main.js"></script>
+<% if (settings['RecruitmentOpen'].Value === '1'){%>
+    <script>
+        let VerifyInput = () =>{
+            let valid = true;
+            $("#ApplicationForm input").each(function() {
+                if(!$(this).parent().hasClass("is-valid") &&  $(this).parent().hasClass("is-required")) {
+                    valid = false;
+                    $(this).trigger("blur");
+                }
+            });
+            $("#ApplicationForm textarea").each(function() {
+                if(!$(this).parent().hasClass("is-valid") &&  $(this).parent().hasClass("is-required") ) {
+                    valid = false;
+                    $(this).trigger("blur");
+                }
+            });
+            return valid;}
+        $(document).on('submit','#ApplicationForm',function(){
+            return VerifyInput();
+        });
+        $('input[name=email]').on('keyup blur', function (event) {
+            if ($(this).parents($inputWrapper).hasClass($optionalClass) && $(this).val() === '') {
+                markNeutral($(this));
+            } else {
+                var $checkEmail = $(this).val().match($validEmail);
+
+                if (event.type === 'blur') {
+                    if ($(this).val() === '') {
+                        markInvalid($(this), $(this).parents($inputWrapper).siblings($helperClass).attr('data-error'));
+                    } else if ($checkEmail === null) {
+                        markInvalid($(this), 'Please enter a valid email');
+                    } else {
+                        markValid($(this));
+                        // helperText($(this), $helpText, $message, event);
+                    }
+                } else {
+                    if ($checkEmail !== null) {
+                        markValid($(this));
+                    }
+                }
+            }
+        });
+
+        $(document).on('blur','#email',function(){
+            //ajax request
+
+            $.ajax({
+                url: "/checkemail",
+                data: {
+                    'email' : $('#email').val()
+                },
+                method: "post",
+                dataType: 'json',
+                success: function(data) {
+                    if(data.msg === "found") {
+                        console.log("Found");
+                        toastr.error("Email Already Exists");
+                        let em = $('#email');
+                        markNeutral($(em));
+                        let $helpText = $(em).closest($inputWrapper).siblings($helperClass);
+                        let $message = $helpText.attr('data-helper');
+                        helperDown($(em), $helpText, $message);
+                        markInvalid($(em), "Email already exists!");
+                    }
+                },
+                error: function(data){
+                    console.log("error");
+                }
+            });
+        });
+
+    </script>
+    <%}%>
+</div>
+</body>
+</html>

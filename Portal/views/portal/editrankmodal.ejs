@@ -1,0 +1,65 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">#<%= mem.id %> -
+        <%= mem.Name %>
+    </h5>
+    <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="post" class="editRank">
+    <div class="modal-body">
+        <p>From 0 to 100</p>
+        <input type="hidden" name="id" value="<%= mem.id %>">
+        <input type="hidden" name="directorate" value="<%= mem.Directorate %>">
+        <!--April-->
+        <div class="input-group mb-3 rankmonth">
+            <div class="input-group-prepend">
+                <button type="button" class="RankButton btn <% if (mem.Rank.April === null){%> btn-danger<%}else{%>btn-success<%}%>">April</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control rankinput" name="April"
+                    <% if (mem.Rank.April !== null){%> value="<%=mem.Rank.April%>" <%}%>  <% if (mem.Rank.April === null){%>disabled<%}%>>
+        </div>
+        <!--May-->
+        <div class="input-group mb-3 rankmonth">
+            <div class="input-group-prepend">
+                <button type="button" class="RankButton btn <% if (mem.Rank.May === null){%> btn-danger<%}else{%>btn-success<%}%>">May</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control rankinput" name="May"
+                    <% if (mem.Rank.May !== null){%> value="<%=mem.Rank.May%>" <%}%>  <% if (mem.Rank.May === null){%>disabled<%}%>>
+        </div>
+        <!--June-->
+        <div class="input-group mb-3 rankmonth">
+            <div class="input-group-prepend">
+                <button type="button" class="RankButton btn <% if (mem.Rank.June === null){%> btn-danger<%}else{%>btn-success<%}%>">June</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control rankinput" name="June"
+                    <% if (mem.Rank.June !== null){%> value="<%=mem.Rank.June%>" <%}%>  <% if (mem.Rank.June === null){%>disabled<%}%>>
+        </div>
+        <!--July-->
+        <div class="input-group mb-3 rankmonth">
+            <div class="input-group-prepend">
+                <button type="button" class="RankButton btn <% if (mem.Rank.July === null){%> btn-danger<%}else{%>btn-success<%}%>">July</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control rankinput" name="July"
+                    <% if (mem.Rank.July !== null){%> value="<%=mem.Rank.July%>" <%}%>  <% if (mem.Rank.July === null){%>disabled<%}%>>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+                data-dismiss="modal">Cancel
+        </button>
+        <input type="submit" value="Save"
+               class="btn btn-outline-success">
+    </div>
+</form>
+<style>
+    .RankButton{
+        width: 90px;
+        text-align: center;
+    }
+</style>

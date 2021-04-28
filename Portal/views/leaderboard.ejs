@@ -1,0 +1,57 @@
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title> <%= settings["WebsiteName"].Value %> || Leaderboard</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/leaderboard.css">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/css/mainleaderboard.css">
+    <link rel="stylesheet" href="/css/running-pikachu.css">
+</head>
+<body>
+<div class="container">
+    <div id="title" style="text-align: center; margin-top: 50px; margin-bottom: 30px;"><h1>Pok<span style="color: #FFC222">énactus</span></h1></div>
+
+    <div class="wrapper">
+        <nav>
+            <input type="radio" data-directorate="Financial" class="dselect" name="tab" id="Financial" checked>
+            <input type="radio" data-directorate="HR" class="dselect" name="tab" id="HR">
+            <input type="radio" data-directorate="Marketing" class="dselect" name="tab" id="Marketing">
+            <input type="radio" data-directorate="Multimedia" class="dselect" name="tab" id="Multimedia">
+            <input type="radio" data-directorate="Projects" class="dselect" name="tab" id="Projects">
+
+            <label for="Financial" class="Financial"><a href="#"><i class="fas fa-dollar-sign"></i><span class="NavText">Financial</span></a></label>
+            <label for="HR" class="HR"><a href="#"><i class="fas fa-user-tie"></i><span class="NavText">HR</span></a></label>
+            <label for="Marketing" class="Marketing"><a href="#"><i class="fas fa-bullhorn"></i><span class="NavText">Marketing</span></a></label>
+            <label for="Multimedia" class="Multimedia"><a href="#"><i class="fa fa-camera"></i><span class="NavText">Multimedia</span></a></label>
+            <label for="Projects" class="Projects"><a href="#"><i class="fa fa-users-cog"></i><span class="NavText">Projects</span></a></label>
+            <div class="tab"></div>
+
+        </nav>
+
+    </div>
+    <section>
+        <div id="leaderboard" class="content">
+
+        </div>
+    </section>
+
+</div>
+<!--    Bottom Running Pikachu-->
+
+<script src="/plugins/jquery/jquery.min.js"></script>
+<script>
+    $("#leaderboard").load(`/members/leaderboard/Financial`);
+    $(".content").show();
+    $(document).on('change', '.dselect', function () {
+        let Directorate = $(this).data("directorate");
+        $(".content").fadeOut(500)
+        $("#leaderboard").load(`/members/leaderboard/${Directorate}`);
+        $(".content").fadeIn(500);
+
+
+    });
+</script>
+</body>
+</html>

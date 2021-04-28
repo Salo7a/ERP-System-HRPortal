@@ -1,0 +1,147 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/portal" class="brand-link">
+        <img src="/images/enactus-star.png" alt="Enactus Logo" class="brand-image"
+             style="opacity: .8">
+        <span class="brand-text font-weight-light">Member's Portal</span>
+    </a>
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="/profiles/<%= user.Photo %>" class="img-circle elevation-2" style="width: 2.8rem" alt="User Image">
+            </div>
+            <div class="info">
+                <a class="d-block"><%= user.Name %></a>
+                <p  style="font-size: 0.8rem; color: #d0d0d0; margin: 0;"><%= user.Position %></p>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+                <% if(user.isAdmin){ %>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-user-shield"></i>
+                            <p>
+                                Admin
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/admin/userlist" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        Users List
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/admin/add" class="nav-link">
+                                    <i class="nav-icon fas fa-user-plus"></i>
+                                    <p>
+                                        Add User
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <% } %>
+                <% if(!user.Position.includes("Member") && !user.Position.includes("member")){ %>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-user-tie"></i>
+                        <p>
+                            Recruitment
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/portal/applicants/my" class="nav-link">
+                                <i class="fas fa-users nav-icon"></i>
+                                <p>My Applicants</p>
+                            </a>
+                        </li>
+                        <% if(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(user.Position) || user.isAdmin){ %>
+                        <li class="nav-item">
+                            <a href="/portal/applicants/all" class="nav-link">
+                                <i class="fas fa-users nav-icon"></i>
+                                <p>Applications</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/portal/applicants/bydate/" class="nav-link">
+                                <i class="fas fa-user-tie nav-icon"></i>
+                                <p>Today's Interviews</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/portal/applicants/filter" class="nav-link">
+                                <i class="fas fa-users-slash nav-icon"></i>
+                                <p>Unfiltered</p>
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a href="/portal/applicants/Incomplete" class="nav-link">
+                                    <i class="fas fa-users-slash nav-icon"></i>
+                                    <p>Incomplete</p>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </li>
+                <%}%>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-user-shield"></i>
+                        <p>
+                            Members
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/portal/members/kpi" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    KPI
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/portal/members/rank" class="nav-link">
+                                <i class="nav-icon fas fa-medal"></i>
+                                <p>
+                                    Ranking
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <% if(!user.Position.includes("Member") && !user.Position.includes("member")){ %>
+                <li class="nav-item">
+                    <a href="/portal/messages" class="nav-link">
+                        <i class="fas fa-envelope nav-icon"></i>
+                        <p>Messages</p>
+                    </a>
+                </li>
+                <%}%>
+                <li class="nav-item">
+                    <a href="/auth/logout" class="nav-link">
+                        <i style="color: #bf0a0a" class="fas fa-user-alt-slash nav-icon"></i>
+                        <p>Logout</p>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+</aside>

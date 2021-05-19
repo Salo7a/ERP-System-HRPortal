@@ -42,12 +42,12 @@
 
 <script src="/plugins/jquery/jquery.min.js"></script>
 <script>
-    $("#leaderboard").load(`/members/leaderboard/Financial`);
+    $("#leaderboard").load(`/members/leaderboard/Financial/<% if (Month){%><%=Month%><%}%>`);
     $(".content").show();
     $(document).on('change', '.dselect', function () {
         let Directorate = $(this).data("directorate");
         $(".content").fadeOut(500)
-        $("#leaderboard").load(`/members/leaderboard/${Directorate}`);
+        $("#leaderboard").load(`/members/leaderboard/${Directorate}/<% if (Month){%><%=Month%><%}%>`);
         $(".content").fadeIn(500);
 
 

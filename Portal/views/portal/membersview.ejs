@@ -56,7 +56,9 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
+
                             <li class="breadcrumb-item active"><%= title %></li>
+
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -72,6 +74,12 @@
                     <div class="card-header">
                         <h3 class="card-title"><%= title %></h3>
                         <!-- /.card-tools -->
+                        <div class="float-right">
+                            <%if(["Admin", "President", "HR VP"].includes(user.Position) || user.isAdmin){%>
+                            <button type="button" class="btn btn-block btn-success" data-toggle="modal"
+                                    data-target="#NewMemberModal">New Member</button>
+                                <%}%>
+                        </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body ">
@@ -144,7 +152,70 @@
         </div>
         <!-- /.content -->
     </div>
+    <%if(["Admin", "President", "HR VP", "TM Team Leader"].includes(user.Position) || user.isAdmin){%>
+    <div class="modal fade" id="NewMemberModal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add a New Member</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form method="post" action="/portal/members/new" id="NewMember">
+                <div class="modal-body">
 
+                            <div class="form-group">
+                                <label for="inputName">Name</label>
+                                <input type="text" id="inputName" class="form-control" name="Name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPhone">Phone</label>
+                                <input type="text" id="inputPhone" class="form-control" name="Phone" required>
+                            </div>
+                        <div class="form-group">
+                            <label for="inputEmail">Email</label>
+                            <input type="email" id="inputEmail" class="form-control" name="Email" required>
+                        </div>
+                            <div class="form-group">
+                                <label for="inputTeam">Team</label>
+                                <select id="inputTeam" class="form-control custom-select" name="Team">
+                                    <option selected disabled>Select one</option>
+                                    <option>Baby Steps</option>
+                                    <option>Fishing Waste</option>
+                                    <option>Gluten-Free</option>
+                                    <option>Tourism</option>
+                                    <option>Projects</option>
+                                    <option>LD</option>
+                                    <option>TM</option>
+                                    <option>OD</option>
+                                    <option>Camera</option>
+                                    <option>Visuals</option>
+                                    <option>Presentation</option>
+                                    <option>CR</option>
+                                    <option>RM</option>
+                                    <option>Events</option>
+                                    <option>Sales</option>
+                                    <option>Marketing</option>
+                                    <option>Social</option>
+                                </select>
+                            </div>
+                        </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+
+
+
+                </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <%}%>
     <!-- /.content-wrmemer -->
     <!--    Footer-->
     <% include ../partials/footer.ejs %>
@@ -171,6 +242,38 @@
         $(document).on('submit', '.editKPI', function () {
             $.ajax({
                 url: '/portal/editkpi',
+                type: 'POST',
+                data: $(this).serialize(),
+                tryCount: 0,
+                retryLimit: 5,
+                success: function (res) {
+                    console.log(res.id + " " + res.State);
+                    this.tryCount = 0;
+                    toastr.success(res.msg);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    if (textStatus === 'timeout') {
+                        this.tryCount++;
+                        toastr.error("Error! " + xhr.status + " " + textStatus + ", Retrying");
+                        if (this.tryCount <= this.retryLimit) {
+                            //try again
+                            $.ajax(this);
+                            return;
+                        }
+                        return;
+                    }
+                    if (xhr.status === 500) {
+                        toastr.error("Error! " + xhr.status + " " + textStatus);
+                    } else {
+                        toastr.error("Error! " + xhr.status + " " + textStatus);
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on('submit', '#NewMember', function () {
+            $.ajax({
+                url: '/portal/members/new',
                 type: 'POST',
                 data: $(this).serialize(),
                 tryCount: 0,

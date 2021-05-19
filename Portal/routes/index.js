@@ -304,14 +304,46 @@ router.post('/members/performance/:PageID', function (req, res, next) {
 
 });
 router.get('/members/pokenactus/', function (req, res, next) {
-    res.render('leaderboard', {title: "Pokenactus Leaderboard"});
+    let d = new Date();
+    let month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let Month = month[d.getMonth()];
+    console.log(Month)
+    res.render('leaderboard', {title: "Pokenactus Leaderboard", Month});
+});
+
+router.get('/members/pokenactus/:Month', function (req, res, next) {
+    let Month = req.params.Month
+    res.render('leaderboard', {title: "Pokenactus Leaderboard", Month});
 });
 
 router.get('/members/leaderboard/:Directorate', function (req, res, next) {
     console.log("Hi")
     Rank.findAll({where:{
             Directorate: req.params.Directorate,
-            Month: "April"
+            Month: "May"
+        },
+        include: Member,
+        order: [
+            ['Rank', 'ASC'],
+        ]}).then(members=>{
+        // if (members.length > 3){
+        res.render('singleleaderboard', {title: "Leaderboard", members});
+        // } else {
+        //     res.render('message', {title: "Hmmmm"});
+        // }
+
+    }).catch(()=>{
+            createError(404);
+        }
+    )
+
+});
+
+router.get('/members/leaderboard/:Directorate/:Month', function (req, res, next) {
+    let Month = req.params.Month
+    Rank.findAll({where:{
+            Directorate: req.params.Directorate,
+            Month: Month
         },
         include: Member,
         order: [

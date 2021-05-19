@@ -48,7 +48,25 @@ function isNumeric(str) {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
-
+let Directorates = {
+    "Baby Steps": "Projects",
+    "Fishing Waste": "Projects",
+    "Gluten-Free": "Projects",
+    "Tourism": "Projects",
+    "Projects": "Projects",
+    LD: "HR",
+    TM: "HR",
+    OD: "HR",
+    Camera: "Multimedia",
+    Visuals: "Multimedia",
+    Presentation: "Multimedia",
+    CR: "Financial",
+    RM: "Financial",
+    Events: "Financial",
+    Sales: "Financial",
+    Marketing: "Marketing",
+    Social: "Marketing"
+}
 router.get('/', isAuth, async function (req, res, next) {
     if (req.user.Position === 'TM Member'){
         res.redirect("/portal/members/kpi");
@@ -660,4 +678,25 @@ router.post('/members/profile/:id', isAuth, function (req, res, next) {
     });
 });
 
+router.post('/members/new', isAuth, async function (req, res, next) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader"].includes(req.user.Position) ||req.user.isAdmin)) {
+        res.redirect("/portal")
+    }
+    let {Name, Phone, Email, Team} = req.body
+    if (!Team || !Name || !Phone || !Email){
+        createError(4500)
+    }
+    Member.create({
+        Name,
+        Phone,
+        Email,
+        Committee: Team,
+        Directorate: Directorates[Team],
+        PageID: chance.integer({min:10000000, max:99999999})
+    }).then((newmem) => {
+        res.json({msg: "Added Successfully!"});
+    }).catch(() => {
+        createError(4000)
+    });
+});
 module.exports = router;

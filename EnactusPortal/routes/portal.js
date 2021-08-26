@@ -6,8 +6,6 @@ const {Applicant, Contact, Member, Rank} = require("../models");
 const chance = require('chance').Chance();
 const {Op} = require("sequelize");
 const sequelize = require('sequelize');
-const fs = require('fs');
-const readline = require('readline');
 const {GoogleSpreadsheet} = require('google-spreadsheet'),
     {promisify} = require('util'),
     creds = require('../config/Enactus21-d39432b22314.json');
@@ -48,25 +46,8 @@ function isNumeric(str) {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
-let Directorates = {
-    "Baby Steps": "Projects",
-    "Fishing Waste": "Projects",
-    "Gluten-Free": "Projects",
-    "Tourism": "Projects",
-    "Projects": "Projects",
-    LD: "HR",
-    TM: "HR",
-    OD: "HR",
-    Camera: "Multimedia",
-    Visuals: "Multimedia",
-    Presentation: "Multimedia",
-    CR: "Financial",
-    RM: "Financial",
-    Events: "Financial",
-    Sales: "Financial",
-    Marketing: "Marketing",
-    Social: "Marketing"
-}
+
+// Portal Home (For Non-Members)
 router.get('/', isAuth, async function (req, res, next) {
     if (req.user.Position === 'TM Member'){
         res.redirect("/portal/members/kpi");
@@ -116,6 +97,7 @@ router.get('/', isAuth, async function (req, res, next) {
 
 });
 
+// Messages submitted on the contact us form
 router.get('/messages', isAuth, async function (req, res, next) {
 
     Contact.findAll().then((contacts) => {
@@ -125,93 +107,14 @@ router.get('/messages', isAuth, async function (req, res, next) {
     });
 });
 
-router.get('/read', isAuth, async function (req, res, next) {
-    const readInterface = readline.createInterface({
-        input: fs.createReadStream('./mem.txt'),
-        console: false
-    });
-    readInterface.on('line', async function(line) {
-        await Applicant.findOne({
-            where:{
-            Email: line.toLowerCase()
-            }}).then(app=>{
-                if (app){
-                    Member.findOrCreate({where:{
-                        Name: app.Name,
-                        Phone: app.Phone,
-                        Email: app.Email,
-                        Committee: app.First}
-                    })
-                } else {
-                    Member.findOrCreate({where:{
-                        Email: line }
-                    })
-                }
-        })
+// KPI Routes
 
-    });
-});
-
-//Unique KPI Page ID Generation
-router.get('/createpageid', isAuth,async function (req, res, next) {
-    await Member.findAll().then(async (mems)=>{
-        await mems.forEach((mem)=>{
-            if (!mem.PageID){
-                mem.PageID = chance.integer({min:10000000, max:99999999});
-                mem.save();
-            }
-            if (!mem.KPI){
-                mem.KPI = {
-                    "January": null,
-                    "February": null,
-                    "March":null,
-                    "April":null,
-                    "May": null,
-                    "June":null,
-                    "July": null
-                }
-                mem.save();
-            }
-        })
-    })
-    res.json({msg: "ok"});
-});
-router.get('/fixmissingdata', isAuth,async function (req, res, next) {
-    let Directorate = {
-        "Baby Steps": "Projects",
-        "Fishing Waste": "Projects",
-        "Gluten-Free": "Projects",
-        "Tourism": "Projects",
-        "Projects": "Projects",
-        LD: "HR",
-        TM: "HR",
-        OD: "HR",
-        Camera: "Multimedia",
-        Visuals: "Multimedia",
-        Presentation: "Multimedia",
-        CR: "Financial",
-        RM: "Financial",
-        Events: "Financial",
-        Sales: "Financial",
-        Marketing: "Marketing",
-        Social: "Marketing"
-    }
-    await Member.findAll().then(async (mems)=>{
-        await mems.forEach((mem)=>{
-            if (!mem.Directorate){
-                mem.Directorate = Directorate[mem.Committee];
-                mem.save();
-            }
-        })
-    })
-    res.json({msg: "ok"});
-});
-
-//KPI Routes
+// Main KPI Route, Lists All Members
 router.get('/members/kpi', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
+
     let mem;
     if (req.user.Position === "TM Member"){
        mem = await Member.findAll({where:
@@ -227,6 +130,7 @@ router.get('/members/kpi', isAuth, async function (req, res, next) {
 
 
 });
+
 
 router.post('/editkpi', isAuth, async function (req, res, next) {
     if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {

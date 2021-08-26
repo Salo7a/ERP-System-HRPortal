@@ -47,28 +47,6 @@ router.post('/login', NotAuth, passport.authenticate('local', {
         res.redirect('/portal');
     });
 
-
-router.get("/userlist", isAuth, (req, res) => {
-    User.findAll().then(
-        users => {
-            res.render("users", {
-                title: "Users List",
-                users
-            });
-        }
-    )
-});
-
-
-router.post('/delete', isAuth, (req, res) => {
-    User.destroy({
-        where: {
-            id: req.body.usersID
-        }
-    });
-    res.redirect('/');
-});
-
 router.get('/register',NotAuth, (req,res,next)=>{
     res.render('auth/register', {title: "Registration"});
 });

@@ -44,7 +44,7 @@
     <% include ../partials/sidebar.ejs %>
     <!-- /.sidebar -->
 
-    <!-- Content Wrmemer. Contains page content -->
+    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
@@ -94,7 +94,13 @@
                                 <tr role="row" id="row-<% directorate.id %>">
                                     <td><%= directorate.id %></td>
                                     <td><%= directorate.Name %></td>
-                                    <td>H</td>
+                                    <td><span data-toggle="tooltip" data-placement="top" title="Actions"><button
+                                                    type="button" class="btn btn-secondary EditButton"
+                                                    data-toggle="modal"
+                                                    data-target="#dire" data-id="<%= directorate.id %>">
+                                            <i class="fa fa-cog"></i>
+                                        </button></span>
+                                    </td>
                                 </tr>
                             <% }); %>
 
@@ -137,7 +143,15 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <!-- /.content-wrmemer -->
+    <div class="modal fade" id="dire" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" id="DirEditModalContent">
+
+            </div>
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
     <!--    Footer-->
     <% include ../partials/footer.ejs %>
 
@@ -160,6 +174,7 @@
             Rejected: "bg-danger",
             Accepted: "bg-success"
         }
+        let DirectoratesTable = $("#ind").DataTable()
         $(document).on('submit', '#NewDirectorate', function () {
             $.ajax({
                 url: "/admin/directorates/add",
@@ -171,6 +186,7 @@
                     console.log(res.id + " " + res.State);
                     this.tryCount = 0;
                     toastr.success(res.msg);
+                    DirectoratesTable.row.add([res.id, res.Name])
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     if (textStatus === 'timeout') {
@@ -193,22 +209,13 @@
             return false;
         });
         $(document).on('click', '.EditButton', function () {
-            let MemId = $(this).data("id");
-            console.log(MemId);
-            $("#EditModalContent").load(`/admin/directorate/edit?id=${MemId}`);
-        });
-        $(document).on('keypress', '.kpiinput', function (e) {
-            if (e.which === 37 ||e.which === 32){
-                console.log("Block")
-                return false;
-            }
-            let letter = String.fromCharCode(e.which)
-            return /^\d*\.?\d*$/.test(letter);
+            let DirId = $(this).data("id");
+            $("#DirEditModalContent").load(`/admin/directorate/edit?id=${DirId}`);
         });
     </script>
     <script>
         $(function () {
-            $("#ind").DataTable({
+            DirectoratesTable({
                 stateSave: true,
                 responsive: true,
                 columnDefs: [

@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Member.hasMany(models.Rank)
+      Member.belongsTo(models.Team)
     }
   }
   Member.init({
@@ -41,7 +42,8 @@ module.exports = (sequelize, DataTypes) => {
     Photo: {
       type: DataTypes.STRING,
       defaultValue: "default.png"
-    }
+    },
+    Season: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Member',

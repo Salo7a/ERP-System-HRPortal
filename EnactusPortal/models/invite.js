@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Invite.associate = function(models) {
     // associations can be defined here
+    Invite.belongsTo(models.Team)
   };
   return Invite;
 };

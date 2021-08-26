@@ -68,20 +68,21 @@ module.exports = (sequelize, DataTypes) => {
     Token: DataTypes.STRING,
     Start: {
       type: DataTypes.DATE,
-      // get: function() {
-      //   return formatToTimeZone(this.getDataValue('Start'), "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'});
-      // }
+      get: function() {
+        return formatToTimeZone(this.getDataValue('Start'), "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'});
+      }
     },
     End: {
       type: DataTypes.DATE,
-      // get: function() {
-      //   return formatToTimeZone(this.getDataValue('End'), "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'});
-      // }
+      get: function() {
+        return formatToTimeZone(this.getDataValue('End'), "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'});
+      }
     },
     IDate: DataTypes.DATEONLY,
     ITime: DataTypes.TIME,
     ATime: DataTypes.TIME,
-    Notes: DataTypes.TEXT
+    Notes: DataTypes.TEXT,
+    Season: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Applicant',

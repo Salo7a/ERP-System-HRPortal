@@ -114,3 +114,5 @@ dist
 *.sqlite-journal
 
 *.tmp
+/aa/
+/routes/debugging.js

@@ -1,3 +1,5 @@
+const createError = require("http-errors");
+
 module.exports = {
     isAuth: function (req, res, next) {
         if (req.isAuthenticated()) {
@@ -22,6 +24,16 @@ module.exports = {
         }
         req.flash('error', 'You need to be logged in!');
         res.redirect('/auth/login');
+    },
+    isPos: function (Positions, req, res, next) {
+        Positions.concat(["Admin", "President"])
+        if(!(Positions.includes(req.user.Position) || req.user.isAdmin)) {
+            req.flash('error', 'Unauthorized');
+            next(createError(403))
+        } else {
+            next()
+        }
+
     },
     imageFilter: function (req, file, cb) {
         // Accept images only

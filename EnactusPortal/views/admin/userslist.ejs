@@ -28,37 +28,6 @@
             min-height: 120px;
         }
     </style>
-    <script>function format(time) {
-            // Hours, minutes and seconds
-            let hrs = ~~(time / 3600);
-            let mins = ~~((time % 3600) / 60);
-            let secs = ~~time % 60;
-
-            // Output like "1:01" or "4:03:59" or "123:03:59"
-            let ret = "";
-            if (hrs > 0) {
-                ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
-            }
-            ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-            ret += "" + secs;
-            return ret;
-        }
-        let questions = {
-            Projects: "What do you know about project management?",
-            OD:"How to ensure that all teams are on the right track? Explain with a specific method.",
-            TM:"How to enhance the performance of the members?",
-            LD:"What is the capacity building program? Mention the steps to conduct a training.",
-            CR:"List the benefits or values that you can offer to the sponsors/partners",
-            RM:"What do you know about product cycle?",
-            Events:"Mention & describe an idea for an event, And list the needed actions for implementing this idea.",
-            Marketing: "Prepare an offline campaign (theme, title, objectives)",
-            Social: "Prepare an online campaign (theme, title, objectives)",
-            Visuals: "List the basic video editing concepts you're familiar with if any (timeline, layers, blending modes...etc.)",
-            Camera: "What are the basics of photography?",
-            Presentation: "Mention 5 pillars will lead person to be a good presenter?"
-        }
-        let Answers;
-    </script>
     <!-- Custom CSS Block -->
     <%- block('css').toString() %>
 

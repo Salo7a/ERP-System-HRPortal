@@ -76,30 +76,37 @@
                         <!-- /.card-tools -->
                         <div class="float-right">
                             <button type="button" class="btn btn-block btn-success" data-toggle="modal"
-                                    data-target="#NewDirectorateModal">Add Directorate</button>
+                                    data-target="#NewTeamModal">Add Team</button>
                         </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body ">
                         <table id="ind" class="table table-bordered table-hover wrap" role="grid"
-                               aria-describedby="Directorates">
+                               aria-describedby="Teams">
                             <thead>
                             <tr role="row">
                                 <th>#</th>
                                 <th>Name</th>
+                                <th>Directorate</th>
                                 <th>Actions</th>
                             </thead>
                             <tbody>
-                            <% directorates.forEach(directorate =>  { %>
-                                <tr role="row" id="row-<% directorate.id %>">
-                                    <td><%= directorate.id %></td>
-                                    <td><%= directorate.Name %></td>
+                            <% teams.forEach(team =>  { %>
+                                <tr role="row" id="row-<% team.id %>">
+                                    <td><%= team.id %></td>
+                                    <td><%= team.Name %></td>
+                                    <td><%= team.Directorate.Name %></td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                     type="button" class="btn btn-secondary EditButton"
                                                     data-toggle="modal"
-                                                    data-target="#dire" data-id="<%= directorate.id %>">
+                                                    data-target="#dire" data-id="<%= team.id %>">
                                             <i class="fa fa-cog"></i>
-                                        </button></span>
+                                        </button></span><form method="post" action="/team/delete" class="Delete">
+                                            <input type="hidden" name="id" value="<%= team.id %>">
+                                            <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                        </form>
+
+
                                     </td>
                                 </tr>
                             <% }); %>
@@ -116,20 +123,30 @@
         </div>
         <!-- /.content -->
     </div>
-    <div class="modal fade" id="NewDirectorateModal" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="NewTeamModal" style="display: none;" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Add a New Directorate</h4>
+                    <h4 class="modal-title">Add a New Team</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form method="post" action="/admin/directorates/add" id="NewDirectorate">
+                <form method="post" action="/admin/teams/add" id="NewTeam">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="Name">Name</label>
-                        <input type="text" id="Name" class="form-control" name="Name" required>
+                        <label for="directorate">Directorate</label>
+                        <select class="custom-select form-control" name="directorate" id="directorate"
+                                required>
+                            <option class="hidden" selected disabled value="">Select The Directorate</option>
+                            <% directorates.forEach(directorate =>{ %>
+                                <option value="<%=directorate.id%>"><%=directorate.Name%></option>
+                            <%}) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" class="form-control" name="name" required>
                     </div>
                 </div>
 
@@ -168,15 +185,26 @@
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.7/pagination/select.js"></script>
     <script type="text/javascript">
-        let label = {
-            Applied: "bg-primary",
-            Interviewed: "bg-warning",
-            Rejected: "bg-danger",
-            Accepted: "bg-success"
-        }
-        let DirectoratesTable = $("#ind").DataTable()
+        let FormSubmit = ()=> {$('.Delete').ajaxSubmit({
+            success: (res) =>{
+                $(`#row-${res.id}`).remove();
+                toastr.success(res.msg);
+            },
+            error: (res)=>{
+                toastr.error(res.msg);
+            }
+
+        });}
+        FormSubmit();
+        $(document).on('submit','.Delete',function(){
+            let DeleteConfirm=confirm("Are you sure you want to delete?");
+            if (DeleteConfirm)
+                FormSubmit();
+            return false;
+        });
+        let TeamsTable = $("#ind").DataTable()
         $(function () {
-            DirectoratesTable({
+            TeamsTable({
                 stateSave: true,
                 responsive: true,
                 columnDefs: [
@@ -194,9 +222,9 @@
 
         })
 
-        $(document).on('submit', '#NewDirectorate', function () {
+        $(document).on('submit', '#NewTeam', function () {
             $.ajax({
-                url: "/admin/directorates/add",
+                url: "/admin/teams/add",
                 type: 'POST',
                 data: $(this).serialize(),
                 tryCount: 0,
@@ -208,12 +236,16 @@
                     let Button = `<span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                     type="button" class="btn btn-secondary EditButton"
                                                     data-toggle="modal"
-                                                    data-target="#dire" data-id="`+ res.id + `">
-                                            <i class="fa fa-cog"></i>
-                                        </button></span>`
-                    DirectoratesTable.row.add([res.id, res.Name, Button])
-                    DirectoratesTable.draw()
-                    $('#NewDirectorateModal').modal('hide')
+                                                    data-target="#dire" data-id="${res.id}">
+                                            <i class="fa fa-cog"></i></span></button>
+                                           <form method="post" action="/team/delete" class="Delete">
+                                            <input type="hidden" name="id" value="${res.id}">
+                                            <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                        </form>`
+
+                    TeamsTable.row.add([res.id, res.Name, res.directorate, Button])
+                    TeamsTable.draw()
+                    $('#NewTeamModal').modal('hide')
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     if (textStatus === 'timeout') {
@@ -237,7 +269,7 @@
         });
         $(document).on('click', '.EditButton', function () {
             let DirId = $(this).data("id");
-            $("#DirEditModalContent").load(`/admin/directorate/edit?id=${DirId}`);
+            $("#DirEditModalContent").load(`/admin/team/edit?id=${DirId}`);
         });
     </script>
 </body>

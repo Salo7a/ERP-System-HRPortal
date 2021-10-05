@@ -1,0 +1,57 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">#<%= position.id %> -
+        <%= position.Name %>
+    </h5>
+    <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="post" class="editPosition">
+    <div class="modal-body">
+        <input type="hidden" name="id" value="<%= position.id %>">
+        <div class="form-group">
+            <label for="rank">Rank</label>
+            <select class="custom-select form-control" name="rank" id="rank"
+                    required>
+                <option class="hidden" selected disabled value="">Select The Rank</option>
+                <% ranks.forEach(rank =>{ %>
+                <option <% if(rank.id === position.Rank.id){ %>selected <%}%> value="<%=rank.id%>"><%=rank.Name%></option>
+                <%}) %>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="directorate">Directorate</label>
+            <select class="custom-select form-control" name="directorate" id="directorate">
+                <option class="hidden" selected value="">Select The Directorate</option>
+                <% directorates.forEach(directorate =>{ %>
+                <option <% if(directorate.id === position.Directorate.id){ %>selected <%}%> value="<%=directorate.id%>"><%=directorate.Name%></option>
+                <%}) %>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="team">Team</label>
+            <select class="custom-select form-control" name="team" id="team">
+                <option class="hidden" selected value="">Select The Team</option>
+                <% teams.forEach(team =>{ %>
+                <option <% if(team.id === position.Team.id){ %>selected <%}%> value="<%=team.id%>"><%=team.Name%></option>
+                <%}) %>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" class="form-control" name="name" required>
+        </div>
+        <div class="form-group row">
+            <label class="col-6" for="visible">Visible In Form:</label>
+            <input checked type="checkbox" <%if (position.isVisible === "1") {%>checked <%}%>  name="visible" id="visible" data-bootstrap-switch data-off-color="danger" data-on-color="success">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+                data-dismiss="modal">Cancel
+        </button>
+        <input type="submit" value="Save"
+               class="btn btn-outline-success">
+    </div>
+</form>

@@ -1,0 +1,42 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">#<%= rank.id %> -
+        <%= rank.Name %>
+    </h5>
+    <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="post" class="editRank">
+    <div class="modal-body">
+        <input type="hidden" name="id" value="<%= rank.id %>">
+        <div class="form-group">
+            <label for="Name">Name</label>
+            <input type="text" id="Name" class="form-control" name="name" value="<%= rank.Name %>" required>
+        </div>
+        <div class="form-group">
+            <label for="Level">Level</label>
+            <input type="number" min=0 max=4 id="Level" class="form-control" name="level" value="<%= rank.Level %>" required>
+            <p>Higher = More Access, 0=> Participant, 4 =>High-Board</p>
+        </div>
+        <div class="form-group">
+            <label for="Internal">Internal Only</label>
+            <input checked type="checkbox"  name="internal" id="Internal" <%if (rank.isInternal === "1") {%>checked <%}%> data-bootstrap-switch data-off-color="danger" data-on-color="success">
+        </div>
+        <div class="form-group">
+            <label for="directorate">Directorate-Exclusive</label>
+            <input class="check" type="checkbox" name="directorate" id="directorate" <%if (rank.isDirectorateOnly === "1") {%>checked <%}%> data-bootstrap-switch data-off-color="danger" data-on-color="success">
+        </div>
+        <div class="form-group">
+            <label for="team">Team-Exclusive</label>
+            <input class="check" type="checkbox" name="team" id="team" <%if (rank.isTeamOnly === "1") {%>checked <%}%> data-bootstrap-switch data-off-color="danger" data-on-color="success">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+                data-dismiss="modal">Cancel
+        </button>
+        <input type="submit" value="Save"
+               class="btn btn-outline-success">
+    </div>
+</form>

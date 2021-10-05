@@ -112,10 +112,12 @@ app.use(function (req, res, next) {
         }
     )
 });
+
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/portal', portalRouter);
 app.use('/admin', adminRouter);
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404));

@@ -206,6 +206,7 @@ router.post('/application',function (req, res, next) {
     })
 
 });
+
 router.post('/applicationajax',function (req, res, next) {
     let {token, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second} = req.body;
     let team=req.body['team[]'];

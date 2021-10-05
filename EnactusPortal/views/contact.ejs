@@ -152,7 +152,11 @@
                     <div class="row">
                         <div class="columns" style="text-align: center">
                             <div class="small-12 medium-12 large-12">
-                                <button type="submit" class="btn hvr-bounce-to-right"
+                                <button class="g-recaptcha btn hvr-bounce-to-right"
+                                        data-sitekey="reCAPTCHA_site_key"
+                                        data-callback='onSubmit'
+                                        data-action='submit'
+                                        type="submit"
                                         style="margin-left: auto; margin-right: auto; font-size: 18px; border-radius: 2px; border-width: 2px;">
                                     Send
                                 </button>
@@ -230,6 +234,7 @@
 
     <!-- Main js -->
     <script type="text/javascript" src="/js/main.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
 
     <script>
         let VerifyInput = () =>{
@@ -264,6 +269,10 @@
                 toastr.success(res.msg);
             }
         });}
+        function onSubmit(token) {
+            FormSubmit();
+            return false;
+        }
         FormSubmit();
         $(document).on('submit','#ContactForm',function(){
             console.log("Submit");

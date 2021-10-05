@@ -70,7 +70,7 @@
         <div class="content">
             <div class="container-fluid">
 
-                <div class="card card-primary col-md-12">
+                <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title"><%= title %></h3>
                         <!-- /.card-tools -->
@@ -186,7 +186,15 @@
                     console.log(res.id + " " + res.State);
                     this.tryCount = 0;
                     toastr.success(res.msg);
-                    DirectoratesTable.row.add([res.id, res.Name])
+                    let Button = `<span data-toggle="tooltip" data-placement="top" title="Actions"><button
+                                                    type="button" class="btn btn-secondary EditButton"
+                                                    data-toggle="modal"
+                                                    data-target="#dire" data-id="`+ res.id + `">
+                                            <i class="fa fa-cog"></i>
+                                        </button></span>`
+                    DirectoratesTable.row.add([res.id, res.Name, Button])
+                    DirectoratesTable.draw()
+                    $('#NewDirectorateModal').modal('hide')
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     if (textStatus === 'timeout') {

@@ -35,7 +35,7 @@ app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser('keyboard'));
 // app.use(sassMiddleware({
 //     src: path.join(__dirname, 'public'),
@@ -46,15 +46,15 @@ app.use(cookieParser('keyboard'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/dist', express.static(path.join(__dirname, 'node_modules/admin-lte/dist')));
 app.use('/plugins', express.static(path.join(__dirname, 'node_modules/admin-lte/plugins')));
-// app.use(helmet({
-//     contentSecurityPolicy: false,
-// }))
+app.use(helmet({
+    contentSecurityPolicy: false,
+}))
 
 
 //Express Session
 app.use(session({
     secret: "keyboard",
-    cookie: { maxAge: 60000 },
+    cookie: {maxAge: 60000},
     store: new SequelizeStore({
         db: db.sequelize,
     }),
@@ -76,17 +76,36 @@ app.use((req, res, next) => {
     res.locals.flashMessages = req.flash();
     next();
 });
+let setCache = function (req, res, next) {
+    // here you can define period in second, this one is 5 minutes
+    const period = 60 * 5
 
+    // you only want to cache for GET requests
+    if (req.method === 'GET') {
+        res.set('Cache-control', `public, max-age=${period}`)
+    } else {
+        // for the other requests set strict no caching parameters
+        res.set('Cache-control', `no-store`)
+    }
+
+    // remember to call next() to pass on the request
+    next()
+}
+
+// now call the new middleware function in your app
+
+app.use(setCache)
 // Middleware for settings
 app.use(function (req, res, next) {
-    if (req.isAuthenticated()){
+    if (req.isAuthenticated()) {
         res.locals.user = req.user;
     }
-    Config.findAll({raw:true}).then(async r => {
+    Config.findAll({raw: true}).then(async r => {
             let settings = {};
-            await r.forEach(setting=>{
-                settings[setting.Setting]=setting;
+            await r.forEach(setting => {
+                settings[setting.Setting] = setting;
             });
+            global.settings = settings
             res.locals.settings = settings;
             next();
 
@@ -114,7 +133,6 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
-
 
 
 module.exports = app;

@@ -87,6 +87,7 @@
                             <tr role="row">
                                 <th>#</th>
                                 <th>Name</th>
+                                <th>Display Name</th>
                                 <th>Directorate</th>
                                 <th>Actions</th>
                             </thead>
@@ -95,6 +96,7 @@
                                 <tr role="row" id="row-<% team.id %>">
                                     <td><%= team.id %></td>
                                     <td><%= team.Name %></td>
+                                    <td><%= team.DisplayName %></td>
                                     <td><%= team.Directorate.Name %></td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                     type="button" class="btn btn-secondary EditButton"
@@ -147,6 +149,10 @@
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" id="name" class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dname">Display Name</label>
+                        <input type="text" id="dname" class="form-control" name="dname" required>
                     </div>
                 </div>
 
@@ -243,9 +249,42 @@
                                             <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                         </form>`
 
-                    TeamsTable.row.add([res.id, res.Name, res.directorate, Button])
+                    TeamsTable.row.add([res.id, res.Name, res.DisplayName, res.directorate, Button])
                     TeamsTable.draw()
                     $('#NewTeamModal').modal('hide')
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    if (textStatus === 'timeout') {
+                        this.tryCount++;
+                        toastr.error("Error! " + xhr.status + " " + textStatus + ", Retrying");
+                        if (this.tryCount <= this.retryLimit) {
+                            //try again
+                            $.ajax(this);
+                            return;
+                        }
+                        return;
+                    }
+                    if (xhr.status === 500) {
+                        toastr.error("Error! " + xhr.status + " " + textStatus);
+                    } else {
+                        toastr.error("Error! " + xhr.status + " " + textStatus);
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on('submit', '.editTeam', function () {
+            $.ajax({
+                type: 'POST',
+                url: '/admin/team/edit',
+                data: $(this).serialize(),
+                tryCount: 0,
+                retryLimit: 5,
+                success: function (res) {
+                    console.log(res.id + " " + res.State);
+                    this.tryCount = 0;
+                    toastr.success(res.msg);
+                    $('#qedit').modal('hide')
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     if (textStatus === 'timeout') {

@@ -70,11 +70,11 @@
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3"for="LeadershipOpen">Open Leaders Recruitment: </label>
-                                <input type="checkbox" disabled class="form-control" name="LeadershipOpen" id="LeadershipOpen" <%if (settings["LeadershipOpen"].Value === "1") {%>checked <%}%> data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                <input type="checkbox" disabled class="form-control" name="LeadershipOpen" id="LeadershipOpen"  data-bootstrap-switch data-off-color="danger" data-on-color="success">
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="MembershipOpen">Open Members Recruitment: </label>
-                                <input type="checkbox"  disabled class="form-control"  name="MembershipOpen" id="MembershipOpen" <%if (settings["MembershipOpen"].Value === "1") {%>checked <%}%> data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                <input type="checkbox"  disabled class="form-control"  name="MembershipOpen" id="MembershipOpen" data-bootstrap-switch data-off-color="danger" data-on-color="success">
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="Season">Current Season: </label>
@@ -85,14 +85,18 @@
                                 <select class="custom-select form-control" name="CurrentForm" id="CurrentForm"
                                         required disabled>
                                     <option class="hidden" disabled value="">Select The Form</option>
-                                    <option <% if(settings['CurrentForm'].Value === "leadership"){ %>selected <%}%> value="leadership">Leadership</option>
-                                    <option <% if(settings['CurrentForm'].Value === "membership"){ %>selected <%}%> value="membership">Members</option>
+                                    <option value="leadership">Leadership</option>
+                                    <option value="membership">Members</option>
                                 </select>
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="SheetID">SheetID: </label>
                                 <input type="text"  name="SheetID" id="SheetID" class="form-control" value="<%=settings['SheetID'].Value%>">
                                 <p style="color: #666; font-size: 12px"> Make sure that enactus21recruitment@enactus21.iam.gserviceaccount.com (and ahmed.shemais@ieeecusb.org for backup) has Edit access to the spreadsheet!, Don't edit the created sheet name or the first row.</p>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3" for="FormTime">Form Time (in seconds): </label>
+                                <input type="number"  class="form-control" name="FormTime" id="FormTime" value="<%=settings['FormTime'].Value%>">
                             </div>
                             <button type="submit" class="btn btn-primary">Save</button>
                         </form>

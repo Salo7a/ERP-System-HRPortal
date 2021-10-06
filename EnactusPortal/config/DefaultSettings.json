@@ -10,5 +10,6 @@
 {"Setting":"CurrentSeason","Value":"2022","Description":null,"createdAt":"2021-10-06 18:36:39","updatedAt":"2021-10-06 18:36:39","id":"9"},
 {"Setting":"StatsForm","Value":"leadership","Description":null,"createdAt":"2021-10-06 18:36:39","updatedAt":"2021-10-06 18:36:39","id":"10"},
 {"Setting":"SheetID","Value":"","Description":null,"createdAt":"2021-10-06 18:36:39","updatedAt":"2021-10-06 18:36:39","id":"11"},
-{"Setting":"CurrentForm","Value":"leadership","Description":null,"createdAt":"2021-10-06 18:36:39","updatedAt":"2021-10-06 18:36:39","id":"12"}
+{"Setting":"CurrentForm","Value":"leadership","Description":null,"createdAt":"2021-10-06 18:36:39","updatedAt":"2021-10-06 18:36:39","id":"12"},
+{"Setting":"FormTime","Value":"1800","Description":null,"createdAt":"2021-10-06 18:36:39","updatedAt":"2021-10-06 18:36:39","id":"12"}
 ]

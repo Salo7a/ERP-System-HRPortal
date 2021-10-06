@@ -6,7 +6,7 @@
     "host": "127.0.0.1",
     "dialect": "mysql",
     "dialectOptions": {
-      "timezone": "Africa/Cairo"
+      "timezone": "local"
     },
     "timezone": "Africa/Cairo"
   },
@@ -18,13 +18,13 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "fanyapjy_test",
-    "password": "Enactus21",
-    "database": "fanyapjy_test",
+    "username": "enaclghh_enactuscu21",
+    "password": "Enactus@CU21",
+    "database": "enaclghh_enactuscu21",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "dialectOptions": {
-      "timezone": "Africa/Cairo"
+      "timezone": "local"
     },
     "timezone": "Africa/Cairo"
   }

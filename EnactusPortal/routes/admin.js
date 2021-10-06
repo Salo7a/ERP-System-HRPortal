@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const {User, Invite, Team, Directorate, Position, Rank, Question} = require('../models');
+const {User, Invite, Team, Directorate, Position, Rank, Question, Config} = require('../models');
 const {NotAuth, isAuth, isAdmin} = require('../utils/filters');
 const {check, validationResult, body} = require('express-validator');
 const {Op} = require('sequelize');
@@ -118,7 +118,9 @@ router.get("/rank/edit", isAdmin, async (req, res, next) => {
             where: {
                 id: req.query.id
             }
-        })
+        }).catch(e=>{
+            console.error(e)
+    })
     res.render('admin/rankEdit', {rank})
 })
 
@@ -185,9 +187,10 @@ router.get("/directorate/edit", isAdmin, async (req, res, next) => {
 
 // Edit Directorate Info
 router.post("/directorate/edit", isAdmin, async (req, res, next) => {
-    let {name, id} = req.body
+    let {name, dname, id} = req.body
     Directorate.findOne({where: {id}}).then((dir)=>{
-        dir.Name = Name
+        dir.Name = name
+        dir.DisplayName = dname
         dir.save()
         res.send({msg: "Updated Successfully"})
     })
@@ -198,11 +201,12 @@ router.post("/directorates/add", isAdmin, async (req, res, next) => {
     if (!req.user.isAdmin) {
         next(createError(403))
     }
-    let name = req.body.Name
+    let {name, dname} = req.body
     Directorate.create({
-        Name: name
+        Name: name,
+        DisplayName: dname
     }).then((directorate => {
-        res.send({id: directorate.id, Name: directorate.Name, msg: "Directorate Successfully Added"})
+        res.send({id: directorate.id, Name: directorate.Name, DisplayName: directorate.DisplayName ,msg: "Directorate Successfully Added"})
     }))
 })
 
@@ -224,13 +228,14 @@ router.get("/teams", isAdmin, async (req, res, next) => {
 
 // Add New Team
 router.post("/teams/add", isAdmin, async (req, res, next) => {
-    let {name, directorate} = req.body
+    let {name, directorate, dname} = req.body
     Team.create({
         Name: name,
-        DirectorateId: directorate
+        DirectorateId: directorate,
+        DisplayName: dname
     }, {include: Directorate}).then((async team => {
         let directorate = await team.getDirectorate()
-        res.send({id: team.id, Name: team.Name, directorate: directorate.Name, msg: "Team Successfully Added"})
+        res.send({id: team.id, Name: team.Name, DisplayName: team.DisplayName, directorate: directorate.Name, msg: "Team Successfully Added"})
     }))
 })
 
@@ -252,10 +257,11 @@ router.get("/team/edit", isAdmin, async (req, res, next) => {
 
 // Edit Team Info
 router.post("/team/edit", isAdmin, async (req, res, next) => {
-    let {name, directorate,id} = req.body
+    let {name, directorate, id, dname} = req.body
     Team.findOne({where: {id}}).then((team)=>{
         team.Name = name
         team.DirectorateId = directorate
+        team.DisplayName = dname
         team.save()
         res.send({msg: "Updated Successfully"})
     })
@@ -372,11 +378,10 @@ router.post("/settings", isAdmin, async (req, res, next) => {
     let NewSettings =
         {
             "RecruitmentOpen": req.body.RecruitmentOpen ? 1 : 0,
-            "LeadershipOpen": req.body.LeadershipOpen ? 1 : 0,
-            "MembershipOpen": req.body.MembershipOpen ? 1 : 0,
             "CurrentSeason": req.body.Season,
             "SheetID": req.body.SheetID,
-            "CurrentForm": req.body.CurrentForm
+            "CurrentForm": req.body.CurrentForm,
+            "FormTime": req.body.FormTime
         }
     let SettingsNames = Object.keys(NewSettings);
     try {
@@ -390,7 +395,7 @@ router.post("/settings", isAdmin, async (req, res, next) => {
         req.flash("error", "An Error Has Occurred");
     } finally {
         req.flash("success", "Settings Updated Successfully");
-        res.redirect('/')
+        res.redirect('/admin/settings')
     }
 
 
@@ -408,9 +413,8 @@ router.get("/questions", isAdmin, async (req, res, next) => {
         next(createError(403))
     }
     let teams = await Team.findAll()
-    let workshops = await Workshop.findAll()
     let questions = await Question.findAll()
-    res.render('admin/questionsView', {title: "All Questions", teams, workshops, questions})
+    res.render('admin/questionsView', {title: "All Questions", teams, questions})
 })
 
 // Add Question
@@ -422,11 +426,10 @@ router.post("/questions/add", isAdmin, async (req, res, next) => {
         Choice: choice,
         isGeneral: true,
         isVisible: true,
-        Form: form,
         Season: settings["CurrentSeason"].Value
     }).then((async question => {
-        res.send({id: question.id, Text: question.Text, Choice: question.Name, isVisible: question.isVisible,
-            Form: question.Form, msg: "Question Successfully Added"})
+        res.send({id: question.id, Text: question.Text, Choice: question.Choice, isVisible: question.isVisible
+            , msg: "Question Successfully Added"})
     }))
 })
 
@@ -436,22 +439,20 @@ router.get("/question/edit", isAdmin, async (req, res, next) => {
         next(createError(403))
     }
     let teams = await Team.findAll()
-    let workshops = await Workshop.findAll()
     let question = await Question.findOne(
         {
             where: {
                 id: req.query.id
             }
         })
-    res.render('admin/questionEdit', {teams, workshops, question})
+    res.render('admin/questionEdit', {teams, question})
 })
 
 // Edit Question
 router.post("/question/edit", isAdmin, async (req, res, next) => {
-    let {id, choice, form, text} = req.body
+    let {id, choice, text} = req.body
     Question.findOne({where: {id}}).then((question)=>{
         question.Choice = choice
-        question.Form = form
         question.Text = text
         question.save()
         res.send({msg: "Updated Successfully"})

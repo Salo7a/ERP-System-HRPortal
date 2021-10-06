@@ -87,6 +87,7 @@
                             <tr role="row">
                                 <th>#</th>
                                 <th>Name</th>
+                                <th>Display Name</th>
                                 <th>Actions</th>
                             </thead>
                             <tbody>
@@ -94,6 +95,7 @@
                                 <tr role="row" id="row-<% directorate.id %>">
                                     <td><%= directorate.id %></td>
                                     <td><%= directorate.Name %></td>
+                                    <td><%= directorate.DisplayName %></td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                     type="button" class="btn btn-secondary EditButton"
                                                     data-toggle="modal"
@@ -125,14 +127,19 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form method="post" action="/admin/directorates/add" id="NewDirectorate">
+                <form method="post" action="/admin/directorates/add" id="NewDirectora/te">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="Name">Name</label>
-                        <input type="text" id="Name" class="form-control" name="Name" required>
+                        <input type="text" id="Name" class="form-control" name="name" required>
                     </div>
                 </div>
-
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="dname">Display Name</label>
+                        <input type="text" id="dname" class="form-control" name="dname" required>
+                    </div>
+                </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Add</button>
@@ -211,9 +218,42 @@
                                                     data-target="#dire" data-id="`+ res.id + `">
                                             <i class="fa fa-cog"></i>
                                         </button></span>`
-                    DirectoratesTable.row.add([res.id, res.Name, Button])
+                    DirectoratesTable.row.add([res.id, res.Name, res.DisplayName, Button])
                     DirectoratesTable.draw()
                     $('#NewDirectorateModal').modal('hide')
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    if (textStatus === 'timeout') {
+                        this.tryCount++;
+                        toastr.error("Error! " + xhr.status + " " + textStatus + ", Retrying");
+                        if (this.tryCount <= this.retryLimit) {
+                            //try again
+                            $.ajax(this);
+                            return;
+                        }
+                        return;
+                    }
+                    if (xhr.status === 500) {
+                        toastr.error("Error! " + xhr.status + " " + textStatus);
+                    } else {
+                        toastr.error("Error! " + xhr.status + " " + textStatus);
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on('submit', '.editDirectorate', function () {
+            $.ajax({
+                type: 'POST',
+                url: '/admin/directorate/edit',
+                data: $(this).serialize(),
+                tryCount: 0,
+                retryLimit: 5,
+                success: function (res) {
+                    console.log(res.id + " " + res.State);
+                    this.tryCount = 0;
+                    toastr.success(res.msg);
+                    $('#qedit').modal('hide')
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     if (textStatus === 'timeout') {

@@ -272,7 +272,10 @@
                                 <div class="relative input-wrap">
                                     <select name="first" id="first">
                                         <option disabled selected value="">--- Please select ---</option>
-                                        <option value="Projects">Projects- Projects Directorate</option>
+                                        <% choices.forEach(choice => {%>
+                                            <option value="<%=choice.Name%>"><%=choice.DisplayName%> - <%=choice.Directorate.DisplayName%> Directorate</option>
+                                        <%})%>
+                                        <option value="Projects">Projects - Projects Directorate</option>
                                         <option value="OD">Organizational Development - Human Resources Directorate</option>
                                         <option value="TM">Talent Management - Human Resources Directorate</option>
                                         <option value="LD">Learning and Development - Human Resources Directorate</option>
@@ -338,6 +341,9 @@
                                 <div class="relative input-wrap">
                                     <select name="second" id="second">
                                         <option disabled selected value="">--- Please select ---</option>
+                                        <% choices.forEach(choice => {%>
+                                        <option value="<%=choice.Name%>"><%=choice.DisplayName%> - <%=choice.Directorate.DisplayName%> Directorate</option>
+                                        <%})%>
                                         <option value="Projects">Projects- Projects Directorate</option>
                                         <option value="OD">Organizational Development - Human Resources Directorate</option>
                                         <option value="TM">Talent Management - Human Resources Directorate</option>
@@ -406,6 +412,26 @@
                         </div>
                     </div>
                     <!--                    Questions-->
+                    <%let i = 1%>
+                    <% questions["General"].forEach((question) => {%>
+                    <div class="row">
+                        <div class="columns">
+                            <div class="small-12 medium-12 large-12">
+                                <label for="G<%=i%>"><%=question.Text%></label>
+                                <div class="relative input-wrap">
+                                    <textarea id="G<%=i%>" name="Gen[]"></textarea>
+                                    <span class="icon validation small success hide">
+										<span class="fa fa-check"></span>
+									</span>
+                                    <span class="icon validation small error hide">
+										<span class="fa fa-remove"></span>
+									</span>
+                                </div>
+                            </div>
+                        </div><!-- /columns -->
+                    </div>
+                    <% i += 1%>
+                    <%})%>
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
@@ -480,6 +506,27 @@
                         </div>
                     </div>
 <!--                    Questions-->
+
+                    <%let x = 1%>
+                    <% questions["Situational"].forEach((question) => {%>
+                    <div class="row">
+                        <div class="columns">
+                            <div class="small-12 medium-12 large-12">
+                                <label for="S<%=x%>"><%=question.Text%></label>
+                                <div class="relative input-wrap">
+                                    <textarea id="S<%=x%>" name="sit[]"></textarea>
+                                    <span class="icon validation small success hide">
+										<span class="fa fa-check"></span>
+									</span>
+                                    <span class="icon validation small error hide">
+										<span class="fa fa-remove"></span>
+									</span>
+                                </div>
+                            </div>
+                        </div><!-- /columns -->
+                    </div>
+                    <% i += 1%>
+                    <%})%>
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
@@ -645,25 +692,7 @@
             return ret;
         }
         let remaining = <%=remaining%>;
-        // let UpdateTime = setInterval(()=>{
-        //     $("#countdown").text(`${format(remaining)}`);
-        //     remaining--;
-        //     if(remaining < 0){
-        //         $("#ApplicationForm2").submit();
-        //     }
-        // }, 1000);
 
-        // function FormSubmit() {$('#ApplicationForm2').ajaxSubmit({
-        //     url: "/applicationajax",
-        //     method: "post",
-        //     success: (res) =>{
-        //         toastr.success(res.msg);
-        //         $(location).attr('href', '/timeout');
-        //     }
-        // });}
-        // $( document ).ready(function() {
-        //     FormSubmit();
-        // });
         $(document).on('change', '#first', ()=>{
             $('#change1q').fadeIn(500).text(questions[$('#first').val()]);
             $('#change1').slideDown(500).show();
@@ -693,8 +722,8 @@
             }
         };
 
-        const TIME_LIMIT = 1810;
-        let timePassed = 1810 - <%=remaining%>;
+        const TIME_LIMIT = <%=parseInt(settings["FormTime"].Value) + 10%>;
+        let timePassed = TIME_LIMIT - <%=remaining%>;
         let timeLeft = <%=remaining%>;
         let timerInterval = null;
         let remainingPathColor = COLOR_CODES.info.color;
@@ -726,7 +755,7 @@
         startTimer();
         function onTimesUp() {
             clearInterval(timerInterval);
-            toastr.error("The 30 minutes has ended, you have 60 seconds to submit");
+            toastr.error("The time has ended, you have 60 seconds to submit");
             let pass = 60;
             function timer2() {
                 timerInterval = setInterval(() => {

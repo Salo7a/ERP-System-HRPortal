@@ -28,8 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Question',
     tableName: 'Question'
   });
-  Question.GetGroupedQuestions =  (Form, Season)=>{
-    return Question.findAll({where:{Form: Form, Season: Season}, raw: true}).then((questionsRaw)=>{
+  Question.GetGroupedQuestions =  (Season)=>{
+    return Question.findAll({where:{Season: Season}, raw: true}).then((questionsRaw)=>{
       let questions = {}
       for (let  key in questionsRaw) {
         let Choice = questionsRaw[key].Choice;

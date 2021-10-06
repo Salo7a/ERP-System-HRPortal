@@ -67,16 +67,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     Token: DataTypes.STRING,
     Start: {
-      type: DataTypes.DATE,
-      get: function() {
-        return formatToTimeZone(this.getDataValue('Start'), "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'});
-      }
+      type: DataTypes.DATE
     },
     End: {
-      type: DataTypes.DATE,
-      get: function() {
-        return formatToTimeZone(this.getDataValue('End'), "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'});
-      }
+      type: DataTypes.DATE
     },
     IDate: DataTypes.DATEONLY,
     ITime: DataTypes.TIME,

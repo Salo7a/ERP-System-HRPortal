@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const Contact = require("../models").Contact;
-const Applicant = require("../models").Applicant;
-const {Member, Ranking} = require("../models");
+const {Applicant, Contact, Member, Ranking, Team, Question, Directorate} = require("../models");
 const {body, validationResult} = require('express-validator');
 const chance = require('chance').Chance();
 const querystring = require('querystring');
 const createError = require("http-errors");
 const { Op } = require("sequelize");
-const {addSeconds, differenceInSeconds, isValid, formatDuration }= require("date-fns");
+const {addSeconds, differenceInSeconds, isValid, formatDuration, parseISO, parse }= require("date-fns");
 function formatTime(time) {
     const minutes = Math.floor(time / 60);
     let seconds = time % 60;
@@ -76,7 +74,8 @@ router.post('/apply' , function (req, res, next) {
               Name: name,
               Email: email,
               Phone: phone,
-              Token: chance.string({ length: 30, alpha: true, numeric: true })
+              Token: chance.string({ length: 30, alpha: true, numeric: true }),
+              Season: settings["CurrentSeason"].Value
           }).then((ap) => {
               let query = querystring.stringify({
                   "token": ap.Token
@@ -95,7 +94,7 @@ router.post('/apply' , function (req, res, next) {
 router.post('/checkemail',((req, res, next) =>{
   let email = req.body.email;
   console.log(email)
-  Applicant.findOne({where: {Email: email}}).then((app)=>{
+  Applicant.findOne({where: {Email: email, Season: settings["CurrentSeason"].Value}}).then((app)=>{
     if (app){
       console.log("Found");
       res.send({msg: "found"});
@@ -127,8 +126,11 @@ router.get('/applicationerror', function (req, res, next) {
     }
   res.render('recruitment/errorinform', {title: "Application Wasn't Submitted", code: code});
 });
-router.get('/application', function (req, res, next) {
+
+router.get('/application', async function (req, res, next) {
     let token = req.query.token;
+    let choices = await Team.findAll({include: Directorate, order: [['DirectorateId', 'ASC']]})
+    let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value)
     Applicant.findOne({where:
             {
             Token: token,
@@ -143,7 +145,7 @@ router.get('/application', function (req, res, next) {
                 applicant.Start = new Date();
                 applicant.save();
             }
-            let remaining = differenceInSeconds(addSeconds(applicant.Start, 1810), new Date())
+            let remaining = differenceInSeconds(addSeconds(applicant.Start, parseInt(settings["FormTime"].Value) + 10), new Date())
         if (remaining < -200)
         {
             console.log(applicant.Email + " : Time Out App " + remaining)
@@ -151,7 +153,7 @@ router.get('/application', function (req, res, next) {
         }
             console.log(applicant.Email + " : Start: " + applicant.Start )
             res.render('recruitment/application', {title: "New Member Application Questions",
-            remaining: remaining, token:token});
+            remaining: remaining, token:token, choices, questions});
     }).catch(()=>{
         return res.redirect("/applicationerror?code=104");
     })
@@ -176,8 +178,8 @@ router.post('/application',function (req, res, next) {
             console.log(email + ": No Open Token");
             return res.redirect("/tokenerror");
         }
-        let secs = differenceInSeconds(new Date(),applicant.Start);
-        if (secs > 2200){
+        let secs = differenceInSeconds(new Date(), applicant.Start);
+        if (secs > (parseInt(settings["FormTime"].Value) * 1.1)){
             console.log(email + ": Timed Out "+ secs);
             return res.redirect("/tokenerror");
         }
@@ -226,8 +228,8 @@ router.post('/applicationajax',function (req, res, next) {
         if (!applicant){
             return res.status(400).json({msg: "Error"});
         }
-        let secs = differenceInSeconds(new Date(),applicant.Start);
-        if (secs > 2200){
+        let secs = differenceInSeconds(new Date(), applicant.Start);
+        if (secs > (parseInt(settings["FormTime"].Value) * 1.14)){
             return res.status(400).json({msg: "Error"});
         }
         applicant.update({
@@ -265,7 +267,7 @@ router.post('/checktime',((req, res, next) =>{
         if (!applicant){
             return res.status(400).json({msg: "Token Not Found"});
         }
-        let remaining = differenceInSeconds(addSeconds(applicant.Start, 1810), new Date())
+        let remaining = differenceInSeconds(addSeconds(applicant.Start, (parseInt(settings["FormTime"].Value) + 10 )), new Date())
         res.send({msg: "Found", remaining: remaining});
     }).catch(()=>{
         return res.status(400).json({msg: "Token Not Found"});

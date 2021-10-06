@@ -11,11 +11,29 @@ const {GoogleSpreadsheet} = require('google-spreadsheet'),
     creds = require('../config/Enactus21-d39432b22314.json');
 const { formatToTimeZone }= require("date-fns-timezone");
 async function AddToSheet(row){
-    const doc = new GoogleSpreadsheet('1-8s0bQnheqCar9144kMG-v1GGDtGqBMK2MryhereWJI');
+    const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
     await doc.useServiceAccountAuth(creds);
     await doc.loadInfo()
-    const sheet = await doc.sheetsByTitle["All"];
+    let sheet = await doc.sheetsByTitle["All"];
+    if (!sheet) {
+        try {
+            sheet = await doc.addSheet({title: "All", headerValues: Object.keys(row)});
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+
+    }
     let FuncSheet = await doc.sheetsByTitle[row.First];
+    if (!FuncSheet) {
+        try {
+            FuncSheet = await doc.addSheet({title: row.First, headerValues: Object.keys(row)});
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+
+    }
     if(row.State === "Accepted")
     {
         row.State = "Filtered";
@@ -52,18 +70,18 @@ router.get('/', isAuth, async function (req, res, next) {
     if (req.user.PositionText === 'TM Member'){
         res.redirect("/portal/members/kpi");
     } else {
-        let applied = await Applicant.count({where: {State: {[Op.ne]: null}}});
-        let accepted = await Applicant.count({where: {State: "Accepted"}})
-        let interviewed = await Applicant.count({where: {State: "Interviewed"}})
-        let rejected = await Applicant.count({where: {State: "Rejected"}})
+        let applied = await Applicant.count({where: {State: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value}});
+        let accepted = await Applicant.count({where: {State: "Accepted", Season: settings["CurrentSeason"].Value}})
+        let interviewed = await Applicant.count({where: {State: "Interviewed", Season: settings["CurrentSeason"].Value}})
+        let rejected = await Applicant.count({where: {State: "Rejected", Season: settings["CurrentSeason"].Value}})
         let First = await Applicant.findAll({
-            where: {State: {[Op.ne]: null}, First: {[Op.ne]: null}},
+            where: {State: {[Op.ne]: null}, First: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value},
             attributes: ['Applicant.First', [sequelize.fn('count', sequelize.col('First')), 'count']],
             group: ['First'],
             raw: true
         });
         let Second = await Applicant.findAll({
-            where: {State: {[Op.ne]: null}, Second: {[Op.ne]: null}},
+            where: {State: {[Op.ne]: null}, Second: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value},
             attributes: ['Applicant.Second', [sequelize.fn('count', sequelize.col('Second')), 'count']],
             group: ['Second'],
             raw: true
@@ -75,7 +93,7 @@ router.get('/', isAuth, async function (req, res, next) {
         //     raw: true,
         // })
         let Dates = await Applicant.findAll({
-            where: {End: {[Op.ne]: null}},
+            where: {End: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value},
             attributes: [
                 [sequelize.literal(`DATE(End)`), 'End'],
                 [sequelize.literal(`COUNT(*)`), 'count']
@@ -277,7 +295,8 @@ router.get('/applicants/all', isAuth, function (req, res, next) {
         where: {
             End: {
                 [Op.ne]: null
-            }
+            },
+            Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
         res.render('portal/applicantsview', {title: "All Applicants", applicants: app});
@@ -288,19 +307,21 @@ router.get('/applicants/all', isAuth, function (req, res, next) {
 });
 
 router.get('/applicants/my', isAuth, function (req, res, next) {
-    let committee = req.user.Committee;
+    let Position = req.user.Committee;
+    let team = Position.getTeam();
     let state = "Accepted";
-    if (committee === "Marketing" || committee === "Visuals")
+    if (team.Name === "Marketing" || team.Name === "Visuals")
     {
         state = ["Accepted", "Rejected"];
     }
     Applicant.findAll({
         where: {
             State: state,
-            [Op.or]: [{First: committee}, {Second: committee}]
+            [Op.or]: [{First: team.Name}, {Second: team.Name}],
+            Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
-        res.render('portal/applicantsview', {title: `${committee} Applicants`, applicants: app});
+        res.render('portal/applicantsview', {title: `${team.Name} Applicants`, applicants: app});
     }).catch(() => {
         createError(404);
     })
@@ -318,7 +339,8 @@ router.get('/applicants/bydate/', isAuth, function (req, res, next) {
     console.log(date);
     Applicant.findAll({
         where: {
-            IDate: date
+            IDate: date,
+            Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
         console.log(app);
@@ -334,7 +356,8 @@ router.get('/applicants/filter', isAuth, function (req, res, next) {
         where: {
             Name: {
                 [Op.ne]: null
-            }
+            },
+            Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
         res.render('portal/applicantsfilterview', {title: "Unfiltered Applicants", applicants: app});
@@ -346,7 +369,7 @@ router.get('/applicants/filter', isAuth, function (req, res, next) {
 router.post('/applicants/filter', isAuth, function (req, res, next) {
     let id = req.body.id;
     Applicant.findOne({
-        where: {id: id}
+        where: {id: id, Season: settings["CurrentSeason"].Value}
     }).then((app) => {
         let name = app.Name;
         app.destroy();
@@ -360,7 +383,7 @@ router.post('/editapplicant', isAuth, function (req, res, next) {
     let {id, State, Notes, ITime, IDate, ATime }= req.body;
     console.log(req.body)
     Applicant.findOne({
-        where: {id: id}
+        where: {id: id, Season: settings["CurrentSeason"].Value}
     }).then((app) => {
         app.update({
             State,
@@ -380,7 +403,8 @@ router.post('/editapplicant', isAuth, function (req, res, next) {
 router.get('/applicants/incomplete', isAuth, function (req, res, next) {
     Applicant.findAll({
         where: {
-            End: null
+            End: null,
+            Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
         res.render('portal/incomplete', {title: "Incomplete Applications", applicants: app});
@@ -400,12 +424,13 @@ router.post('/applicants/incomplete', isAuth, function (req, res, next) {
         Situational:sit
     }
     Applicant.findOne({where: {
-            id: id
+            id: id,
+            Season: settings["CurrentSeason"].Value
         }}).then((applicant)=>{
         if (!applicant){
             return res.status(400).json({msg: "Error"});
         }
-        let secs = 1900;
+        let secs =  parseInt(settings["FormTime"].Value) * 1.05;
         applicant.update({
             Name: name,
             Phone: phone,
@@ -436,7 +461,7 @@ router.post('/sendtosheet', isAuth, function (req, res, next) {
     let {id}= req.body;
     console.log("Sheet");
     Applicant.findOne({
-        where: {id: id}
+        where: {id: id, Season: settings["CurrentSeason"].Value}
     }).then((app) => {
         let data = {
             ID: app.id,
@@ -470,7 +495,8 @@ router.post('/sendtosheet', isAuth, function (req, res, next) {
             Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
             ITime: app.ITime,
             IDate: app.IDate,
-            ATime: app.ATime
+            ATime: app.ATime,
+            Season: app.Season
         }
             AddToSheet(data).then(r => {
                 res.status(200).json({msg: "Sent Successfully", id: app.id});
@@ -488,7 +514,8 @@ router.get('/applicants/modal', isAuth, function (req, res, next) {
   let id = req.query.id;
     Applicant.findAll({
         where: {
-            id: id
+            id: id,
+            Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
         if(app){
@@ -503,7 +530,8 @@ router.get('/applicants/edit', isAuth, function (req, res, next) {
     let id = req.query.id;
     Applicant.findAll({
         where: {
-            id: id
+            id: id,
+            Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
         if(app){
@@ -514,20 +542,20 @@ router.get('/applicants/edit', isAuth, function (req, res, next) {
     })
 });
 
-router.get('/settings', isAdmin, function (req, res, next) {
-    let id = req.query.id;
-    Applicant.findAll({
-        where: {
-            id: id
-        }
-    }).then(app => {
-        if(app){
-            res.render('portal/editmodal', {app: app[0]});
-        }
-    }).catch(() => {
-        createError(404);
-    })
-});
+// router.get('/settings', isAdmin, function (req, res, next) {
+//     let id = req.query.id;
+//     Applicant.findAll({
+//         where: {
+//             id: id
+//         }
+//     }).then(app => {
+//         if(app){
+//             res.render('portal/editmodal', {app: app[0]});
+//         }
+//     }).catch(() => {
+//         createError(404);
+//     })
+// });
 
 router.get('/members/profile/:id', isAuth, function (req, res, next) {
     let id = req.params.id;

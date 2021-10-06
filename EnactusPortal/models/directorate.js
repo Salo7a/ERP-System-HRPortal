@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Directorate.init({
     Name: DataTypes.STRING,
+    DisplayName: DataTypes.STRING,
     Image: DataTypes.STRING,
     Description: DataTypes.STRING
   }, {

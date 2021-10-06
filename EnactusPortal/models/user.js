@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.belongsTo(models.Position)
     }
   }
   User.init({
@@ -22,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       isEmail: true
     },
-    Position: DataTypes.STRING,
+    PositionText: DataTypes.STRING,
     Committee: DataTypes.STRING,
     Phone: DataTypes.STRING,
     Birthday: DataTypes.DATEONLY,
@@ -41,13 +42,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     ActiveHash: DataTypes.STRING,
     RememberHash: DataTypes.STRING,
+    Season: DataTypes.STRING,
     Rep:{
       type: DataTypes.STRING,
       get: function () {
         return this.getDataValue('Rep').split(',');
-      }},
-    Directorate:  DataTypes.STRING,
-    Team:  DataTypes.STRING
+      }}
   }, {
     sequelize,
     modelName: 'User',

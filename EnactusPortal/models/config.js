@@ -15,8 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Config.init({
     Setting: {
-      type: DataTypes.STRING,
-      primaryKey: true
+      type: DataTypes.STRING
     },
     Value: DataTypes.STRING,
     Description: DataTypes.STRING

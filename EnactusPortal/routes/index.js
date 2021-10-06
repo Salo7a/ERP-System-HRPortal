@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Contact = require("../models").Contact;
 const Applicant = require("../models").Applicant;
-const {Member, Rank} = require("../models");
+const {Member, Ranking} = require("../models");
 const {body, validationResult} = require('express-validator');
 const chance = require('chance').Chance();
 const querystring = require('querystring');
@@ -319,13 +319,13 @@ router.get('/members/pokenactus/:Month', function (req, res, next) {
 
 router.get('/members/leaderboard/:Directorate', function (req, res, next) {
     console.log("Hi")
-    Rank.findAll({where:{
+    Ranking.findAll({where:{
             Directorate: req.params.Directorate,
             Month: "May"
         },
         include: Member,
         order: [
-            ['Rank', 'ASC'],
+            ['Ranking', 'ASC'],
         ]}).then(members=>{
         // if (members.length > 3){
         res.render('singleleaderboard', {title: "Leaderboard", members});
@@ -342,13 +342,13 @@ router.get('/members/leaderboard/:Directorate', function (req, res, next) {
 
 router.get('/members/leaderboard/:Directorate/:Month', function (req, res, next) {
     let Month = req.params.Month
-    Rank.findAll({where:{
+    Ranking.findAll({where:{
             Directorate: req.params.Directorate,
             Month: Month
         },
         include: Member,
         order: [
-            ['Rank', 'ASC'],
+            ['Ranking', 'ASC'],
         ]}).then(members=>{
             // if (members.length > 3){
                 res.render('singleleaderboard', {title: "Leaderboard", members});

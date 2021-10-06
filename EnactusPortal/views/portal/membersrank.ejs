@@ -85,7 +85,7 @@
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Profile</th>
-                                <th>Rank</th>
+                                <th>Ranking</th>
                             </thead>
                             <tbody>
                             <% members.forEach(mem =>  { %>
@@ -96,7 +96,7 @@
                                     <td><a href="mailto:<%= mem.Email %>"><%= mem.Email %></a></td>
                                     <td><a href="tel:<%= mem.Phone %>"><%= mem.Phone %></a></td>
                                     <td><a href="/portal/members/profile/<%= mem.id %>">Profile</a></td>
-                                    <td><% if(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(user.Position) || user.isAdmin){ %>
+                                    <td><% if(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(user.PositionText) || user.isAdmin){ %>
                                             <span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                         type="button" class="btn btn-secondary EditButton"
                                                         data-toggle="modal"
@@ -168,9 +168,9 @@
             Rejected: "bg-danger",
             Accepted: "bg-success"
         }
-        $(document).on('submit', '.editRank', function () {
+        $(document).on('submit', '.editRanking', function () {
             $.ajax({
-                url: '/portal/editrank',
+                url: '/portal/editranking',
                 type: 'POST',
                 data: $(this).serialize(),
                 tryCount: 0,
@@ -200,8 +200,8 @@
             });
             return false;
         });
-        $(document).on('click', '.RankButton', function () {
-            let input = $(this).closest("div.rankmonth").find("input");
+        $(document).on('click', '.RankingButton', function () {
+            let input = $(this).closest("div.rankingmonth").find("input");
             if ($(this).hasClass("btn-danger")){
                 $(this).removeClass("btn-danger");
                 $(this).addClass("btn-success");
@@ -247,9 +247,9 @@
         $(document).on('click', '.EditButton', function () {
             let MemId = $(this).data("id");
             console.log(MemId);
-            $("#EditModalContent").load(`/portal/members/edit/rank?id=${MemId}`);
+            $("#EditModalContent").load(`/portal/members/edit/ranking?id=${MemId}`);
         });
-        $(document).on('keypress', '.rankinput', function (e) {
+        $(document).on('keypress', '.rankinginput', function (e) {
             if (e.which === 37 ||e.which === 32){
                 console.log("Block")
                 return false;

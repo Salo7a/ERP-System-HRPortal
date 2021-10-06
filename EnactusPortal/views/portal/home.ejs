@@ -64,7 +64,7 @@
                             <div class="icon">
                                 <i class="fas fa-user-friends"></i>
                             </div>
-                            <% if(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(user.Position) || user.isAdmin){ %>
+                            <% if(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(user.PositionText) || user.isAdmin){ %>
                             <a href="/portal/applicants/all" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                             <%}%>
                         </div>

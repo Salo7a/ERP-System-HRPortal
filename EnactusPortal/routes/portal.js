@@ -2,7 +2,7 @@ let express = require('express');
 const createError = require("http-errors");
 let router = express.Router();
 const {NotAuth, isAuth, isAdmin, imageFilter} = require('../utils/filters');
-const {Applicant, Contact, Member, Rank} = require("../models");
+const {Applicant, Contact, Member, Ranking} = require("../models");
 const chance = require('chance').Chance();
 const {Op} = require("sequelize");
 const sequelize = require('sequelize');
@@ -49,7 +49,7 @@ function isNumeric(str) {
 
 // Portal Home (For Non-Members)
 router.get('/', isAuth, async function (req, res, next) {
-    if (req.user.Position === 'TM Member'){
+    if (req.user.PositionText === 'TM Member'){
         res.redirect("/portal/members/kpi");
     } else {
         let applied = await Applicant.count({where: {State: {[Op.ne]: null}}});
@@ -111,12 +111,12 @@ router.get('/messages', isAuth, async function (req, res, next) {
 
 // Main KPI Route, Lists All Members
 router.get('/members/kpi', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) || req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
 
     let mem;
-    if (req.user.Position === "TM Member"){
+    if (req.user.PositionText === "TM Member"){
        mem = await Member.findAll({where:
                {
                    Committee: req.user.Rep
@@ -133,7 +133,7 @@ router.get('/members/kpi', isAuth, async function (req, res, next) {
 
 
 router.post('/editkpi', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let {January, February, March, April, May, June, July}=req.body
@@ -159,7 +159,7 @@ router.post('/editkpi', isAuth, async function (req, res, next) {
 });
 
 router.get('/members/edit/kpi', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let id = req.query.id;
@@ -178,12 +178,12 @@ router.get('/members/edit/kpi', isAuth, function (req, res, next) {
 });
 //End KPI
 // Ranking Routes
-router.get('/members/rank', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+router.get('/members/ranking', isAuth, async function (req, res, next) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let mem;
-    if (req.user.Position === "TM Member"){
+    if (req.user.PositionText === "TM Member"){
         mem = await Member.findAll({where:
                 {
                     Committee: req.user.Rep
@@ -193,13 +193,13 @@ router.get('/members/rank', isAuth, async function (req, res, next) {
         mem = await Member.findAll()
     }
 
-    res.render('portal/membersrank', {title: "Set Rank", members: mem});
+    res.render('portal/membersrank', {title: "Set Ranking", members: mem});
 
 
 });
 
-router.post('/editrank', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+router.post('/editranking', isAuth, async function (req, res, next) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
 
@@ -208,32 +208,32 @@ router.post('/editrank', isAuth, async function (req, res, next) {
     Months = Months.filter(function (el) {
         return el != null;
     });
-    let RankValues = {
+    let RankingValues = {
         "April": isNumeric(April) ? +April : null,
         "May": isNumeric(May) ? +May : null,
         "June": isNumeric(June) ? +June : null,
         "July": isNumeric(July) ? +July : null
     }
-    Rank.findAll({
+    Ranking.findAll({
         where: {
             MemberId: req.body.id
-        }}).then(ranks => {
-            ranks.forEach(rank=>{
-                if (Months.includes(rank.Month)){
-                    rank.Rank = RankValues[rank.Month]
-                    rank.save()
+        }}).then(rankings => {
+            rankings.forEach(ranking=>{
+                if (Months.includes(ranking.Month)){
+                    ranking.Ranking = RankingValues[ranking.Month]
+                    ranking.save()
                     Months = Months.filter(function (el) {
-                        return el !== rank.Month;
+                        return el !== ranking.Month;
                     });
                 } else {
-                    rank.destroy()
+                    ranking.destroy()
                 }
             })
             Months.forEach(month=>{
-                Rank.create({
+                Ranking.create({
                     MemberId: req.body.id,
                     Month: month,
-                    Rank: RankValues[month],
+                    Ranking: RankingValues[month],
                     Directorate: req.body.directorate
                 })
             })
@@ -244,8 +244,8 @@ router.post('/editrank', isAuth, async function (req, res, next) {
     })
 });
 
-router.get('/members/edit/rank', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position) ||req.user.isAdmin)) {
+router.get('/members/edit/ranking', isAuth, function (req, res, next) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let id = req.query.id;
@@ -253,11 +253,11 @@ router.get('/members/edit/rank', isAuth, function (req, res, next) {
     Member.findOne({
         where: {
             id: id
-        }, include: Rank
+        }, include: Ranking
     }).then(mem => {
-        mem.Rank = {}
-        for (let ran of mem.Ranks){
-            mem.Rank[ran.Month] = ran.Rank;
+        mem.Ranking = {}
+        for (let ran of mem.Rankings){
+            mem.Ranking[ran.Month] = ran.Ranking;
         }
         console.log(mem)
         if(mem){
@@ -267,10 +267,10 @@ router.get('/members/edit/rank', isAuth, function (req, res, next) {
         createError(404);
     })
 });
-//End Rank
+//End Ranking
 
 router.get('/applicants/all', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(req.user.Position) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(req.user.PositionText) ||req.user.isAdmin)) {
     res.redirect("/portal")
     }
     Applicant.findAll({
@@ -571,7 +571,7 @@ router.post('/members/profile/:id', isAuth, function (req, res, next) {
                 member.update({
                     Photo: req.file.filename,
                 }).then(result => {
-                    res.redirect("/portal/members/rank/");
+                    res.redirect("/portal/members/ranking/");
                     // res.render('PatientProfile', {
                     //     title: 'My Profile',
                     //     success_msg: "successfully added profile picture",
@@ -583,7 +583,7 @@ router.post('/members/profile/:id', isAuth, function (req, res, next) {
 });
 
 router.post('/members/new', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader"].includes(req.user.Position) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader"].includes(req.user.PositionText) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let {Name, Phone, Email, Team} = req.body

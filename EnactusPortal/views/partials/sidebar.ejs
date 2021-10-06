@@ -13,7 +13,7 @@
             </div>
             <div class="info">
                 <a class="d-block"><%= user.Name %></a>
-                <p  style="font-size: 0.8rem; color: #d0d0d0; margin: 0;"><%= user.Position %></p>
+                <p  style="font-size: 0.8rem; color: #d0d0d0; margin: 0;"><%= user.PositionText %></p>
             </div>
         </div>
 
@@ -51,7 +51,7 @@
                         </ul>
                     </li>
                 <% } %>
-                <% if(!user.Position.includes("Member") && !user.Position.includes("member")){ %>
+                <% if(!user.PositionText.includes("Member") && !user.PositionText.includes("member")){ %>
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-user-tie"></i>
@@ -67,7 +67,7 @@
                                 <p>My Applicants</p>
                             </a>
                         </li>
-                        <% if(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(user.Position) || user.isAdmin){ %>
+                        <% if(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(user.PositionText) || user.isAdmin){ %>
                         <li class="nav-item">
                             <a href="/portal/applicants/all" class="nav-link">
                                 <i class="fas fa-users nav-icon"></i>
@@ -125,7 +125,7 @@
                         </li>
                     </ul>
                 </li>
-                <% if(!user.Position.includes("Member") && !user.Position.includes("member")){ %>
+                <% if(!user.PositionText.includes("Member") && !user.PositionText.includes("member")){ %>
                 <li class="nav-item">
                     <a href="/portal/messages" class="nav-link">
                         <i class="fas fa-envelope nav-icon"></i>

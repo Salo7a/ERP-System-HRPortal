@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Member.hasMany(models.Rank)
+      Member.hasMany(models.Ranking)
       Member.belongsTo(models.Team)
     }
   }

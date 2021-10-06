@@ -1,12 +1,12 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models').User;
+const {User, Position} = require('../models');
 RememberMeStrategy = require('passport-remember-me-extended').Strategy;
 const Chance = require('chance');
 
 passport.use(new LocalStrategy({usernameField: 'email'}, function (email, password, done) {
     User
-        .findOne({where: {Email: email}})
+        .findOne({where: {Email: email}, include: [Position]})
         .then(function (user) { // successful query to database
             if (!user) {
                 return done(null, false, {message: 'Email is Not Registered'});
@@ -31,7 +31,7 @@ passport.serializeUser(function (user, done) {
 // from the user id, figure out who the user is...
 passport.deserializeUser(function (userId, done) {
     User
-        .findOne({where: {id: userId}})
+        .findOne({where: {id: userId}, include: [Position]})
         .then(function (user) {
             done(null, user);
         }).catch(function (err) {
@@ -41,7 +41,7 @@ passport.deserializeUser(function (userId, done) {
 passport.use(new RememberMeStrategy(
     function (token, done) {
         User
-            .findOne({where: {RememberHash: token}})
+            .findOne({where: {RememberHash: token}, include: [Position]})
             .then(function (user) {
                 if (user) {
                     user.update({

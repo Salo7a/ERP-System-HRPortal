@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const {User, Invite, Team, Directorate} = require('../models');
+const {User, Invite, Team, Directorate, Position, Rank, Question} = require('../models');
 const {NotAuth, isAuth, isAdmin} = require('../utils/filters');
 const {check, validationResult, body} = require('express-validator');
 const {Op} = require('sequelize');
@@ -289,7 +289,7 @@ router.get("/positions", isAdmin, async (req, res, next) => {
     let ranks = await Rank.findAll()
     let directorates = await Directorate.findAll()
     let teams = await Team.findAll()
-    res.render('admin/positionsView', {title: "All Teams", positions, ranks, directorates, teams})
+    res.render('admin/positionsView', {title: "All Positions", positions, ranks, directorates, teams})
 })
 
 // Add New Position

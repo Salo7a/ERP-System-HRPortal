@@ -49,6 +49,8 @@ async function AddToSheet(row){
 }
 const multer = require('multer');
 const path = require('path');
+const fs = require("fs");
+const stream = require("stream");
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -631,4 +633,65 @@ router.post('/members/new', isAuth, async function (req, res, next) {
         createError(4000)
     });
 });
+
+router.get('/profile', isAuth, function (req, res, next) {
+    res.render("portal/MyProfile",{title: "My Profile"})
+});
+
+router.post('/profile/image', isAuth, function (req, res, next) {
+    let upload = multer({storage: ProfilesStorage, fileFilter: imageFilter}).single('profile_image');
+    upload(req, res, function (err) {
+        // req.file contains information of uploaded file
+        // req.body contains information of text fields, if there were any
+
+        if (req.fileValidationError) {
+            return res.send(req.fileValidationError);
+        } else if (!req.file) {
+            return res.send('Please select an image to upload');
+        } else if (err instanceof multer.MulterError) {
+            return res.send(err);
+        } else if (err) {
+            return res.send(err);
+        }
+
+        User.findOne({
+            where: {
+                id: res.locals.user.id
+            }
+
+        })
+            .then(function (user) {
+                user.update({
+                    Photo: req.file.filename,
+                }).then(result => {
+                    res.redirect("/profile");
+                    // res.render('PatientProfile', {
+                    //     title: 'My Profile',
+                    //     success_msg: "successfully added profile picture",
+                    //     user: req.user
+                    // });
+                }).catch(err => {
+                    next(createError(500))
+                });
+            })
+    });
+});
+
+router.get('/profile/image/:id', isAuth, async function (req, res, next) {
+    let id = req.params.id;
+    let user = await User.findOne({where: {id: id}})
+    const r = fs.createReadStream(`public/profiles/${user.Photo}`) // or any other way to get a readable stream
+    const ps = new stream.PassThrough() // <---- this makes a trick with stream error handling
+    stream.pipeline(
+        r,
+        ps, // <---- this makes a trick with stream error handling
+        (err) => {
+            if (err) {
+                console.log(err) // No such file or any other kind of error
+                return res.sendStatus(400);
+            }
+        })
+    ps.pipe(res) // <---- this makes a trick with stream error handling
+});
+
 module.exports = router;

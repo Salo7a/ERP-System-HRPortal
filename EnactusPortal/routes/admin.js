@@ -258,11 +258,15 @@ router.get("/team/edit", isAdmin, async (req, res, next) => {
 // Edit Team Info
 router.post("/team/edit", isAdmin, async (req, res, next) => {
     let {name, directorate, id, dname} = req.body
-    Team.findOne({where: {id}}).then((team)=>{
+    console.log(name, directorate, id, dname)
+    Team.findOne({where: {id: id}}).then(async (team)=>{
+        console.log(team)
         team.Name = name
         team.DirectorateId = directorate
         team.DisplayName = dname
-        team.save()
+        await team.save()
+        await team.reload()
+        console.log(team)
         res.send({msg: "Updated Successfully"})
     })
 })
@@ -322,21 +326,25 @@ router.get("/position/edit", isAdmin, async (req, res, next) => {
     if (!req.user.isAdmin) {
         next(createError(403))
     }
+    let ranks = await Rank.findAll()
     let directorates = await Directorate.findAll()
+    let teams = await Team.findAll()
     let position = await Position.findOne(
         {
             where: {
                 id: req.query.id
             },
             include: [Rank, Directorate, Team]
-        })
-    res.render('admin/positionEdit', {position, directorates})
+        }).catch(e=>{
+        console.error(e)
+    })
+    res.render('admin/positionEdit', {position, directorates, ranks, teams})
 })
 
 // Edit Position Info
 router.post("/position/edit", isAdmin, async (req, res, next) => {
     let {name, directorate, id, rank, team, visible} = req.body
-    Position.findOne({where: {id}}).then((position)=>{
+    Position.findOne({where: {id: id}}).then((position)=>{
         position.Name = name
         position.RankId = rank?rank: null
         position.DirectorateId = directorate?directorate: null
@@ -344,6 +352,8 @@ router.post("/position/edit", isAdmin, async (req, res, next) => {
         position.isVisible = visible ? 1 : 0
         position.save()
         res.send({msg: "Updated Successfully"})
+    }).catch(e=>{
+        console.error(e)
     })
 })
 

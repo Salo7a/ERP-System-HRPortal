@@ -25,7 +25,7 @@
             <select class="custom-select form-control" name="directorate" id="directorate">
                 <option class="hidden" selected value="">Select The Directorate</option>
                 <% directorates.forEach(directorate =>{ %>
-                <option <% if(directorate.id === position.Directorate.id){ %>selected <%}%> value="<%=directorate.id%>"><%=directorate.Name%></option>
+                <option <% if(position.Directorate && (directorate.id === position.Directorate.id)){ %>selected <%}%> value="<%=directorate.id%>"><%=directorate.Name%></option>
                 <%}) %>
             </select>
         </div>
@@ -34,7 +34,7 @@
             <select class="custom-select form-control" name="team" id="team">
                 <option class="hidden" selected value="">Select The Team</option>
                 <% teams.forEach(team =>{ %>
-                <option <% if(team.id === position.Team.id){ %>selected <%}%> value="<%=team.id%>"><%=team.Name%></option>
+                <option <% if(position.Team && (team.id === position.Team.id)){ %>selected <%}%> value="<%=team.id%>"><%=team.Name%></option>
                 <%}) %>
             </select>
         </div>

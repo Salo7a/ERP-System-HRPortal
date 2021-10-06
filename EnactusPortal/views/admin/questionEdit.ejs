@@ -11,10 +11,12 @@
     <div class="modal-body">
         <input type="hidden" name="id" value="<%= question.id %>">
         <div class="form-group">
-            <label for="choice">Team</label>
+            <label for="choice">Category</label>
             <select class="custom-select form-control" name="choice" id="choice"
                     required>
-                <option class="hidden" selected disabled value="">Select The Team</option>
+                <option class="hidden" selected disabled value="">Select The Category</option>
+                <option>General</option>
+                <option>Situational</option>
                 <% teams.forEach(team =>{ %>
                     <option <% if(team.Name === question.Choice){ %>selected <%}%>><%=team.Name%></option>
                 <%}) %>

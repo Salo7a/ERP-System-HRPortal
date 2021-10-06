@@ -22,12 +22,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Position.init({
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false
-    },
     Name: DataTypes.STRING,
     Description: DataTypes.STRING,
     isVisible: {

@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Directorate.hasMany(models.Team)
+      Directorate.hasMany(models.Position)
+      // Directorate.belongsToMany(models.Rank, { through: models.Position })
     }
   }
   Directorate.init({

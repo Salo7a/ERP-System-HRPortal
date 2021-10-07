@@ -1,17 +1,3 @@
-<% let questions = {
-    Projects: "What do you know about project management?",
-    OD: "How to ensure that all teams are on the right track? Explain with a specific method.",
-    TM: "How to enhance the performance of the members?",
-    LD: "What is the capacity building program? Mention the steps to conduct a training.",
-    CR: "List the benefits or values that you can offer to the sponsors/partners",
-    RM: "What do you know about product cycle?",
-    Events: "Mention & describe an idea for an event, And list the needed actions for implementing this idea.",
-    Marketing: "Prepare an offline campaign (theme, title, objectives)",
-    Social: "Prepare an online campaign (theme, title, objectives)",
-    Visuals: "List the basic video editing concepts you're familiar with if any (timeline, layers, blending modes...etc.)",
-    Camera: "What are the basics of photography?",
-    Presentation: "Mention 5 pillars will lead person to be a good presenter?"
-} %>
 <div class="modal-header">
     <h5 class="modal-title" id="exampleModalLabel">#<%= app.id %>
         - <%= app.Name %></h5>
@@ -42,87 +28,47 @@
                       class="form-control"><%= app.Courses %></textarea>
         </div>
         <br>
+        <%let q = 0%>
         <label>Team</label>
         <hr>
         <br><h6>Questions: <%= app.First %></h6>
-
+        <%questions[app.First].forEach((question, index) => {%>
+            <div class="form-group">
+                <label><%=question.Text%></label>
+                <textarea disabled
+                          class="form-control"><%= app.Answers.Team[q] %></textarea>
+            </div>
+        <% q = q +1%>
+        <%})%>
+        <br>
+        <h6>Questions: <%= app.Second %></h6>
+        <%questions[app.Second].forEach((question, index) => {%>
         <div class="form-group">
-            <label>What do you know about this team?</label>
+            <label><%=question.Text%></label>
             <textarea disabled
-                      class="form-control"><%= app.Answers.Team[0] %></textarea>
+                      class="form-control"><%= app.Answers.Team[q] %></textarea>
         </div>
-        <div class="form-group">
-            <label>
-                <%= questions[app.First] %>
-            </label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.Team[1] %></textarea>
-        </div>
-        <br> <h6>Questions: <%= app.Second %></h6>
-
-        <div class="form-group">
-            <label>What do you know about this team?</label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.Team[2] %></textarea>
-        </div>
-        <div class="form-group">
-            <label>
-                <%= questions[app.Second] %>
-            </label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.Team[3] %></textarea>
-        </div>
+        <% q = q +1%>
+        <%})%>
         <br><h6>General</h6>
         <hr>
-
+        <%questions["General"].forEach((question, index) => {%>
         <div class="form-group">
-            <label>What does the word “Entrepreneur“ mean?</label>
+            <label><%=question.Text%></label>
             <textarea disabled
-                      class="form-control"><%= app.Answers.General[0] %></textarea>
+                      class="form-control"><%= app.Answers.General[index] %></textarea>
         </div>
-        <div class="form-group">
-            <label>In your opinion, What is Leadership ? and what makes a
-                good leader
-                ?</label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.General[1] %></textarea>
-        </div>
-        <div class="form-group">
-            <label>What is a non-profit organization?</label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.General[2] %></textarea>
-        </div>
-        <div class="form-group">
-            <label>Why did you apply for Enactus?</label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.General[3] %></textarea>
-        </div>
+        <%})%>
         <br>
         <h6>Situational</h6>
         <hr>
-
+        <%questions["Situational"].forEach((question, index) => {%>
         <div class="form-group">
-            <label>Give an example of a problem you have faced in the past,
-                either as a
-                part of a team or as an individual. How did you solve the
-                problem?
-            </label>
+            <label><%=question.Text%></label>
             <textarea disabled
-                      class="form-control"><%= app.Answers.Situational[0] %></textarea>
+                      class="form-control"><%= app.Answers.Situational[index] %></textarea>
         </div>
-        <div class="form-group">
-            <label>Describe a time when a team member has annoyed
-                you.</label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.Situational[1] %></textarea>
-        </div>
-        <div class="form-group">
-            <label>How do you manage your time to achieve results and
-                work-life
-                balance?</label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.Situational[2] %></textarea>
-        </div>
+        <%})%>
     </form>
 </div>
 <div class="modal-footer">

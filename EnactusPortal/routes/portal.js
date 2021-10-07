@@ -2,7 +2,7 @@ let express = require('express');
 const createError = require("http-errors");
 let router = express.Router();
 const {NotAuth, isAuth, isAdmin, imageFilter} = require('../utils/filters');
-const {Applicant, Contact, Member, Ranking} = require("../models");
+const {Applicant, Contact, Member, Ranking, Question, Position, Rank, Directorate, Team} = require("../models");
 const chance = require('chance').Chance();
 const {Op} = require("sequelize");
 const sequelize = require('sequelize');
@@ -512,16 +512,17 @@ router.post('/sendtosheet', isAuth, function (req, res, next) {
     })
 });
 
-router.get('/applicants/modal', isAuth, function (req, res, next) {
+router.get('/applicants/modal', isAuth, async function (req, res, next) {
   let id = req.query.id;
-    Applicant.findAll({
+  let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value);
+    Applicant.findOne({
         where: {
             id: id,
             Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
         if(app){
-            res.render('portal/infomodal', {title: "hi",app: app[0]});
+            res.render('portal/infomodal', {title: "hi",app: app, questions});
         }
     }).catch(() => {
         createError(404);

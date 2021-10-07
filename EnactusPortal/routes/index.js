@@ -131,6 +131,14 @@ router.get('/application', async function (req, res, next) {
     let token = req.query.token;
     let choices = await Team.findAll({include: Directorate, order: [['DirectorateId', 'ASC']]})
     let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value)
+    let TeamQuestions = {}
+    let keys = Object.keys(questions);
+    await keys.forEach((key, index) => {
+        if (key !== "General" && key !== "Situational") {
+            TeamQuestions[key] = []
+            questions[key].forEach((question) => TeamQuestions[key].push(question.Text))
+        }
+    });
     Applicant.findOne({where:
             {
             Token: token,
@@ -153,7 +161,7 @@ router.get('/application', async function (req, res, next) {
         }
             console.log(applicant.Email + " : Start: " + applicant.Start )
             res.render('recruitment/application', {title: "New Member Application Questions",
-            remaining: remaining, token:token, choices, questions});
+            remaining: remaining, token:token, choices, questions, TeamQuestions: JSON.stringify(TeamQuestions)});
     }).catch(()=>{
         return res.redirect("/applicationerror?code=104");
     })

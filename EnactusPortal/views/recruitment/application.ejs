@@ -270,7 +270,7 @@
                             <div class="small-12 medium-12 large-12">
                                 <label for="first">1st Preference *</label>
                                 <div class="relative input-wrap">
-                                    <select name="first" id="first">
+                                    <select name="first" id="first" class="teamchoice">
                                         <option disabled selected value="">--- Please select ---</option>
                                         <% choices.forEach(choice => {%>
                                             <option value="<%=choice.Name%>"><%=choice.DisplayName%> - <%=choice.Directorate.DisplayName%> Directorate</option>
@@ -289,45 +289,13 @@
                         </div><!-- /columns -->
                     </div>
                     <div id="change1" style="display: none">
-                        <div class="row">
-                            <div class="columns">
-                                <div class="small-12 medium-12 large-12">
-                                    <label for="T1">What do you know about this team?</label>
-                                    <div class="relative input-wrap">
-                                        <textarea id="T1" name="team[]"></textarea>
-                                        <span class="icon validation small success hide">
-                                            <span class="fa fa-check"></span>
-                                        </span>
-                                        <span class="icon validation small error hide">
-                                            <span class="fa fa-remove"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div><!-- /columns -->
-                        </div>
-                        <div class="row">
-                            <div class="columns">
-                                <div class="small-12 medium-12 large-12">
-                                    <label for="T2" id="change1q"></label>
-                                    <div class="relative input-wrap">
-                                        <textarea id="T2" name="team[]"></textarea>
-                                        <span class="icon validation small success hide">
-                                            <span class="fa fa-check"></span>
-                                        </span>
-                                        <span class="icon validation small error hide">
-                                            <span class="fa fa-remove"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div><!-- /columns -->
-                        </div>
                     </div>
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
                                 <label for="second">2nd Preference *</label>
                                 <div class="relative input-wrap">
-                                    <select name="second" id="second">
+                                    <select name="second" id="second" class="teamchoice" >
                                         <option disabled selected value="">--- Please select ---</option>
                                         <% choices.forEach(choice => {%>
                                         <option value="<%=choice.Name%>"><%=choice.DisplayName%> - <%=choice.Directorate.DisplayName%> Directorate</option>
@@ -346,38 +314,6 @@
                         </div><!-- /columns -->
                     </div>
                     <div  id="change2" style="display: none">
-                        <div class="row">
-                            <div class="columns">
-                                <div class="small-12 medium-12 large-12">
-                                    <label for="T3">What do you know about this team?</label>
-                                    <div class="relative input-wrap">
-                                        <textarea id="T3" name="team[]"></textarea>
-                                        <span class="icon validation small success hide">
-                                            <span class="fa fa-check"></span>
-                                        </span>
-                                        <span class="icon validation small error hide">
-                                            <span class="fa fa-remove"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div><!-- /columns -->
-                        </div>
-                        <div class="row">
-                            <div class="columns">
-                                <div class="small-12 medium-12 large-12">
-                                    <label for="T4" id="change2q"></label>
-                                    <div class="relative input-wrap">
-                                        <textarea id="T4" name="team[]"></textarea>
-                                        <span class="icon validation small success hide">
-                                            <span class="fa fa-check"></span>
-                                        </span>
-                                        <span class="icon validation small error hide">
-                                            <span class="fa fa-remove"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div><!-- /columns -->
-                        </div>
                     </div>
                 </div>
 <!--                General-->
@@ -492,7 +428,7 @@
     <div id="app"></div>
     <!-- Js Files -->
     <!-- j Query -->
-    <script type="text/javascript" src="/vendor/jquery.2.2.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Bootstrap JS -->
     <script type="text/javascript" src="/vendor/bootstrap/bootstrap.min.js"></script>
@@ -507,7 +443,7 @@
     <script type="text/javascript" src="/vendor/foundation.min.js"></script>
 
     <!-- Jquery-UI -->
-    <script type="text/javascript" src="/vendor/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- AJAXSubmit -->
     <script type="text/javascript" src="/vendor/jquery.ajaxSubmit.min.js"></script>
@@ -525,20 +461,21 @@
 
     <script>
         let timeout = false;
-        let questions = {
-            Projects: "What do you know about project management?",
-            OD:"How to ensure that all teams are on the right track? Explain with a specific method.",
-            TM:"How to enhance the performance of the members?",
-            LD:"What is the capacity building program? Mention the steps to conduct a training.",
-            CR:"List the benefits or values that you can offer to the sponsors/partners",
-            RM:"What do you know about product cycle?",
-            Events:"Mention & describe an idea for an event, And list the needed actions for implementing this idea.",
-            Marketing: "Prepare an offline campaign (theme, title, objectives)",
-            Social: "Prepare an online campaign (theme, title, objectives)",
-            Visuals: "List the basic video editing concepts you're familiar with if any (timeline, layers, blending modes...etc.)",
-            Camera: "What are the basics of photography?",
-            Presentation: "Mention 5 pillars will lead person to be a good presenter?"
-        }
+        let questions = JSON.parse(`<%-TeamQuestions%>`)
+        // let questions = {
+        //     Projects: "What do you know about project management?",
+        //     OD:"How to ensure that all teams are on the right track? Explain with a specific method.",
+        //     TM:"How to enhance the performance of the members?",
+        //     LD:"What is the capacity building program? Mention the steps to conduct a training.",
+        //     CR:"List the benefits or values that you can offer to the sponsors/partners",
+        //     RM:"What do you know about product cycle?",
+        //     Events:"Mention & describe an idea for an event, And list the needed actions for implementing this idea.",
+        //     Marketing: "Prepare an offline campaign (theme, title, objectives)",
+        //     Social: "Prepare an online campaign (theme, title, objectives)",
+        //     Visuals: "List the basic video editing concepts you're familiar with if any (timeline, layers, blending modes...etc.)",
+        //     Camera: "What are the basics of photography?",
+        //     Presentation: "Mention 5 pillars will lead person to be a good presenter?"
+        // }
 
         function format(time) {
             // Hours, minutes and seconds
@@ -557,15 +494,63 @@
         }
         let remaining = <%=remaining%>;
 
-        $(document).on('change', '#first', ()=>{
-            $('#change1q').fadeIn(500).text(questions[$('#first').val()]);
-            $('#change1').slideDown(500).show();
-
+        // $(document).on('change', '#first', ()=>{
+        //     $('#change1q').fadeIn(500).text(questions[$('#first').val()][0]);
+        //     $('#change1').slideDown(500).show();
+        //
+        // })
+        // $(document).on('change', '#second', ()=>{
+        //     $('#change2q').text(questions[$('#second').val()][0]).fadeIn(500);
+        //     $('#change2').slideDown(500).show();
+        // });
+        let i = 0
+        $(".teamchoice").on('change', async function() {
+            let val = $(this).val()
+            let id = $(this).attr('id')
+            let Qdiv, divid
+            if (id === "first"){
+                divid = "#change1"
+                Qdiv = $(`#change1`)
+            } else {
+                divid = "#change2"
+                Qdiv = $(`#change2`)
+            }
+            Qdiv.slideDown("slow").show()
+            if (questions[val])
+            {
+                console.log(questions[val])
+                Qdiv.slideUp("slow", async ()=>{
+                    console.log("up")
+                    Qdiv.empty()
+                    await questions[val].forEach((question)=>
+                    {
+                        console.log(question)
+                        Qdiv.append(`<div class="row">
+                            <div class="columns">
+                                <div class="small-12 medium-12 large-12">
+                                    <label for="T${i}">${question}</label>
+                                    <div class="relative input-wrap">
+                                        <textarea id="T{i}" name="team[]"></textarea>
+                                        <span class="icon validation small success hide">
+                                            <span class="fa fa-check"></span>
+                                        </span>
+                                        <span class="icon validation small error hide">
+                                            <span class="fa fa-remove"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div><!-- /columns -->
+                        </div>`)
+                        i +=1
+                    })
+                    Qdiv.slideDown("slow").show()
+                })
+            } else {
+                Qdiv.slideUp("slow", ()=>{
+                    Qdiv.empty()
+                })
+            }
         })
-        $(document).on('change', '#second', ()=>{
-            $('#change2q').text(questions[$('#second').val()]).fadeIn(500);
-            $('#change2').slideDown(500).show();
-        });
         // Credit: Mateusz Rybczonec
 
         const FULL_DASH_ARRAY = 283;

@@ -1,0 +1,16 @@
+@media (min-width: 992px){
+.modal-dialog {
+    max-width: 800px;
+    margin: 1.75rem auto;
+}
+}
+h6 {
+    font-size: 16px !important;
+    font-weight: bold !important;
+}
+
+textarea {
+    width: 100%;
+    height: fit-content;
+    min-height: 120px;
+}

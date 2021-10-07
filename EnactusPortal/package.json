@@ -7,10 +7,10 @@
     "Nodemon": "nodemon ./bin/www"
   },
   "dependencies": {
-    "admin-lte": "^3.0.5",
+    "admin-lte": "^3.1",
     "bcryptjs": "^2.4.3",
     "chance": "^1.1.7",
-    "connect-session-sequelize": "^7.1.0",
+    "connect-session-sequelize": "^7.1.2",
     "cookie-parser": "~1.4.4",
     "date-fns": "~2.25.0",
     "date-fns-timezone": "^0.1.4",
@@ -34,7 +34,7 @@
     "passport-remember-me-extended": "0.0.3",
     "promisify": "0.0.3",
     "random": "^2.2.0",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.6.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.6",

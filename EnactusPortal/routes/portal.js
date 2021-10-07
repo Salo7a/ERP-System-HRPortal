@@ -69,7 +69,7 @@ function isNumeric(str) {
 
 // Portal Home (For Non-Members)
 router.get('/', isAuth, async function (req, res, next) {
-    if (req.user.PositionText === 'TM Member'){
+    if (req.user.Position.Name === 'TM Member'){
         res.redirect("/portal/members/kpi");
     } else {
         let applied = await Applicant.count({where: {State: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value}});
@@ -131,12 +131,12 @@ router.get('/messages', isAuth, async function (req, res, next) {
 
 // Main KPI Route, Lists All Members
 router.get('/members/kpi', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) || req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
 
     let mem;
-    if (req.user.PositionText === "TM Member"){
+    if (req.user.Position.Name === "TM Member"){
        mem = await Member.findAll({where:
                {
                    Committee: req.user.Rep
@@ -153,7 +153,7 @@ router.get('/members/kpi', isAuth, async function (req, res, next) {
 
 
 router.post('/editkpi', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let {January, February, March, April, May, June, July}=req.body
@@ -179,7 +179,7 @@ router.post('/editkpi', isAuth, async function (req, res, next) {
 });
 
 router.get('/members/edit/kpi', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let id = req.query.id;
@@ -199,11 +199,11 @@ router.get('/members/edit/kpi', isAuth, function (req, res, next) {
 //End KPI
 // Ranking Routes
 router.get('/members/ranking', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let mem;
-    if (req.user.PositionText === "TM Member"){
+    if (req.user.Position.Name === "TM Member"){
         mem = await Member.findAll({where:
                 {
                     Committee: req.user.Rep
@@ -219,7 +219,7 @@ router.get('/members/ranking', isAuth, async function (req, res, next) {
 });
 
 router.post('/editranking', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
 
@@ -265,7 +265,7 @@ router.post('/editranking', isAuth, async function (req, res, next) {
 });
 
 router.get('/members/edit/ranking', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.PositionText) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let id = req.query.id;
@@ -290,7 +290,7 @@ router.get('/members/edit/ranking', isAuth, function (req, res, next) {
 //End Ranking
 
 router.get('/applicants/all', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(req.user.PositionText) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "Marketing VP", "HR VP", "TM Team Leader", "OD Team Leader","L&D Team Leader"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
     res.redirect("/portal")
     }
     Applicant.findAll({
@@ -614,7 +614,7 @@ router.post('/members/profile/:id', isAuth, function (req, res, next) {
 });
 
 router.post('/members/new', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TM Team Leader"].includes(req.user.PositionText) ||req.user.isAdmin)) {
+    if(!(["Admin", "President", "HR VP", "TM Team Leader"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let {Name, Phone, Email, Team} = req.body

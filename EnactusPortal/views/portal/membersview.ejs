@@ -75,7 +75,7 @@
                         <h3 class="card-title"><%= title %></h3>
                         <!-- /.card-tools -->
                         <div class="float-right">
-                            <%if(["Admin", "President", "HR VP"].includes(user.PositionText) || user.isAdmin){%>
+                            <%if(["Admin", "President", "HR VP"].includes(user.Position.Name) || user.isAdmin){%>
                             <button type="button" class="btn btn-block btn-success" data-toggle="modal"
                                     data-target="#NewMemberModal">New Member</button>
                                 <%}%>
@@ -104,7 +104,7 @@
                                     <td><a href="mailto:<%= mem.Email %>"><%= mem.Email %></a></td>
                                     <td><a href="tel:<%= mem.Phone %>"><%= mem.Phone %></a></td>
                                     <td><a href="https://enactus-cu.org/members/performance/<%= mem.PageID %>">Here</a></td>
-                                    <td><% if(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(user.PositionText) || user.isAdmin){ %>
+                                    <td><% if(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(user.Position.Name) || user.isAdmin){ %>
                                             <span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                         type="button" class="btn btn-secondary EditButton"
                                                         data-toggle="modal"
@@ -152,7 +152,7 @@
         </div>
         <!-- /.content -->
     </div>
-    <%if(["Admin", "President", "HR VP", "TM Team Leader"].includes(user.PositionText) || user.isAdmin){%>
+    <%if(["Admin", "President", "HR VP", "TM Team Leader"].includes(user.Position.Name) || user.isAdmin){%>
     <div class="modal fade" id="NewMemberModal" style="display: none;" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

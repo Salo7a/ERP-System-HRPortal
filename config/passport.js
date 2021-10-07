@@ -11,9 +11,13 @@ passport.use(new LocalStrategy({usernameField: 'email'}, function (email, passwo
             if (!user) {
                 return done(null, false, {message: 'Email is Not Registered'});
             } else {
-                if (user.comparePass(password)) {
+                if (!user.isActive){
+                    return done(null, false, {message: 'Account isn\'t activated'});
+                }
+                else if (user.comparePass(password)) {
                     return done(null, user, {message: 'Logged In Successfully'});
-                } else {
+                }
+                else{
                     return done(null, false, {message: 'Wrong Password'});
                 }
             }

@@ -3,14 +3,14 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models').User;
 const Invite = require('../models').Invite;
-const { NotAuth, isAuth } = require('../utils/filters');
-const { check, validationResult, body } = require('express-validator');
-const { Op } = require('sequelize');
+const {NotAuth, isAuth} = require('../utils/filters');
+const {check, validationResult, body} = require('express-validator');
+const {Op} = require('sequelize');
 const Chance = require('chance');
 
 function issueToken(user, done) {
     let chance = new Chance();
-    let token = chance.word({ length: 60 });
+    let token = chance.word({length: 60});
     user.update({
         RememberHash: token
     }).then(result => {
@@ -27,27 +27,27 @@ router.get('/login', NotAuth, function (req, res, next) {
 });
 
 router.post('/login', NotAuth, passport.authenticate('local', {
-    failureRedirect: '/auth/login',
-    failureFlash: true
-}), function (req, res, next) {
-    req.flash('success', 'You\'ve Logged In Successfully');
-    if (!req.body.remember_me) {
-        return next();
-    }
-
-    issueToken(req.user, function (err, token) {
-        if (err) {
-            return next(err);
+        failureRedirect: '/auth/login',
+        failureFlash: true
+    }), function (req, res, next) {
+        req.flash('success', 'You\'ve Logged In Successfully');
+        if (!req.body.remember_me) {
+            return next();
         }
-        res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 604800000 });
-        return next();
-    });
-},
+
+        issueToken(req.user, function (err, token) {
+            if (err) {
+                return next(err);
+            }
+            res.cookie('remember_me', token, {path: '/', httpOnly: true, maxAge: 604800000});
+            return next();
+        });
+    },
     function (req, res) {
         res.redirect('/portal');
     });
 
-router.get('/register',NotAuth, (req,res,next)=>{
+router.get('/register', NotAuth, (req, res, next) => {
     res.render('auth/register', {title: "Registration"});
 });
 
@@ -77,16 +77,18 @@ router.post('/register', [
     }
     let chance = new Chance();
     const {name, email, password, phone, invite, username} = req.body;
-    Invite.findOne({where: {
-        Code: invite,
-        Used: false
-        }}).then((inv)=>{
-            if (!inv){
-                res.redirect("/auth/invalidinvite")
-            }
-            let position = inv.Position;
-            let committee = inv.Committee;
-            let rep = inv.Rep
+    Invite.findOne({
+        where: {
+            Code: invite,
+            isUsed: false
+        }
+    }).then((inv) => {
+        if (!inv) {
+            res.redirect("/auth/invalidinvite")
+        }
+        let position = inv.PositionId;
+        let season = inv.Season;
+        let admin = inv.isAdmin;
         User.findOne({
             where: {
                 [Op.or]: [
@@ -107,12 +109,11 @@ router.post('/register', [
                         Phone: phone,
                         ActiveHash: hash,
                         Username: username,
-                        Position: position,
-                        Committee: committee,
-                        Rep: rep
+                        PositionId: position,
+                        isAdmin: admin,
+                        Season: season
                     })
-                        .then(function ()
-                            {
+                        .then(function () {
                                 inv.Used = true;
                                 inv.save();
                                 req.flash('success', 'The user was registered successfully');

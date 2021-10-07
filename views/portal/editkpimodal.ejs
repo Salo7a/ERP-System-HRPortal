@@ -1,0 +1,91 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">#<%= mem.id %> -
+        <%= mem.Name %>
+    </h5>
+    <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="post" class="editKPI">
+    <div class="modal-body">
+        <p>From 0 to 100</p>
+        <input type="hidden" name="id" value="<%= mem.id %>">
+        <!--January-->
+        <div class="input-group mb-3 kpimonth">
+            <div class="input-group-prepend">
+                <button type="button" class="KPIButton btn <% if (mem.KPI.January === null){%> btn-danger<%}else{%>btn-success<%}%>">January</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control kpiinput" name="January"
+            <% if (mem.KPI.January !== null){%> value="<%=mem.KPI.January%>" <%}%>  <% if (mem.KPI.January === null){%>disabled<%}%>>
+        </div>
+        <!--February-->
+        <div class="input-group mb-3 kpimonth">
+            <div class="input-group-prepend">
+                <button type="button" class="KPIButton btn <% if (mem.KPI.February === null){%> btn-danger<%}else{%>btn-success<%}%>">February</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control kpiinput" name="February"
+                    <% if (mem.KPI.February !== null){%> value="<%=mem.KPI.February%>" <%}%>  <% if (mem.KPI.February === null){%>disabled<%}%>>
+        </div>
+        <!--March-->
+        <div class="input-group mb-3 kpimonth">
+            <div class="input-group-prepend">
+                <button type="button" class="KPIButton btn <% if (mem.KPI.March === null){%> btn-danger<%}else{%>btn-success<%}%>">March</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control kpiinput" name="March"
+                    <% if (mem.KPI.March !== null){%> value="<%=mem.KPI.March%>" <%}%>  <% if (mem.KPI.March === null){%>disabled<%}%>>
+        </div>
+        <!--April-->
+        <div class="input-group mb-3 kpimonth">
+            <div class="input-group-prepend">
+                <button type="button" class="KPIButton btn <% if (mem.KPI.April === null){%> btn-danger<%}else{%>btn-success<%}%>">April</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control kpiinput" name="April"
+                    <% if (mem.KPI.April !== null){%> value="<%=mem.KPI.April%>" <%}%>  <% if (mem.KPI.April === null){%>disabled<%}%>>
+        </div>
+        <!--May-->
+        <div class="input-group mb-3 kpimonth">
+            <div class="input-group-prepend">
+                <button type="button" class="KPIButton btn <% if (mem.KPI.May === null){%> btn-danger<%}else{%>btn-success<%}%>">May</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control kpiinput" name="May"
+                    <% if (mem.KPI.May !== null){%> value="<%=mem.KPI.May%>" <%}%>  <% if (mem.KPI.May === null){%>disabled<%}%>>
+        </div>
+        <!--June-->
+        <div class="input-group mb-3 kpimonth">
+            <div class="input-group-prepend">
+                <button type="button" class="KPIButton btn <% if (mem.KPI.June === null){%> btn-danger<%}else{%>btn-success<%}%>">June</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control kpiinput" name="June"
+                    <% if (mem.KPI.June !== null){%> value="<%=mem.KPI.June%>" <%}%>  <% if (mem.KPI.June === null){%>disabled<%}%>>
+        </div>
+        <!--July-->
+        <div class="input-group mb-3 kpimonth">
+            <div class="input-group-prepend">
+                <button type="button" class="KPIButton btn <% if (mem.KPI.July === null){%> btn-danger<%}else{%>btn-success<%}%>">July</button>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control kpiinput" name="July"
+                    <% if (mem.KPI.July !== null){%> value="<%=mem.KPI.July%>" <%}%>  <% if (mem.KPI.July === null){%>disabled<%}%>>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+                data-dismiss="modal">Cancel
+        </button>
+        <input type="submit" value="Save"
+               class="btn btn-outline-success">
+    </div>
+</form>
+<style>
+    .KPIButton{
+        width: 90px;
+        text-align: center;
+    }
+</style>

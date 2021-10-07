@@ -1,0 +1,79 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">#<%= app.id %>
+        - <%= app.Name %></h5>
+    <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form class="infoForm">
+        <h6>Personal Info</h6>
+        <hr>
+        <ul>
+            <li>CU Student: <%= app.CUStudent %></li>
+            <li>Academic Year: <%= app.Academic %></li>
+            <li>Faculty: <%= app.Faculty %></li>
+            <li>Major: <%= app.Major %></li>
+            <li>Minor: <%= app.Minor %></li>
+            <li>English: <%= app.English %></li>
+            <li>Application Start: <%= app.Start %></li>
+            <li>Application End: <%= app.End %></li>
+        </ul>
+        <label>Extra-Curricular Activities</label>
+        <textarea disabled class="form-control"><%= app.Excur %></textarea>
+        <div class="form-group">
+            <label>Courses & Workshops Attended</label>
+            <textarea disabled
+                      class="form-control"><%= app.Courses %></textarea>
+        </div>
+        <br>
+        <%let q = 0%>
+        <label>Team</label>
+        <hr>
+        <br><h6>Questions: <%= app.First %></h6>
+        <%questions[app.First].forEach((question, index) => {%>
+            <div class="form-group">
+                <label><%=question.Text%></label>
+                <textarea disabled
+                          class="form-control"><%= app.Answers.Team[q] %></textarea>
+            </div>
+        <% q = q +1%>
+        <%})%>
+        <br>
+        <h6>Questions: <%= app.Second %></h6>
+        <%questions[app.Second].forEach((question, index) => {%>
+        <div class="form-group">
+            <label><%=question.Text%></label>
+            <textarea disabled
+                      class="form-control"><%= app.Answers.Team[q] %></textarea>
+        </div>
+        <% q = q +1%>
+        <%})%>
+        <br><h6>General</h6>
+        <hr>
+        <%questions["General"].forEach((question, index) => {%>
+        <div class="form-group">
+            <label><%=question.Text%></label>
+            <textarea disabled
+                      class="form-control"><%= app.Answers.General[index] %></textarea>
+        </div>
+        <%})%>
+        <br>
+        <h6>Situational</h6>
+        <hr>
+        <%questions["Situational"].forEach((question, index) => {%>
+        <div class="form-group">
+            <label><%=question.Text%></label>
+            <textarea disabled
+                      class="form-control"><%= app.Answers.Situational[index] %></textarea>
+        </div>
+        <%})%>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary"
+            data-dismiss="modal">
+        Close
+    </button>
+</div>

@@ -1,0 +1,3 @@
+DirectoryIndex disabled
+RewriteEngine on
+RewriteRule  (.*)  https://localhost:5000/$1  [P,L]

@@ -108,15 +108,19 @@ router.post('/checkemail',((req, res, next) =>{
 router.get('/success', function (req, res, next) {
   res.render('recruitment/success', {title: "Application Submitted Successfully"});
 });
+
 router.get('/tokenerror', function (req, res, next) {
   res.render('recruitment/tokenerror', {title: "Application Wasn't Submitted"});
 });
+
 router.get('/tokenexpired', function (req, res, next) {
     res.render('recruitment/tokenerror', {title: "Application Has Expired"});
 });
+
 router.get('/timeout', function (req, res, next) {
     res.render('recruitment/timeout', {title: "Timeout"});
 });
+
 router.get('/applicationerror', function (req, res, next) {
     let code;
     if(req.query.code){
@@ -167,6 +171,7 @@ router.get('/application', async function (req, res, next) {
     })
 
 });
+
 router.post('/application',function (req, res, next) {
     let {token, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second} = req.body;
     let team=req.body['team[]'];
@@ -314,6 +319,7 @@ router.post('/members/performance/:PageID', function (req, res, next) {
     )
 
 });
+
 router.get('/members/pokenactus/', function (req, res, next) {
     let d = new Date();
     let month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

@@ -5,7 +5,7 @@ const {User, Invite, Team, Directorate, Position, Rank, Question, Config} = requ
 const {NotAuth, isAuth, isAdmin} = require('../utils/filters');
 const {check, validationResult, body} = require('express-validator');
 const {Op} = require('sequelize');
-const Chance = require('chance');
+const Chance = require('chance').Chance();
 const createError = require("http-errors");
 
 // Users List
@@ -67,9 +67,6 @@ router.get("/invites", isAdmin, async (req, res, next) => {
 
 // Add Invite
 router.post("/invites/add", isAdmin, (req, res, next) => {
-    if (!req.user.isAdmin) {
-        next(createError(403))
-    }
     let {position, admin} = req.body;
     let code = Chance.string({length: 8, alpha: true, numeric: true})
     Invite.create({

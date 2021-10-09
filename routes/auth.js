@@ -114,7 +114,7 @@ router.post('/register', [
                         Season: season
                     })
                         .then(function () {
-                                inv.Used = true;
+                                inv.isUsed = true;
                                 inv.save();
                                 req.flash('success', 'The user was registered successfully');
                                 res.redirect('/auth/login');

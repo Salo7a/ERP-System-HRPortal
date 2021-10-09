@@ -15,6 +15,8 @@ passport.use(new LocalStrategy({usernameField: 'email'}, function (email, passwo
                     return done(null, false, {message: 'Account isn\'t activated'});
                 }
                 else if (user.comparePass(password)) {
+                    user.LastLogin = new Date();
+                    user.save()
                     return done(null, user, {message: 'Logged In Successfully'});
                 }
                 else{
@@ -37,6 +39,8 @@ passport.deserializeUser(function (userId, done) {
     User
         .findOne({where: {id: userId}, include: [Position]})
         .then(function (user) {
+            user.LastActive = new Date();
+            user.save()
             done(null, user);
         }).catch(function (err) {
         done(err, null);

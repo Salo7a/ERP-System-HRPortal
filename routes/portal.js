@@ -310,6 +310,10 @@ router.get('/applicants/all', isAuth, function (req, res, next) {
 
 router.get('/applicants/my', isAuth, async function (req, res, next) {
     let Position = req.user.Position;
+    let rank = await Position.getRank();
+    if (rank.Level < 2){
+        next(createError(403));
+    }
     let team = await Position.getTeam();
     let state = "Accepted";
     if (team.Name === "Marketing" || team.Name === "Visuals")

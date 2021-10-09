@@ -390,14 +390,20 @@ router.post('/editapplicant', isAuth, function (req, res, next) {
     console.log(req.body)
     Applicant.findOne({
         where: {id: id, Season: settings["CurrentSeason"].Value}
-    }).then((app) => {
-        app.update({
-            State,
-            Notes,
-            ITime,
-            IDate,
-            ATime
-        });
+    }).then(async (app) => {
+        app.State = State
+        app.Notes = Notes
+        await app.save()
+        if (ITime){
+            app.ITime = ITime
+        }
+        if (IDate){
+            app.IDate = IDate
+        }
+        if (ATime){
+            app.ATime = ATime
+        }
+        await app.save()
         res.send({msg: "Saved!", id, State});
         // res.render("/portal/row", {app});
     }).catch((err) => {

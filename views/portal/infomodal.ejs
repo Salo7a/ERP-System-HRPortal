@@ -32,6 +32,7 @@
         <label>Team</label>
         <hr>
         <br><h6>Questions: <%= app.First %></h6>
+        <%if(questions[app.First]) {%>
         <%questions[app.First].forEach((question, index) => {%>
             <div class="form-group">
                 <label><%=question.Text%></label>
@@ -40,8 +41,10 @@
             </div>
         <% q = q +1%>
         <%})%>
+        <%}%>
         <br>
         <h6>Questions: <%= app.Second %></h6>
+        <%if(questions[app.Second]) {%>
         <%questions[app.Second].forEach((question, index) => {%>
         <div class="form-group">
             <label><%=question.Text%></label>
@@ -50,6 +53,7 @@
         </div>
         <% q = q +1%>
         <%})%>
+        <%}%>
         <br><h6>General</h6>
         <hr>
         <%questions["General"].forEach((question, index) => {%>

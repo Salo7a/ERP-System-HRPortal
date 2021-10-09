@@ -47,7 +47,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       get: function () {
         return this.getDataValue('Rep').split(',');
-      }}
+      }},
+    LastLogin: {
+      type: DataTypes.DATE
+    },
+    LastActive: {
+      type: DataTypes.DATE
+    },
   }, {
     sequelize,
     modelName: 'User',

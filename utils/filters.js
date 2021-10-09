@@ -12,7 +12,7 @@ module.exports = {
         if (!req.isAuthenticated()) {
             return next();
         }
-        res.redirect('/');
+        res.redirect('/portal');
     },
     isAdmin: function (req, res, next) {
         if (req.isAuthenticated()) {

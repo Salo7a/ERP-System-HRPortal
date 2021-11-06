@@ -85,7 +85,7 @@
                                     <td><a href="mailto:<%= mem.Email %>"><%= mem.Email %></a></td>
                                     <td><a href="tel:<%= mem.Phone %>"><%= mem.Phone %></a></td>
                                     <td><a href="/portal/members/profile/<%= mem.id %>">Profile</a></td>
-                                    <td><% if(["Admin", "President", "HR VP", "TM Team Leader", "TM Member"].includes(user.Position.Name) || user.isAdmin){ %>
+                                    <td><% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
                                             <span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                         type="button" class="btn btn-secondary EditButton"
                                                         data-toggle="modal"

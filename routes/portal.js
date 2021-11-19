@@ -478,6 +478,7 @@ router.post('/sendtosheet', isAuth, function (req, res, next) {
         let data = {
             ID: app.id,
             Name: app.Name,
+            Age: app.Age,
             Phone: app.Phone,
             Email: app.Email,
             CUStudent: app.CUStudent,

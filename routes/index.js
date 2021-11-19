@@ -173,8 +173,26 @@ router.get('/application', async function (req, res, next) {
 });
 
 router.post('/application',function (req, res, next) {
-    let {token, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second, creativity, effective} = req.body;
-    let team=req.body['team[]'];
+    let {
+        token,
+        name,
+        age,
+        email,
+        phone,
+        custudent,
+        faculty,
+        academic,
+        major,
+        minor,
+        english,
+        courses,
+        excur,
+        first,
+        second,
+        creativity,
+        effective
+    } = req.body;
+    let team = req.body['team[]'];
     let gen=req.body['Gen[]'];
     let sit=req.body['sit[]'];
     sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
@@ -201,6 +219,7 @@ router.post('/application',function (req, res, next) {
         }
         applicant.update({
             Name: name,
+            Age: age,
             Phone: phone,
             CUStudent: custudent,
             State: "Applied",
@@ -226,8 +245,26 @@ router.post('/application',function (req, res, next) {
 });
 
 router.post('/applicationajax',function (req, res, next) {
-    let {token, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second, creativity, effective} = req.body;
-    let team=req.body['team[]'];
+    let {
+        token,
+        name,
+        age,
+        email,
+        phone,
+        custudent,
+        faculty,
+        academic,
+        major,
+        minor,
+        english,
+        courses,
+        excur,
+        first,
+        second,
+        creativity,
+        effective
+    } = req.body;
+    let team = req.body['team[]'];
     let gen=req.body['Gen[]'];
     let sit=req.body['sit[]'];
     sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
@@ -252,6 +289,7 @@ router.post('/applicationajax',function (req, res, next) {
         }
         applicant.update({
             Name: name,
+            Age: age,
             Phone: phone,
             CUStudent: custudent,
             State: "Applied",

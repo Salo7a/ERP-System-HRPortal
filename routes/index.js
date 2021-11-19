@@ -173,17 +173,22 @@ router.get('/application', async function (req, res, next) {
 });
 
 router.post('/application',function (req, res, next) {
-    let {token, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second} = req.body;
+    let {token, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second, creativity, effective} = req.body;
     let team=req.body['team[]'];
     let gen=req.body['Gen[]'];
     let sit=req.body['sit[]'];
+    console.log(creativity)
+    console.log(effective)
+    sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
+    sit.push(Array.isArray(effective) ? effective[1] : effective)
     let answers = {
         Team: team,
         General: gen,
         Situational:sit
     }
     console.log(req.body);
-    Applicant.findOne({where: {
+    console.log(sit)
+    Applicant.findOne({where:{
             Token: token,
             End: null
         }}).then((applicant)=>{
@@ -212,7 +217,7 @@ router.post('/application',function (req, res, next) {
             First: first,
             Second: second,
             Answers: answers,
-            End: new Date(),
+            // End: new Date(),
         })
         res.redirect('/success');
     }).catch((err)=>{
@@ -223,10 +228,12 @@ router.post('/application',function (req, res, next) {
 });
 
 router.post('/applicationajax',function (req, res, next) {
-    let {token, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second} = req.body;
+    let {token, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second, creativity, effective} = req.body;
     let team=req.body['team[]'];
     let gen=req.body['Gen[]'];
     let sit=req.body['sit[]'];
+    sit.push(creativity)
+    sit.push(effective)
     let answers = {
         Team: team,
         General: gen,

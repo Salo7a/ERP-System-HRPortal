@@ -177,8 +177,6 @@ router.post('/application',function (req, res, next) {
     let team=req.body['team[]'];
     let gen=req.body['Gen[]'];
     let sit=req.body['sit[]'];
-    console.log(creativity)
-    console.log(effective)
     sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
     sit.push(Array.isArray(effective) ? effective[1] : effective)
     let answers = {
@@ -217,7 +215,7 @@ router.post('/application',function (req, res, next) {
             First: first,
             Second: second,
             Answers: answers,
-            // End: new Date(),
+            End: new Date(),
         })
         res.redirect('/success');
     }).catch((err)=>{
@@ -232,8 +230,8 @@ router.post('/applicationajax',function (req, res, next) {
     let team=req.body['team[]'];
     let gen=req.body['Gen[]'];
     let sit=req.body['sit[]'];
-    sit.push(creativity)
-    sit.push(effective)
+    sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
+    sit.push(Array.isArray(effective) ? effective[1] : effective)
     let answers = {
         Team: team,
         General: gen,

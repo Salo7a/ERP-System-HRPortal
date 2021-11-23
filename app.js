@@ -15,6 +15,10 @@ let passportConfig = require('./config/passport');
 // initalize sequelize with session store
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
+// Debugging
+const requestIp = require('request-ip');
+const useragent = require('express-useragent');
+
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const portalRouter = require('./routes/portal');
@@ -33,6 +37,7 @@ app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
@@ -50,6 +55,8 @@ app.use(helmet({
     contentSecurityPolicy: false,
 }))
 
+app.use(requestIp.mw())
+app.use(useragent.express());
 
 //Express Session
 app.use(session({

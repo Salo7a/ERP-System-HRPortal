@@ -67,16 +67,17 @@ router.post('/apply' , function (req, res, next) {
         return res.redirect('/apply');
     }
     let {name, phone,email} = req.body;
-
-  Applicant.findOne({where:{Email: email}}).then((app)=>{
-      if (!app){
-          Applicant.create({
-              Name: name,
-              Email: email,
-              Phone: phone,
-              Token: chance.string({ length: 30, alpha: true, numeric: true }),
-              Season: settings["CurrentSeason"].Value
-          }).then((ap) => {
+    req.useragent["IP"] = req.clientIp
+    Applicant.findOne({where: {Email: email}}).then((app) => {
+        if (!app) {
+            Applicant.create({
+                Name: name,
+                Email: email,
+                Phone: phone,
+                Token: chance.string({length: 30, alpha: true, numeric: true}),
+                Season: settings["CurrentSeason"].Value,
+                Info: req.useragent
+            }).then((ap) => {
               let query = querystring.stringify({
                   "token": ap.Token
               });

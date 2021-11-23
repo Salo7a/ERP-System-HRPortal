@@ -81,7 +81,17 @@ module.exports = (sequelize, DataTypes) => {
     ITime: DataTypes.TIME,
     ATime: DataTypes.TIME,
     Notes: DataTypes.TEXT,
-    Season: DataTypes.STRING
+    Season: DataTypes.STRING,
+    Info: {
+      type: DataTypes.JSON,
+      get: function () {
+        try {
+          return JSON.parse(this.getDataValue('Info'));
+        } catch (e) {
+          return this.getDataValue('Info');
+        }
+      }
+    },
   }, {
     sequelize,
     modelName: 'Applicant',

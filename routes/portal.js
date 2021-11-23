@@ -533,8 +533,7 @@ router.get('/applicants/modal', isAuth, async function (req, res, next) {
         }
     }).then(app => {
         if(app){
-            console.log(app)
-            console.log(questions)
+            console.log("Showing #" + app.id)
             res.render('portal/infomodal', {title: "hi", app: app, questions});
         }
     }).catch(() => {

@@ -61,10 +61,14 @@ module.exports = (sequelize, DataTypes) => {
     First: DataTypes.STRING,
     Second: DataTypes.STRING,
     Answers: {
-      type: DataTypes.JSON
-      // get: function () {
-      //   return JSON.parse(this.getDataValue('Answers'));
-      // }
+      type: DataTypes.JSON,
+      get: function () {
+        try {
+          return JSON.parse(this.getDataValue('Answers'));
+        } catch (e) {
+          return this.getDataValue('Answers');
+        }
+      }
     },
     Token: DataTypes.STRING,
     Start: {

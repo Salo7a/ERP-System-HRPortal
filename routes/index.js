@@ -204,6 +204,7 @@ router.post('/application',function (req, res, next) {
     }
     console.log(req.body);
     console.log(sit)
+    let state = "Applied"
     Applicant.findOne({where:{
             Token: token,
             End: null
@@ -213,16 +214,17 @@ router.post('/application',function (req, res, next) {
             return res.redirect("/tokenerror");
         }
         let secs = differenceInSeconds(new Date(), applicant.Start);
-        if (secs > (parseInt(settings["FormTime"].Value) * 1.1)){
-            console.log(email + ": Timed Out "+ secs);
-            return res.redirect("/tokenerror");
+        if (secs > (parseInt(settings["FormTime"].Value) * 1.1)) {
+            console.log(email + ": Timed Out " + secs);
+            // return res.redirect("/tokenerror");
+            state = "Overtime"
         }
         applicant.update({
             Name: name,
             Age: age,
             Phone: phone,
             CUStudent: custudent,
-            State: "Applied",
+            State: state,
             Time: secs,
             Faculty: faculty,
             Academic: academic,
@@ -276,6 +278,7 @@ router.post('/applicationajax',function (req, res, next) {
     }
     console.log("AppAJAX: " + email + new Date());
     console.log(req.body);
+    let state = "Applied"
     Applicant.findOne({where: {
             Token: token,
             End: null
@@ -285,6 +288,7 @@ router.post('/applicationajax',function (req, res, next) {
         }
         let secs = differenceInSeconds(new Date(), applicant.Start);
         if (secs > (parseInt(settings["FormTime"].Value) * 1.14)){
+            state = "Overtime"
             return res.status(400).json({msg: "Error"});
         }
         applicant.update({
@@ -292,7 +296,7 @@ router.post('/applicationajax',function (req, res, next) {
             Age: age,
             Phone: phone,
             CUStudent: custudent,
-            State: "Applied",
+            State: state,
             Time: secs,
             Faculty: faculty,
             Academic: academic,

@@ -213,14 +213,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 $('.check').not(this).prop('checked', false);
             });
         });
-        $("input[data-bootstrap-switch]").each(function(){
+        $("input[data-bootstrap-switch]").each(function () {
             $(this).bootstrapSwitch();
         });
         let label = {
             Applied: "bg-primary",
             Interviewed: "bg-warning",
             Rejected: "bg-danger",
-            Accepted: "bg-success"
+            Accepted: "bg-success",
+            Overtime: "bg-dark"
         }
         let RanksTable = $("#ind").DataTable()
         $(function () {

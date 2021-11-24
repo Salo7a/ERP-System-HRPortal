@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+const morgan = require('morgan');
 // const sassMiddleware = require('node-sass-middleware');
 const db = require('./models/index');
 const flash = require('express-flash');
@@ -11,6 +11,7 @@ const passport = require('passport');
 const engine = require('ejs-mate');
 const helmet = require('helmet');
 const Config = require('./models').Config;
+const winston = require('./config/winston');
 let passportConfig = require('./config/passport');
 // initalize sequelize with session store
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
@@ -38,7 +39,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 
-app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser('keyboard'));
@@ -130,6 +131,7 @@ app.use(function (req, res, next) {
     next(createError(404));
 });
 
+global.winston = winston
 // error handler
 app.use(function (err, req, res, next) {
     if (res.headersSent) {
@@ -138,6 +140,8 @@ app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // Winston logging
+    winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
     // render the error page
     res.status(err.status || 500);
     res.render('error');

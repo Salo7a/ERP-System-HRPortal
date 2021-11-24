@@ -38,18 +38,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHC5BRL"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 <div class="limiter">
     <div class="container-login100">
-        <div class="wrap-login100"  style="width: 90vw;max-width: 650px;">
-                <div class="login100-form-title p-b-48">
-						 <img style="width: 100px;" src="/images/enactus-star.png" alt="Enactus Logo">
-                     <h1>Error!!</h1>
-                    <h6 style="margin-top: 20px; margin-bottom: 8px">A Problem Has Occurred With Your Submission</h6>
-                    <p>Try again or leave us a message at our facebook page<%if (code){ %>, Error Code: <%=code%><%}%></p>
-					</div>
+        <div class="wrap-login100" style="width: 90vw;max-width: 650px;">
+            <div class="login100-form-title p-b-48">
+                <img style="width: 100px;" src="/images/enactus-star.png" alt="Enactus Logo">
+                <h1>Error!!</h1>
+                <h6 style="margin-top: 20px; margin-bottom: 8px">A Problem Has Occurred With Your Submission</h6>
+                <% if (code == 147){ %>
+                    <p>You didn't answer any team preference questions, please return and attempt answering, if this
+                        error persists, try using a different browser, device or contact us at our facebook page</p>
+                <% } else { %>
+                <p>Try again or leave us a message at our facebook page
+                    <% if (code){ %>
+                    , Error Code: <%= code %>
+                    <% } %>
+                </p>
+                <% } %>
+            </div>
 
         </div>
     </div>

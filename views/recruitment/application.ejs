@@ -69,7 +69,8 @@
                             <p>For Cairo University Students Only</p>
                         </div>
                     </div>
-                    <!--                    Questions-->
+                    <!-- Personal Questions-->
+                    <!--Name-->
                     <div class="row">
                         <div class="columns small-12 medium-12 large-12">
                             <label for="fullName">Your Full Name <span style="color:#ff0022;">*</span></label>
@@ -87,6 +88,7 @@
                                  data-error="Please enter your full name."></div>
                         </div>
                     </div>
+                    <!--Email-->
                     <div class="row">
                         <div class="small-12 medium-12 large-12">
                             <div class="columns small-12 medium-12 large-12">
@@ -106,6 +108,7 @@
                             </div>
                         </div>
                     </div>
+                    <!--Phone -->
                     <div class="row">
                         <div class="columns small-12 medium-6 large-6">
                             <label for="phone">Your Phone Number<span style="color:#ff0022;">*</span></label>
@@ -123,6 +126,7 @@
                                  data-error="Please enter a valid phone number."></div>
                         </div>
                     </div>
+                    <!--Age-->
                     <div class="row">
                         <div class="columns small-12 medium-6 large-6">
                             <label for="age">Your Age<span style="color:#ff0022;">*</span></label>
@@ -140,6 +144,7 @@
                                  data-error="Please enter a valid age."></div>
                         </div>
                     </div>
+                    <!--Cairo Student-->
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
@@ -162,6 +167,7 @@
                             </div><!-- /col-24 -->
                         </div><!-- /columns -->
                     </div>
+                    <!--Faculty-->
                     <div class="row">
                         <div class="columns small-12 medium-12 large-12">
                             <label for="faculty">Your Faculty <span style="color:#ff0022;">*</span></label>
@@ -179,6 +185,7 @@
                                  data-error="Please enter your faculty."></div>
                         </div>
                     </div>
+                    <!--Academic Level-->
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
@@ -205,6 +212,7 @@
                             </div><!-- /col-24 -->
                         </div><!-- /columns -->
                     </div>
+                    <!--Major-->
                     <div class="row">
                         <div class="columns small-12 medium-12 large-12">
                             <label for="major">Major<span style="color:#ff0022;">*</span></label>
@@ -222,6 +230,7 @@
                                  data-error="Please enter your Major."></div>
                         </div>
                     </div>
+                    <!--Minor-->
                     <div class="row">
                         <div class="columns small-12 medium-12 large-12">
                             <label for="minor">Minor (If Applicable)</label>
@@ -239,6 +248,7 @@
                                  data-error="Please enter your Minor."></div>
                         </div>
                     </div>
+                    <!--English Level-->
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
@@ -263,6 +273,7 @@
                             </div><!-- /col-24 -->
                         </div><!-- /columns -->
                     </div>
+                    <!--Workshops&Courses-->
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
@@ -279,6 +290,7 @@
                             </div>
                         </div><!-- /columns -->
                     </div>
+                    <!--Activities-->
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
@@ -301,9 +313,12 @@
                     <div class="row">
                         <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
                             <h4>Team Preferences</h4>
+                            <p style="color: #666; font-size: 12px">Attempt all team-related questions, if no questions
+                                appear after selecting your team preferences, please refresh the page or use a different
+                                browser.</p>
                         </div>
                     </div>
-                    <!--                    Questions-->
+                    <!--Short Answer Questions-->
                     <div class="row">
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
@@ -312,9 +327,9 @@
                                     <select name="first" id="first" class="teamchoice">
                                         <option disabled selected value="">--- Please select ---</option>
                                         <% choices.forEach(choice => { %>
-                                        <option value="<%= choice.Name %>"><%= choice.DisplayName %>
-                                            - <%= choice.Directorate.DisplayName %> Directorate
-                                        </option>
+                                            <option value="<%= choice.Name %>"><%= choice.DisplayName %>
+                                                - <%= choice.Directorate.DisplayName %> Directorate
+                                            </option>
                                         <% }) %>
                                     </select>
 
@@ -339,9 +354,9 @@
                                     <select name="second" id="second" class="teamchoice">
                                         <option disabled selected value="">--- Please select ---</option>
                                         <% choices.forEach(choice => { %>
-                                        <option value="<%= choice.Name %>"><%= choice.DisplayName %>
-                                            - <%= choice.Directorate.DisplayName %> Directorate
-                                        </option>
+                                            <option value="<%= choice.Name %>"><%= choice.DisplayName %>
+                                                - <%= choice.Directorate.DisplayName %> Directorate
+                                            </option>
                                         <% }) %>
                                     </select>
 
@@ -366,29 +381,29 @@
                             <h4>General Questions</h4>
                         </div>
                     </div>
-                    <!--                    Questions-->
+                    <!--Questions-->
                     <% let i = 1 %>
                     <% questions["General"].forEach((question) => { %>
-                    <div class="row">
-                        <div class="columns">
-                            <div class="small-12 medium-12 large-12">
-                                <label for="G<%= i %>"><%= question.Text %></label>
-                                <div class="relative input-wrap">
-                                    <textarea id="G<%= i %>" name="Gen[]"></textarea>
-                                    <span class="icon validation small success hide">
+                        <div class="row">
+                            <div class="columns">
+                                <div class="small-12 medium-12 large-12">
+                                    <label for="G<%= i %>"><%= question.Text %></label>
+                                    <div class="relative input-wrap">
+                                        <textarea id="G<%= i %>" name="Gen[]"></textarea>
+                                        <span class="icon validation small success hide">
 										<span class="fa fa-check"></span>
 									</span>
-                                    <span class="icon validation small error hide">
+                                        <span class="icon validation small error hide">
 										<span class="fa fa-remove"></span>
 									</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div><!-- /columns -->
-                    </div>
-                    <% i += 1 %>
+                            </div><!-- /columns -->
+                        </div>
+                        <% i += 1 %>
                     <% }) %>
                 </div>
-                <!--                Situation-->
+                <!--Situational-->
                 <div class="box">
                     <div class="row">
                         <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
@@ -396,92 +411,100 @@
 
                         </div>
                     </div>
-                    <!--                    Questions-->
+                    <!--Questions-->
 
                     <% let x = 1 %>
                     <% questions["Situational"].forEach((question) => { %>
-                    <%if(question.Type === "textarea"){%>
-                        <div class="row">
-                        <div class="columns">
-                            <div class="small-12 medium-12 large-12">
-                                <label for="S<%= x %>"><%= question.Text %></label>
-                                <div class="relative input-wrap">
-                                    <textarea id="S<%= x %>" name="sit[]"></textarea>
-                                    <span class="icon validation small success hide">
+                        <% if(question.Type === "textarea"){ %>
+                            <div class="row">
+                                <div class="columns">
+                                    <div class="small-12 medium-12 large-12">
+                                        <label for="S<%= x %>"><%= question.Text %></label>
+                                        <div class="relative input-wrap">
+                                            <textarea id="S<%= x %>" name="sit[]"></textarea>
+                                            <span class="icon validation small success hide">
 										<span class="fa fa-check"></span>
 									</span>
-                                    <span class="icon validation small error hide">
+                                            <span class="icon validation small error hide">
 										<span class="fa fa-remove"></span>
 									</span>
-                                </div>
-                            </div>
-                        </div><!-- /columns -->
-                    </div>
-                    <%} else if (question.Type === 'choice'){%>
-                        <div class="row">
-                            <div class="columns">
-                                <div class="small-12 medium-12 large-12">
-                                    <label for="S<%= x %>"><%= question.Text %></label>
-                                    <% if(question.Text.includes("creativity")) {%>
-                                        <div id="S<%= x %>">
-                                            <div>
-                                                <input type="radio" name="creativity" id="choice1" value="Something you learn">
-                                                <label for="choice1">Something you learn</label>
-                                            </div>
-                                            <div >
-                                                <input type="radio" name="creativity" id="choice2" value="Something you have">
-                                                <label for="choice2">Something you have</label>
-                                            </div>
-
-                                            <div>
-                                                <input type="radio" name="creativity" id="choice3" value="Other">
-                                                <label for="choice3">Other</label>
-
-                                                <div class="reveal-if-active">
-                                                    <input type="text" disabled class="disable-if-inactive" name="creativity" placeholder="Please Specify" data-disable-pair="#choice3">
-                                                    <span class="icon validation small success hide">
-                                                        <span class="fa fa-check"></span>
-                                                    </span>
-                                                    <span class="icon validation small error hide">
-                                                        <span class="fa fa-remove"></span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                    </div>
-                                    <%} else if (question.Text.includes("effective")){%>
-                                        <div id="S<%= x %>">
-                                            <div>
-                                                <input type="radio" name="effective" id="choice4" value="Understanding">
-                                                <label for="choice4">Understanding</label>
-                                            </div>
-                                            <div>
-                                                <input type="radio" name="effective" id="choice5" value="Respect">
-                                                <label for="choice5">Respect</label>
-                                            </div>
-                                            <div>
-                                                <input type="radio" name="effective" id="choice6" value="Transparency">
-                                                <label for="choice6">Transparency</label>
-                                            </div>
-                                            <div>
-                                                <input type="radio" name="effective" id="choice7" value="Other">
-                                                <label for="choice7">Other</label>
-
-                                                <div class="reveal-if-active">
-                                                    <input type="text" disabled class="disable-if-inactive" name="effective" placeholder="Please Specify" data-disable-pair="#choice7">
-                                                    <span class="icon validation small success hide">
-                                                        <span class="fa fa-check"></span>
-                                                    </span>
-                                                    <span class="icon validation small error hide">
-                                                        <span class="fa fa-remove"></span>
-                                                    </span>
-                                                </div>
-                                            </div>
                                         </div>
-                                    <%}%>
+                                    </div>
+                                </div><!-- /columns -->
+                            </div>
+                        <% } else if (question.Type === 'choice'){ %>
+                            <div class="row">
+                                <div class="columns">
+                                    <div class="small-12 medium-12 large-12">
+                                        <label for="S<%= x %>"><%= question.Text %></label>
+                                        <% if(question.Text.includes("creativity")) { %>
+                                            <div id="S<%= x %>">
+                                                <div>
+                                                    <input type="radio" name="creativity" id="choice1"
+                                                           value="Something you learn">
+                                                    <label for="choice1">Something you learn</label>
+                                                </div>
+                                                <div>
+                                                    <input type="radio" name="creativity" id="choice2"
+                                                           value="Something you have">
+                                                    <label for="choice2">Something you have</label>
+                                                </div>
+
+                                                <div>
+                                                    <input type="radio" name="creativity" id="choice3" value="Other">
+                                                    <label for="choice3">Other</label>
+
+                                                    <div class="reveal-if-active">
+                                                        <input type="text" disabled class="disable-if-inactive"
+                                                               name="creativity" placeholder="Please Specify"
+                                                               data-disable-pair="#choice3">
+                                                        <span class="icon validation small success hide">
+                                                        <span class="fa fa-check"></span>
+                                                    </span>
+                                                        <span class="icon validation small error hide">
+                                                        <span class="fa fa-remove"></span>
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } else if (question.Text.includes("effective")){ %>
+                                            <div id="S<%= x %>">
+                                                <div>
+                                                    <input type="radio" name="effective" id="choice4"
+                                                           value="Understanding">
+                                                    <label for="choice4">Understanding</label>
+                                                </div>
+                                                <div>
+                                                    <input type="radio" name="effective" id="choice5" value="Respect">
+                                                    <label for="choice5">Respect</label>
+                                                </div>
+                                                <div>
+                                                    <input type="radio" name="effective" id="choice6"
+                                                           value="Transparency">
+                                                    <label for="choice6">Transparency</label>
+                                                </div>
+                                                <div>
+                                                    <input type="radio" name="effective" id="choice7" value="Other">
+                                                    <label for="choice7">Other</label>
+
+                                                    <div class="reveal-if-active">
+                                                        <input type="text" disabled class="disable-if-inactive"
+                                                               name="effective" placeholder="Please Specify"
+                                                               data-disable-pair="#choice7">
+                                                        <span class="icon validation small success hide">
+                                                        <span class="fa fa-check"></span>
+                                                    </span>
+                                                        <span class="icon validation small error hide">
+                                                        <span class="fa fa-remove"></span>
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } %>
                                 </div>
                             </div><!-- /columns -->
                         </div>
-                    <%}%>
+                        <% } %>
                     <% i += 1 %>
                     <% }) %>
                     <div class="row">
@@ -496,7 +519,7 @@
                         </div>
                     </div>
                 </div>
-                <!--                    End-->
+                <!--End-->
             </form>
         </div>
     </section>
@@ -540,9 +563,8 @@
     <div id="app"></div>
     <!-- Js Files -->
     <!-- j Query -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-            integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/javascript/jquery-3.6.0.min.js"></script>
+    <script src="/javascript/jquery-migrate-3.3.2.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script type="text/javascript" src="/vendor/bootstrap/bootstrap.min.js"></script>
@@ -557,9 +579,7 @@
     <script type="text/javascript" src="/vendor/foundation.min.js"></script>
 
     <!-- Jquery-UI -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
-            integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/javascript/jquery-ui.min.js"></script>
 
     <!-- AJAXSubmit -->
     <script type="text/javascript" src="/vendor/jquery.ajaxSubmit.min.js"></script>
@@ -578,20 +598,49 @@
     <script>
         let timeout = false;
         let questions = JSON.parse(`<%- TeamQuestions %>`)
-        // let questions = {
-        //     Projects: "What do you know about project management?",
-        //     OD:"How to ensure that all teams are on the right track? Explain with a specific method.",
-        //     TM:"How to enhance the performance of the members?",
-        //     LD:"What is the capacity building program? Mention the steps to conduct a training.",
-        //     CR:"List the benefits or values that you can offer to the sponsors/partners",
-        //     RM:"What do you know about product cycle?",
-        //     Events:"Mention & describe an idea for an event, And list the needed actions for implementing this idea.",
-        //     Marketing: "Prepare an offline campaign (theme, title, objectives)",
-        //     Social: "Prepare an online campaign (theme, title, objectives)",
-        //     Visuals: "List the basic video editing concepts you're familiar with if any (timeline, layers, blending modes...etc.)",
-        //     Camera: "What are the basics of photography?",
-        //     Presentation: "Mention 5 pillars will lead person to be a good presenter?"
-        // }
+        let i = 0
+        $(".teamchoice").on('change', async function () {
+            let val = $(this).val()
+            let id = $(this).attr('id')
+            let Qdiv, divid
+            if (id === "first") {
+                divid = "#change1"
+                Qdiv = $(`#change1`)
+            } else {
+                divid = "#change2"
+                Qdiv = $(`#change2`)
+            }
+            Qdiv.slideDown("slow").show()
+            if (questions[val]) {
+                Qdiv.slideUp("fast", async () => {
+                    Qdiv.empty()
+                    await questions[val].forEach((question) => {
+                        Qdiv.append(`<div class="row">
+                            <div class="columns">
+                                <div class="small-12 medium-12 large-12">
+                                    <label for="T${i}">${question}</label>
+                                    <div class="relative input-wrap">
+                                        <textarea id="T{i}" name="team[]"></textarea>
+                                        <span class="icon validation small success hide">
+                                            <span class="fa fa-check"></span>
+                                        </span>
+                                        <span class="icon validation small error hide">
+                                            <span class="fa fa-remove"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div><!-- /columns -->
+                        </div>`)
+                        i += 1
+                    })
+                    Qdiv.slideDown("fast").show()
+                })
+            } else {
+                Qdiv.slideUp("fast", () => {
+                    Qdiv.empty()
+                })
+            }
+        })
 
         function format(time) {
             // Hours, minutes and seconds
@@ -620,52 +669,7 @@
         //     $('#change2q').text(questions[$('#second').val()][0]).fadeIn(500);
         //     $('#change2').slideDown(500).show();
         // });
-        let i = 0
-        $(".teamchoice").on('change', async function () {
-            let val = $(this).val()
-            let id = $(this).attr('id')
-            let Qdiv, divid
-            if (id === "first") {
-                divid = "#change1"
-                Qdiv = $(`#change1`)
-            } else {
-                divid = "#change2"
-                Qdiv = $(`#change2`)
-            }
-            Qdiv.slideDown("slow").show()
-            if (questions[val]) {
-                console.log(questions[val])
-                Qdiv.slideUp("slow", async () => {
-                    console.log("up")
-                    Qdiv.empty()
-                    await questions[val].forEach((question) => {
-                        console.log(question)
-                        Qdiv.append(`<div class="row">
-                            <div class="columns">
-                                <div class="small-12 medium-12 large-12">
-                                    <label for="T${i}">${question}</label>
-                                    <div class="relative input-wrap">
-                                        <textarea id="T{i}" name="team[]"></textarea>
-                                        <span class="icon validation small success hide">
-                                            <span class="fa fa-check"></span>
-                                        </span>
-                                        <span class="icon validation small error hide">
-                                            <span class="fa fa-remove"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div><!-- /columns -->
-                        </div>`)
-                        i += 1
-                    })
-                    Qdiv.slideDown("slow").show()
-                })
-            } else {
-                Qdiv.slideUp("slow", () => {
-                    Qdiv.empty()
-                })
-            }
-        })
+
         // Credit: Mateusz Rybczonec
 
         const FULL_DASH_ARRAY = 283;
@@ -693,28 +697,28 @@
         let remainingPathColor = COLOR_CODES.info.color;
 
         document.getElementById("app").innerHTML = `
-<div class="base-timer">
-  <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <g class="base-timer__circle">
-      <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
-      <path
-        id="base-timer-path-remaining"
-        stroke-dasharray="283"
-        class="base-timer__path-remaining ${remainingPathColor}"
-        d="
-          M 50, 50
-          m -45, 0
-          a 45,45 0 1,0 90,0
-          a 45,45 0 1,0 -90,0
-        "
-      ></path>
-    </g>
-  </svg>
-  <span id="base-timer-label" class="base-timer__label">${formatTime(
+        <div class="base-timer">
+          <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g class="base-timer__circle">
+              <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+              <path
+                id="base-timer-path-remaining"
+                stroke-dasharray="283"
+                class="base-timer__path-remaining ${remainingPathColor}"
+                d="
+                  M 50, 50
+                  m -45, 0
+                  a 45,45 0 1,0 90,0
+                  a 45,45 0 1,0 -90,0
+                "
+              ></path>
+            </g>
+          </svg>
+          <span id="base-timer-label" class="base-timer__label">${formatTime(
             timeLeft
         )}</span>
-</div>
-`;
+        </div>
+        `;
 
         startTimer();
 
@@ -836,20 +840,20 @@
         // });
         let OtherOptionHandle = {
 
-            init: function() {
+            init: function () {
                 // kick it off once, in case the radio is already checked when the page loads
                 this.applyConditionalRequired();
                 this.bindUIActions();
             },
 
-            bindUIActions: function() {
+            bindUIActions: function () {
                 // when a radio or checkbox changes value, click or otherwise
                 $("input[type='radio'], input[type='checkbox']").on("change", this.applyConditionalRequired);
             },
 
-            applyConditionalRequired: function() {
+            applyConditionalRequired: function () {
                 // find each input that may be hidden or not
-                $(".disable-if-inactive").each(function() {
+                $(".disable-if-inactive").each(function () {
                     let el = $(this);
                     // find the pairing radio or checkbox
                     if ($(el.data("disable-pair")).is(":checked")) {

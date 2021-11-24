@@ -195,22 +195,28 @@ router.post('/application',function (req, res, next) {
         effective
     } = req.body;
     let team = req.body['team[]'];
-    let gen=req.body['Gen[]'];
-    let sit=req.body['sit[]'];
+    let gen = req.body['Gen[]'];
+    let sit = req.body['sit[]'];
     sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
     sit.push(Array.isArray(effective) ? effective[1] : effective)
     let answers = {
         Team: team,
         General: gen,
-        Situational:sit
+        Situational: sit
     }
     console.error(req.body);
+    if (!team) {
+        winston.warn("No Team Questions " + email + "  " + req.useragent.toString())
+        return res.redirect("/applicationerror?code=147")
+    }
     let state = "Applied"
-    Applicant.findOne({where:{
+    Applicant.findOne({
+        where: {
             Token: token,
             End: null
-        }}).then((applicant)=>{
-        if (!applicant){
+        }
+    }).then((applicant) => {
+        if (!applicant) {
             winston.warn(new Date() + email + ": No Open Token");
             return res.redirect("/tokenerror");
         }
@@ -221,9 +227,9 @@ router.post('/application',function (req, res, next) {
             state = "Overtime"
         }
         applicant.update({
-            Name: name,
+            Name: name ? name : applicant.Name,
             Age: age ? age : 0,
-            Phone: phone,
+            Phone: phone ? phone : applicant.Phone,
             CUStudent: custudent,
             State: state,
             Time: secs,
@@ -295,9 +301,9 @@ router.post('/applicationajax',function (req, res, next) {
             return res.status(400).json({msg: "Error"});
         }
         applicant.update({
-            Name: name,
+            Name: name ? name : applicant.Name,
             Age: age ? age : 0,
-            Phone: phone,
+            Phone: phone ? phone : applicant.Phone,
             CUStudent: custudent,
             State: state,
             Time: secs,

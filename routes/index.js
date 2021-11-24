@@ -93,17 +93,17 @@ router.post('/apply' , function (req, res, next) {
 });
 
 router.post('/checkemail',((req, res, next) =>{
-  let email = req.body.email;
-  console.log(email)
-  Applicant.findOne({where: {Email: email, Season: settings["CurrentSeason"].Value}}).then((app)=>{
-    if (app){
-      console.log("Found");
-      res.send({msg: "found"});
-    } else {
-      console.log("Not Found");
-      res.send({msg: "non"})
-    }
-  });
+    let email = req.body.email;
+    winston.warn(new Date() + "Check Email: " + email)
+    Applicant.findOne({where: {Email: email, Season: settings["CurrentSeason"].Value}}).then((app) => {
+        if (app) {
+            winston.warn(new Date() + "Found");
+            res.send({msg: "found"});
+        } else {
+            winston.warn(new Date() + "Not Found");
+            res.send({msg: "non"})
+        }
+    });
 }))
 
 router.get('/success', function (req, res, next) {
@@ -150,23 +150,24 @@ router.get('/application', async function (req, res, next) {
             End: null
         }}).then((applicant)=>{
             if (!applicant){
-                console.log("Wrong Token")
+                winston.warn(new Date() + "Wrong Token")
                 return res.redirect("/tokenerror");
             }
             if(!isValid(applicant.Start)){
-                console.log("New Start Time")
+                winston.warn(new Date() + "New Start Time")
                 applicant.Start = new Date();
                 applicant.save();
             }
-            let remaining = differenceInSeconds(addSeconds(applicant.Start, parseInt(settings["FormTime"].Value) + 10), new Date())
-        if (remaining < -200)
-        {
-            console.log(applicant.Email + " : Time Out App " + remaining)
+        let remaining = differenceInSeconds(addSeconds(applicant.Start, parseInt(settings["FormTime"].Value) + 10), new Date())
+        if (remaining < -200) {
+            winston.warn(new Date() + applicant.Email + " : Time Out App " + remaining)
             res.redirect("/tokenerror");
         }
-            console.log(applicant.Email + " : Start: " + applicant.Start )
-            res.render('recruitment/application', {title: "New Member Application Questions",
-            remaining: remaining, token:token, choices, questions, TeamQuestions: JSON.stringify(TeamQuestions)});
+        winston.warn(new Date() + applicant.Email + " : Start: " + applicant.Start)
+        res.render('recruitment/application', {
+            title: "New Member Application Questions",
+            remaining: remaining, token: token, choices, questions, TeamQuestions: JSON.stringify(TeamQuestions)
+        });
     }).catch(()=>{
         return res.redirect("/applicationerror?code=104");
     })
@@ -203,26 +204,25 @@ router.post('/application',function (req, res, next) {
         General: gen,
         Situational:sit
     }
-    console.log(req.body);
-    console.log(sit)
+    console.error(req.body);
     let state = "Applied"
     Applicant.findOne({where:{
             Token: token,
             End: null
         }}).then((applicant)=>{
         if (!applicant){
-            console.log(email + ": No Open Token");
+            winston.warn(new Date() + email + ": No Open Token");
             return res.redirect("/tokenerror");
         }
         let secs = differenceInSeconds(new Date(), applicant.Start);
         if (secs > (parseInt(settings["FormTime"].Value) * 1.1)) {
-            console.log(email + ": Timed Out " + secs);
+            winston.warn(new Date() + email + ": Timed Out " + secs);
             // return res.redirect("/tokenerror");
             state = "Overtime"
         }
         applicant.update({
             Name: name,
-            Age: age,
+            Age: age ? age : 0,
             Phone: phone,
             CUStudent: custudent,
             State: state,
@@ -241,7 +241,7 @@ router.post('/application',function (req, res, next) {
         })
         res.redirect('/success');
     }).catch((err)=>{
-        console.log(err);
+        winston.error(err);
         return res.redirect("/applicationerror?code=106");
     })
 
@@ -268,33 +268,35 @@ router.post('/applicationajax',function (req, res, next) {
         effective
     } = req.body;
     let team = req.body['team[]'];
-    let gen=req.body['Gen[]'];
-    let sit=req.body['sit[]'];
+    let gen = req.body['Gen[]'];
+    let sit = req.body['sit[]'];
     sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
     sit.push(Array.isArray(effective) ? effective[1] : effective)
     let answers = {
         Team: team,
         General: gen,
-        Situational:sit
+        Situational: sit
     }
-    console.log("AppAJAX: " + email + new Date());
-    console.log(req.body);
+    winston.warn("AppAJAX: " + email + new Date());
+    console.error(req.body);
     let state = "Applied"
-    Applicant.findOne({where: {
+    Applicant.findOne({
+        where: {
             Token: token,
             End: null
-        }}).then((applicant)=>{
-        if (!applicant){
+        }
+    }).then((applicant) => {
+        if (!applicant) {
             return res.status(400).json({msg: "Error"});
         }
         let secs = differenceInSeconds(new Date(), applicant.Start);
-        if (secs > (parseInt(settings["FormTime"].Value) * 1.14)){
+        if (secs > (parseInt(settings["FormTime"].Value) * 1.14)) {
             state = "Overtime"
             return res.status(400).json({msg: "Error"});
         }
         applicant.update({
             Name: name,
-            Age: age,
+            Age: age ? age : 0,
             Phone: phone,
             CUStudent: custudent,
             State: state,

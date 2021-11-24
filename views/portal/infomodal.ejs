@@ -29,37 +29,45 @@
                       class="form-control"><%= app.Courses %></textarea>
         </div>
         <br>
-        <%let q = 0%>
+        <% let q = 0 %>
         <label>Team</label>
         <hr>
         <br><h6>Questions: <%= app.First %></h6>
-        <%if(questions[app.First]) {%>
-        <%questions[app.First].forEach((question, index) => {%>
-            <div class="form-group">
-                <label><%=question.Text%></label>
+        <% if(questions[app.First]) { %>
+        <% questions[app.First].forEach((question, index) => { %>
+        <div class="form-group">
+            <label><%= question.Text %></label>
+            <% if(app.Answers.Team){ %>
                 <textarea disabled
-                          class="form-control"><%= app.Answers.Team[q] %></textarea>
-            </div>
-        <% q = q +1%>
-        <%})%>
-        <%}%>
+                          class="form-control"><%= app.Answers.Team[q] %> </textarea>
+            <% } else { %>
+                <h6 class="text-red"> No Answers Found in DB</h6>
+            <% } %>
+        </div>
+        <% q = q + 1 %>
+        <% }) %>
+        <% } %>
         <br>
         <h6>Questions: <%= app.Second %></h6>
-        <%if(questions[app.Second]) {%>
-        <%questions[app.Second].forEach((question, index) => {%>
+        <% if(questions[app.Second]) { %>
+        <% questions[app.Second].forEach((question, index) => { %>
         <div class="form-group">
-            <label><%=question.Text%></label>
-            <textarea disabled
-                      class="form-control"><%= app.Answers.Team[q] %></textarea>
+            <label><%= question.Text %></label>
+            <% if(app.Answers.Team){ %>
+                <textarea disabled
+                          class="form-control"><%= app.Answers.Team[q] %> </textarea>
+            <% } else { %>
+                <h6 class="text-red"> No Answers Found in DB</h6>
+            <% } %>
         </div>
-        <% q = q +1%>
-        <%})%>
-        <%}%>
+        <% q = q + 1 %>
+        <% }) %>
+        <% } %>
         <br><h6>General</h6>
         <hr>
-        <%questions["General"].forEach((question, index) => {%>
+        <% questions["General"].forEach((question, index) => { %>
         <div class="form-group">
-            <label><%=question.Text%></label>
+            <label><%= question.Text %></label>
             <textarea disabled
                       class="form-control"><%= app.Answers.General[index] %></textarea>
         </div>

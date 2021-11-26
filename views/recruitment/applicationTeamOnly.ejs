@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- For Resposive Device -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> <%= settings["WebsiteName"].Value %> || <%= title %></title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/css/timer.css">
+    <!-- Main style sheet -->
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <!-- responsive style sheet -->
+    <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+
+    <!-- Animate -->
+    <link rel="stylesheet" type="text/css" href="/vendor/animate.css">
+
+    <!-- Foundation -->
+    <link rel="stylesheet" type="text/css" href="/vendor/foundation.min.css">
+
+    <!-- Other -->
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PHC5BRL');</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Fix Internet Explorer -->
+
+    <!--    &lt;!&ndash;[if lt IE 9]>-->
+    <script src="/vendor/html5shiv.js"></script>
+    <script src="/vendor/respond.js"></script>
+    <!--    <![endif]&ndash;&gt;-->
+
+</head>
+
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHC5BRL"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div class="main-page-wrapper">
+    <section style="margin-bottom: 20px" id="contact-section">
+        <div class="container send-message">
+            <form id="ApplicationForm2" method="post">
+                <!--                Personal-->
+                <div class="box">
+                    <div class="row">
+                        <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
+                            <h4>Personal Info</h4>
+                            <p>For Cairo University Students Only</p>
+                        </div>
+                    </div>
+                    <!-- Personal Questions-->
+                    <!--Name-->
+                    <div class="row">
+                        <div class="columns small-12 medium-12 large-12">
+                            <label for="fullName">Your Full Name <span style="color:#ff0022;">*</span></label>
+                            <div class="relative input-wrap">
+                                <input id="fullName" type="text" name="name" disabled placeholder="Full Name*"
+                                       value="<%= app.Name %>">
+                            </div>
+                        </div>
+                    </div>
+                    <!--Email-->
+                    <div class="row">
+                        <div class="small-12 medium-12 large-12">
+                            <div class="columns small-12 medium-12 large-12">
+                                <label for="email">Your Email<span style="color:#ff0022;">*</span></label>
+                                <div class="relative input-wrap">
+                                    <input id="email" type="email" name="email" disabled placeholder="Email *"
+                                           value="<%= app.Email %>">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Phone -->
+                    <div class="row">
+                        <div class="columns small-12 medium-6 large-6">
+                            <label for="phone">Your Phone Number<span style="color:#ff0022;">*</span></label>
+                            <div class="relative input-wrap">
+                                <input type="tel" disabled id="phone" placeholder="Phone Number*"
+                                       value="<%= app.Phone %>">
+
+                            </div>
+                        </div>
+                    </div>
+                    <!--Age-->
+                    <div class="row">
+                        <div class="columns small-12 medium-6 large-6">
+                            <label for="age">Your Age<span style="color:#ff0022;">*</span></label>
+                            <div class="relative input-wrap">
+                                <input type="number" min="15" max="32" disabled id="age" placeholder="Age*"
+                                       value="<%= app.Age %>">
+                            </div>
+                            <div class="is-helpful" data-helper="Ex: 18"
+                                 data-error="Please enter a valid age."></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Team-->
+                <div class="box">
+                    <div class="row">
+                        <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
+                            <h4>Team Preferences</h4>
+                        </div>
+                    </div>
+                    <!--Short Answer Questions-->
+                    <div class="row">
+                        <div class="columns">
+                            <div class="small-12 medium-12 large-12">
+                                <h5>1st Preference - <%= app.First %></h5>
+                                <% let i = 0 %>
+                                <% TeamQuestions[app.First].forEach((question) => { %>
+                                <div class="row">
+                                    <div class="columns">
+                                        <div class="small-12 medium-12 large-12">
+                                            <label for="T<%= i %>"><%= question %></label>
+                                            <div class="relative input-wrap">
+                                                <textarea id="T<%= i %>" name="team[]"></textarea>
+                                                <span class="icon validation small success hide">
+                                            <span class="fa fa-check"></span>
+                                        </span>
+                                                <span class="icon validation small error hide">
+                                            <span class="fa fa-remove"></span>
+                                        </span>
+                                            </div>
+                                        </div>
+                                    </div><!-- /columns -->
+                                </div>
+                                <% i += 1 %>
+                                <% }) %>
+                            </div><!-- /col-24 -->
+                        </div><!-- /columns -->
+                    </div>
+                    <div class="row">
+                        <div class="columns">
+                            <div class="small-12 medium-12 large-12">
+                                <h5>2nd Preference - <%= app.Second %></h5>
+                                <% TeamQuestions[app.Second].forEach((question) => { %>
+                                <div class="row">
+                                    <div class="columns">
+                                        <div class="small-12 medium-12 large-12">
+                                            <label for="T<%= i %>"><%= question %></label>
+                                            <div class="relative input-wrap">
+                                                <textarea id="T<%= i %>" name="team[]"></textarea>
+                                                <span class="icon validation small success hide">
+                                            <span class="fa fa-check"></span>
+                                        </span>
+                                                <span class="icon validation small error hide">
+                                            <span class="fa fa-remove"></span>
+                                        </span>
+                                            </div>
+                                        </div>
+                                    </div><!-- /columns -->
+                                </div>
+                                <% i += 1 %>
+                                <% }) %>
+                            </div><!-- /col-24 -->
+                        </div><!-- /columns -->
+                    </div>
+                    <div class="row">
+                        <div class="columns" style="text-align: center">
+                            <div class="small-12 medium-12 large-12">
+                                <input type="hidden" name="token" value="<%= token %>">
+                                <button type="submit" id="submit" class="btn hvr-bounce-to-right"
+                                        style="margin-left: auto; margin-right: auto; font-size: 18px; border-radius: 2px; border-width: 2px;">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--End-->
+            </form>
+        </div>
+    </section>
+
+
+    <!---------Footer---------->
+    <footer>
+        <div class="container">
+            <a href="/" class="logo"><img src="images/logo/logo.png" alt="Logo"></a>
+
+            <ul>
+                <li><a href="https://www.facebook.com/EnactusCairo/" class="tran3s round-border"><i
+                                class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                <!--                <li><a href="#" class="tran3s round-border"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>-->
+                <li><a href="https://www.linkedin.com/company/enactus-cairo-university/" class="tran3s round-border"><i
+                                class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                <li><a href="https://www.instagram.com/enactuscairo/" class="tran3s round-border"><i
+                                class="fa fa-instagram" aria-hidden="true"></i></a></li>
+            </ul>
+        </div>
+    </footer>
+
+
+    <!---------Pre Loader---------->
+    <div id="loader-wrapper">
+        <div id="preloader_1">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+
+    <!-- Timer -->
+    <!--    <div class="timer tran3s p-color-bg">-->
+    <!--        <p id="countdown"></p>-->
+    <!--    </div>-->
+
+    <div id="app"></div>
+    <!-- Js Files -->
+    <!-- j Query -->
+    <script src="/javascript/jquery-3.6.0.min.js"></script>
+    <script src="/javascript/jquery-migrate-3.3.2.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script type="text/javascript" src="/vendor/bootstrap/bootstrap.min.js"></script>
+
+    <!-- Foundation -->
+    <script type="text/javascript" src="/vendor/foundation.min.js"></script>
+
+    <!-- Wow -->
+    <script type="text/javascript" src="/vendor/wow.min.js"></script>
+
+    <!-- Foundation -->
+    <script type="text/javascript" src="/vendor/foundation.min.js"></script>
+
+    <!-- Jquery-UI -->
+    <script src="/javascript/jquery-ui.min.js"></script>
+
+    <!-- AJAXSubmit -->
+    <script type="text/javascript" src="/vendor/jquery.ajaxSubmit.min.js"></script>
+
+    <!-- Validation -->
+    <script type="text/javascript" src="/js/validation.js"></script>
+
+    <!--Form Persist-->
+    <script type="text/javascript" src="/js/savestorage.min.js"></script>
+    <!-- Toasts -->
+    <% include ../partials/toasts.ejs %>
+
+    <!-- Main js -->
+    <script type="text/javascript" src="/js/main.js"></script>
+
+    <script>
+        let timeout = false;
+
+        function format(time) {
+            // Hours, minutes and seconds
+            let hrs = ~~(time / 3600);
+            let mins = ~~((time % 3600) / 60);
+            let secs = ~~time % 60;
+
+            // Output like "1:01" or "4:03:59" or "123:03:59"
+            let ret = "";
+            if (hrs > 0) {
+                ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+            }
+            ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+            ret += "" + secs;
+            return ret;
+        }
+
+        let remaining = <%= remaining %>;
+
+        // $(document).on('change', '#first', ()=>{
+        //     $('#change1q').fadeIn(500).text(questions[$('#first').val()][0]);
+        //     $('#change1').slideDown(500).show();
+        //
+        // })
+        // $(document).on('change', '#second', ()=>{
+        //     $('#change2q').text(questions[$('#second').val()][0]).fadeIn(500);
+        //     $('#change2').slideDown(500).show();
+        // });
+
+        // Credit: Mateusz Rybczonec
+
+        const FULL_DASH_ARRAY = 283;
+        const WARNING_THRESHOLD = 120;
+        const ALERT_THRESHOLD = 30;
+
+        const COLOR_CODES = {
+            info: {
+                color: "green"
+            },
+            warning: {
+                color: "orange",
+                threshold: WARNING_THRESHOLD
+            },
+            alert: {
+                color: "red",
+                threshold: ALERT_THRESHOLD
+            }
+        };
+
+        const TIME_LIMIT = <%= parseInt(settings["FormTime"].Value) + 10 %>;
+        let timePassed = TIME_LIMIT - <%= remaining %>;
+        let timeLeft = <%= remaining %>;
+        let timerInterval = null;
+        let remainingPathColor = COLOR_CODES.info.color;
+
+        document.getElementById("app").innerHTML = `
+        <div class="base-timer">
+          <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g class="base-timer__circle">
+              <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+              <path
+                id="base-timer-path-remaining"
+                stroke-dasharray="283"
+                class="base-timer__path-remaining ${remainingPathColor}"
+                d="
+                  M 50, 50
+                  m -45, 0
+                  a 45,45 0 1,0 90,0
+                  a 45,45 0 1,0 -90,0
+                "
+              ></path>
+            </g>
+          </svg>
+          <span id="base-timer-label" class="base-timer__label">${formatTime(
+            timeLeft
+        )}</span>
+        </div>
+        `;
+
+        startTimer();
+
+        function onTimesUp() {
+            clearInterval(timerInterval);
+            toastr.error("The time has ended, you have 60 seconds to submit");
+            let pass = 60;
+
+            function timer2() {
+                timerInterval = setInterval(() => {
+                        pass--;
+                        if (pass === 30) {
+                            toastr.error("30 seconds Left");
+                        }
+                        if (pass < 10 && pass > 0) {
+                            toastr.error(pass + " seconds Left");
+                        }
+                        if (pass === 0) {
+                            toastr.error("Timeout");
+                            $.ajax({
+                                    type: 'POST',
+                                    url: '/application/continueajax',
+                                    data: $('#ApplicationForm2').serialize(),
+                                    success: (res) => {
+                                        toastr.success(res.msg);
+                                        $(location).attr('href', '/timeout');
+                                    },
+                                    error: () => {
+                                        $(location).attr('href', '/tokenerror');
+                                    }
+                                }
+                            );
+                        }
+                    }
+                    , 1000);
+            }
+
+            timer2();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timePassed = timePassed += 1;
+                timeLeft = TIME_LIMIT - timePassed;
+                document.getElementById("base-timer-label").innerHTML = formatTime(
+                    timeLeft
+                );
+                setCircleDasharray();
+                setRemainingPathColor(timeLeft);
+
+                if (timeLeft === 0) {
+                    onTimesUp();
+                }
+            }, 1000);
+        }
+
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            let seconds = time % 60;
+
+            if (seconds < 10) {
+                seconds = `0${seconds}`;
+            }
+
+            return `${minutes}:${seconds}`;
+        }
+
+        function setRemainingPathColor(timeLeft) {
+            const {alert, warning, info} = COLOR_CODES;
+            if (timeLeft <= alert.threshold) {
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.remove(warning.color);
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.add(alert.color);
+            } else if (timeLeft <= warning.threshold) {
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.remove(info.color);
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.add(warning.color);
+            }
+        }
+
+        function calculateTimeFraction() {
+            const rawTimeFraction = timeLeft / TIME_LIMIT;
+            return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+        }
+
+        function setCircleDasharray() {
+            const circleDasharray = `${(
+                calculateTimeFraction() * FULL_DASH_ARRAY
+            ).toFixed(0)} 283`;
+            document
+                .getElementById("base-timer-path-remaining")
+                .setAttribute("stroke-dasharray", circleDasharray);
+        }
+
+        let VerifyInput = () => {
+            let valid = true;
+            $("#ApplicationForm2 input").each(function () {
+                if (!$(this).parent().hasClass("is-valid") && $(this).parent().hasClass("is-required")) {
+                    valid = false;
+                    $(this).trigger("blur");
+                }
+            });
+            $("#ApplicationForm2 textarea").each(function () {
+                if (!$(this).parent().hasClass("is-valid") && $(this).parent().hasClass("is-required")) {
+                    valid = false;
+                    $(this).trigger("blur");
+                }
+            });
+            return valid;
+        }
+        // $('#ApplicationForm2').saveStorage({
+        //     exclude: ['password','hidden']
+        // });
+        let OtherOptionHandle = {
+
+            init: function () {
+                // kick it off once, in case the radio is already checked when the page loads
+                this.applyConditionalRequired();
+                this.bindUIActions();
+            },
+
+            bindUIActions: function () {
+                // when a radio or checkbox changes value, click or otherwise
+                $("input[type='radio'], input[type='checkbox']").on("change", this.applyConditionalRequired);
+            },
+
+            applyConditionalRequired: function () {
+                // find each input that may be hidden or not
+                $(".disable-if-inactive").each(function () {
+                    let el = $(this);
+                    // find the pairing radio or checkbox
+                    if ($(el.data("disable-pair")).is(":checked")) {
+                        // if its checked, the field should be enabled
+                        el.prop("disabled", false);
+                    } else {
+                        // otherwise it should not
+                        el.prop("disabled", true);
+                    }
+                });
+            }
+
+        };
+
+        OtherOptionHandle.init();
+    </script>
+
+</div>
+</body>
+</html>

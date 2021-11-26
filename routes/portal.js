@@ -9,8 +9,9 @@ const sequelize = require('sequelize');
 const {GoogleSpreadsheet} = require('google-spreadsheet'),
     {promisify} = require('util'),
     creds = require('../config/Enactus21-d39432b22314.json');
-const { formatToTimeZone }= require("date-fns-timezone");
-async function AddToSheet(row){
+const {formatToTimeZone} = require("date-fns-timezone");
+
+async function AddToSheet(row) {
     const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
     await doc.useServiceAccountAuth(creds);
     await doc.loadInfo()
@@ -25,6 +26,7 @@ async function AddToSheet(row){
 
     }
     let FuncSheet = await doc.sheetsByTitle[row.First];
+    let FuncSheet2 = await doc.sheetsByTitle[row.Second];
     if (!FuncSheet) {
         try {
             FuncSheet = await doc.addSheet({title: row.First, headerValues: Object.keys(row)});
@@ -34,19 +36,20 @@ async function AddToSheet(row){
         }
 
     }
-    if(row.State === "Accepted")
-    {
+    if (row.State === "Accepted") {
         row.State = "Filtered";
     }
     try {
         await sheet.addRow(row)
         await FuncSheet.addRow(row);
+        await FuncSheet2.addRow(row);
         return true;
     } catch (e) {
         console.log(e);
         return false;
     }
 }
+
 const multer = require('multer');
 const path = require('path');
 const fs = require("fs");
@@ -69,12 +72,17 @@ function isNumeric(str) {
 
 // Portal Home (For Non-Members)
 router.get('/', isAuth, async function (req, res, next) {
-    if (req.user.Position.Name === 'TD Member'){
+    if (req.user.Position.Name === 'TD Member') {
         res.redirect("/portal/members/kpi");
     } else {
         let applied = await Applicant.count({where: {State: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value}});
         let accepted = await Applicant.count({where: {State: "Accepted", Season: settings["CurrentSeason"].Value}})
-        let interviewed = await Applicant.count({where: {State: "Interviewed", Season: settings["CurrentSeason"].Value}})
+        let interviewed = await Applicant.count({
+            where: {
+                State: "Interviewed",
+                Season: settings["CurrentSeason"].Value
+            }
+        })
         let rejected = await Applicant.count({where: {State: "Rejected", Season: settings["CurrentSeason"].Value}})
         let First = await Applicant.findAll({
             where: {State: {[Op.ne]: null}, First: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value},
@@ -131,46 +139,48 @@ router.get('/messages', isAuth, async function (req, res, next) {
 
 // Main KPI Route, Lists All Members
 router.get('/members/kpi', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
 
     let mem;
-    if (req.user.Position.Name === "TD Member"){
-       mem = await Member.findAll({where:
-               {
-                   Committee: req.user.Rep
-               }
-       })
+    if (req.user.Position.Name === "TD Member") {
+        mem = await Member.findAll({
+            where:
+                {
+                    Committee: req.user.Rep
+                }
+        })
     } else {
         mem = await Member.findAll()
     }
 
-        res.render('portal/membersview', {title: "All Members", members: mem});
+    res.render('portal/membersview', {title: "All Members", members: mem});
 
 
 });
 
 
 router.post('/editkpi', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
-    let {January, February, March, April, May, June, July}=req.body
+    let {January, February, March, April, May, June, July} = req.body
     Member.findOne({
         where: {
             id: req.body.id
-        }}).then(mem => {
-            mem.KPI = {
-                "January": isNumeric(January) ? +January : null,
-                "February": isNumeric(February) ? +February : null,
-                "March": isNumeric(March) ? +March : null,
-                "April": isNumeric(April) ? +April : null,
-                "May": isNumeric(May) ? +May : null,
-                "June": isNumeric(June) ? +June : null,
-                "July": isNumeric(July) ? +July : null
-            }
-            mem.save();
+        }
+    }).then(mem => {
+        mem.KPI = {
+            "January": isNumeric(January) ? +January : null,
+            "February": isNumeric(February) ? +February : null,
+            "March": isNumeric(March) ? +March : null,
+            "April": isNumeric(April) ? +April : null,
+            "May": isNumeric(May) ? +May : null,
+            "June": isNumeric(June) ? +June : null,
+            "July": isNumeric(July) ? +July : null
+        }
+        mem.save();
             res.send({msg: "Saved!"});
         }
     ).catch(() => {
@@ -179,7 +189,7 @@ router.post('/editkpi', isAuth, async function (req, res, next) {
 });
 
 router.get('/members/edit/kpi', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let id = req.query.id;
@@ -189,7 +199,7 @@ router.get('/members/edit/kpi', isAuth, function (req, res, next) {
             id: id
         }
     }).then(mem => {
-        if(mem){
+        if (mem) {
             res.render('portal/editkpimodal', {mem: mem});
         }
     }).catch(() => {
@@ -199,16 +209,17 @@ router.get('/members/edit/kpi', isAuth, function (req, res, next) {
 //End KPI
 // Ranking Routes
 router.get('/members/ranking', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let mem;
-    if (req.user.Position.Name === "TD Member"){
-        mem = await Member.findAll({where:
+    if (req.user.Position.Name === "TD Member") {
+        mem = await Member.findAll({
+            where:
                 {
                     Committee: req.user.Rep
                 }
-        } )
+        })
     } else {
         mem = await Member.findAll()
     }
@@ -219,11 +230,11 @@ router.get('/members/ranking', isAuth, async function (req, res, next) {
 });
 
 router.post('/editranking', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
 
-    let {April, May, June, July}=req.body
+    let {April, May, June, July} = req.body
     let Months = [isNumeric(April) ? "April" : null, isNumeric(May) ? "May" : null, isNumeric(June) ? "June" : null, isNumeric(July) ? "July" : null]
     Months = Months.filter(function (el) {
         return el != null;
@@ -237,27 +248,28 @@ router.post('/editranking', isAuth, async function (req, res, next) {
     Ranking.findAll({
         where: {
             MemberId: req.body.id
-        }}).then(rankings => {
-            rankings.forEach(ranking=>{
-                if (Months.includes(ranking.Month)){
-                    ranking.Ranking = RankingValues[ranking.Month]
-                    ranking.save()
-                    Months = Months.filter(function (el) {
-                        return el !== ranking.Month;
-                    });
-                } else {
-                    ranking.destroy()
-                }
+        }
+    }).then(rankings => {
+        rankings.forEach(ranking => {
+            if (Months.includes(ranking.Month)) {
+                ranking.Ranking = RankingValues[ranking.Month]
+                ranking.save()
+                Months = Months.filter(function (el) {
+                    return el !== ranking.Month;
+                });
+            } else {
+                ranking.destroy()
+            }
+        })
+        Months.forEach(month => {
+            Ranking.create({
+                MemberId: req.body.id,
+                Month: month,
+                Ranking: RankingValues[month],
+                Directorate: req.body.directorate
             })
-            Months.forEach(month=>{
-                Ranking.create({
-                    MemberId: req.body.id,
-                    Month: month,
-                    Ranking: RankingValues[month],
-                    Directorate: req.body.directorate
-                })
-            })
-            res.send({msg: "Saved!"});
+        })
+        res.send({msg: "Saved!"});
         }
     ).catch(() => {
         createError(404);
@@ -265,7 +277,7 @@ router.post('/editranking', isAuth, async function (req, res, next) {
 });
 
 router.get('/members/edit/ranking', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let id = req.query.id;
@@ -276,11 +288,11 @@ router.get('/members/edit/ranking', isAuth, function (req, res, next) {
         }, include: Ranking
     }).then(mem => {
         mem.Ranking = {}
-        for (let ran of mem.Rankings){
+        for (let ran of mem.Rankings) {
             mem.Ranking[ran.Month] = ran.Ranking;
         }
         console.log(mem)
-        if(mem){
+        if (mem) {
             res.render('portal/editrankmodal', {mem: mem});
         }
     }).catch(() => {
@@ -290,8 +302,8 @@ router.get('/members/edit/ranking', isAuth, function (req, res, next) {
 //End Ranking
 
 router.get('/applicants/all', isAuth, function (req, res, next) {
-    if(!(["Admin", "President", "Marketing VP", "HR VP", "TD Team Leader", "OD Team Leader","L&D Team Leader"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
-    res.redirect("/portal")
+    if (!(["Admin", "President", "Marketing VP", "Projects VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+        res.redirect("/portal")
     }
     Applicant.findAll({
         where: {
@@ -311,13 +323,12 @@ router.get('/applicants/all', isAuth, function (req, res, next) {
 router.get('/applicants/my', isAuth, async function (req, res, next) {
     let Position = req.user.Position;
     let rank = await Position.getRank();
-    if (rank.Level < 2){
+    if (rank.Level < 2) {
         next(createError(403));
     }
     let team = await Position.getTeam();
     let state = "Accepted";
-    if (team.Name === "Marketing" || team.Name === "Visuals")
-    {
+    if (team.Name === "Marketing" || team.Name === "Visuals" || team.Name === "Projects") {
         state = ["Accepted", "Rejected"];
     }
     Applicant.findAll({
@@ -336,10 +347,9 @@ router.get('/applicants/my', isAuth, async function (req, res, next) {
 
 router.get('/applicants/bydate/', isAuth, function (req, res, next) {
     let date;
-    if(req.query.date === undefined){
+    if (req.query.date === undefined) {
         date = formatToTimeZone(new Date(), "DD-MMM-YYYY", {timeZone: 'Africa/Cairo'});
-    }
-    else {
+    } else {
         date = req.query.date;
     }
     console.log(date);
@@ -386,7 +396,7 @@ router.post('/applicants/filter', isAuth, function (req, res, next) {
 });
 
 router.post('/editapplicant', isAuth, function (req, res, next) {
-    let {id, State, Notes, ITime, IDate, ATime }= req.body;
+    let {id, State, Notes, ITime, IDate, ATime} = req.body;
     console.log(req.body)
     Applicant.findOne({
         where: {id: id, Season: settings["CurrentSeason"].Value}
@@ -394,13 +404,13 @@ router.post('/editapplicant', isAuth, function (req, res, next) {
         app.State = State
         app.Notes = Notes
         await app.save()
-        if (ITime){
+        if (ITime) {
             app.ITime = ITime
         }
-        if (IDate){
+        if (IDate) {
             app.IDate = IDate
         }
-        if (ATime){
+        if (ATime) {
             app.ATime = ATime
         }
         await app.save()
@@ -426,23 +436,40 @@ router.get('/applicants/incomplete', isAuth, function (req, res, next) {
 });
 
 router.post('/applicants/incomplete', isAuth, function (req, res, next) {
-    let {id, name, email, phone, custudent, faculty, academic, major, minor, english, courses, excur, first, second} = req.body;
-    let team=req.body['team[]'];
-    let gen=req.body['Gen[]'];
-    let sit=req.body['sit[]'];
+    let {
+        id,
+        name,
+        email,
+        phone,
+        custudent,
+        faculty,
+        academic,
+        major,
+        minor,
+        english,
+        courses,
+        excur,
+        first,
+        second
+    } = req.body;
+    let team = req.body['team[]'];
+    let gen = req.body['Gen[]'];
+    let sit = req.body['sit[]'];
     let answers = {
         Team: team,
         General: gen,
-        Situational:sit
+        Situational: sit
     }
-    Applicant.findOne({where: {
+    Applicant.findOne({
+        where: {
             id: id,
             Season: settings["CurrentSeason"].Value
-        }}).then((applicant)=>{
-        if (!applicant){
+        }
+    }).then((applicant) => {
+        if (!applicant) {
             return res.status(400).json({msg: "Error"});
         }
-        let secs =  parseInt(settings["FormTime"].Value) * 1.05;
+        let secs = parseInt(settings["FormTime"].Value) * 1.05;
         applicant.update({
             Name: name,
             Phone: phone,
@@ -462,15 +489,14 @@ router.post('/applicants/incomplete', isAuth, function (req, res, next) {
             End: new Date(),
         })
         res.status(200).json({msg: "Done"});
-    }).catch((err)=>{
+    }).catch((err) => {
         console.log(err);
         return res.status(400).json({msg: "Error"});
     })
 
 });
-
 router.post('/sendtosheet', isAuth, function (req, res, next) {
-    let {id}= req.body;
+    let {id} = req.body;
     console.log("Sheet");
     Applicant.findOne({
         where: {id: id, Season: settings["CurrentSeason"].Value}
@@ -493,17 +519,18 @@ router.post('/sendtosheet', isAuth, function (req, res, next) {
             Courses: app.Courses,
             First: app.First,
             Second: app.Second,
-            Q1: app.Answers.Team[0],
-            Q2: app.Answers.Team[1],
-            Q3: app.Answers.Team[2],
-            Q4: app.Answers.Team[3],
-            General1: app.Answers.General[0],
-            General2: app.Answers.General[1],
-            General3: app.Answers.General[2],
-            General4: app.Answers.General[3],
-            Situational1: app.Answers.Situational[0],
-            Situational2: app.Answers.Situational[1],
-            Situational3: app.Answers.Situational[2],
+            // Answers: app.Answers,
+            // Q1: app.Answers.Team[0],
+            // Q2: app.Answers.Team[1],
+            // Q3: app.Answers.Team[2],
+            // Q4: app.Answers.Team[3],
+            // General1: app.Answers.General[0],
+            // General2: app.Answers.General[1],
+            // General3: app.Answers.General[2],
+            // General4: app.Answers.General[3],
+            // Situational1: app.Answers.Situational[0],
+            // Situational2: app.Answers.Situational[1],
+            // Situational3: app.Answers.Situational[2],
             End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
             Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
             ITime: app.ITime,
@@ -511,28 +538,151 @@ router.post('/sendtosheet', isAuth, function (req, res, next) {
             ATime: app.ATime,
             Season: app.Season
         }
-            AddToSheet(data).then(r => {
-                res.status(200).json({msg: "Sent Successfully", id: app.id});
-            }).catch((e)=>{
-                console.log(e);
-                res.status(400).json({msg: "Failed"});
-            });
+        AddToSheet(data).then(r => {
+            res.status(200).json({msg: "Sent Successfully", id: app.id});
+        }).catch((e) => {
+            console.log(e);
+            res.status(400).json({msg: "Failed"});
+        });
 
     }).catch(() => {
         res.status(400).json({msg: "Failed"});
     })
 });
 
+router.get('/sendtosheet/:limit/:offset', isAuth, function (req, res, next) {
+    let offset = parseInt(req.params.offset);
+    let limit = parseInt(req.params.limit);
+    Applicant.findAll({
+        limit: limit,
+        offset: offset,
+        where: {End: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value}
+    })
+        .then(async (apps) => {
+            await apps.forEach((app) => {
+                let data = {
+                    ID: app.id,
+                    Name: app.Name,
+                    Age: app.Age,
+                    Phone: app.Phone,
+                    Email: app.Email,
+                    CUStudent: app.CUStudent,
+                    State: app.State,
+                    Time: app.Time,
+                    Faculty: app.Faculty,
+                    Academic: app.Academic,
+                    Major: app.Major,
+                    Minor: app.Minor,
+                    English: app.English,
+                    Excur: app.Excur,
+                    Courses: app.Courses,
+                    First: app.First,
+                    Second: app.Second,
+                    // Answers: app.Answers,
+                    // Q1: app.Answers.Team[0],
+                    // Q2: app.Answers.Team[1],
+                    // Q3: app.Answers.Team[2],
+                    // Q4: app.Answers.Team[3],
+                    // General1: app.Answers.General[0],
+                    // General2: app.Answers.General[1],
+                    // General3: app.Answers.General[2],
+                    // General4: app.Answers.General[3],
+                    // Situational1: app.Answers.Situational[0],
+                    // Situational2: app.Answers.Situational[1],
+                    // Situational3: app.Answers.Situational[2],
+                    End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                    Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                    ITime: app.ITime,
+                    IDate: app.IDate,
+                    ATime: app.ATime,
+                    Season: app.Season
+                }
+                AddToSheet(data)
+            })
+            res.status(200).json({msg: "Sent Successfully"});
+        })
+        .catch((e) => {
+            res.status(500).json({msg: "Failed"});
+        })
+});
+
+router.get('/sendalltosheet', isAuth, async function (req, res, next) {
+    let {id} = req.body;
+    console.log("Sheet");
+    Applicant.findAll({
+        where: {
+            Season: settings["CurrentSeason"].Value, End: {
+                [Op.ne]: null
+            }
+        }
+    }).then(async (apps) => {
+        const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
+        await doc.useServiceAccountAuth(creds);
+        await doc.loadInfo()
+        let sheet = await doc.sheetsByTitle["All"];
+        let rows = []
+        await apps.forEach((app) => {
+            let data = {
+                ID: app.id,
+                Name: app.Name,
+                Age: app.Age,
+                Phone: app.Phone,
+                Email: app.Email,
+                CUStudent: app.CUStudent,
+                State: app.State,
+                Time: app.Time,
+                Faculty: app.Faculty,
+                Academic: app.Academic,
+                Major: app.Major,
+                Minor: app.Minor,
+                English: app.English,
+                Excur: app.Excur,
+                Courses: app.Courses,
+                First: app.First,
+                Second: app.Second,
+                // Answers: app.Answers,
+                // Q1: app.Answers.Team[0],
+                // Q2: app.Answers.Team[1],
+                // Q3: app.Answers.Team[2],
+                // Q4: app.Answers.Team[3],
+                // General1: app.Answers.General[0],
+                // General2: app.Answers.General[1],
+                // General3: app.Answers.General[2],
+                // General4: app.Answers.General[3],
+                // Situational1: app.Answers.Situational[0],
+                // Situational2: app.Answers.Situational[1],
+                // Situational3: app.Answers.Situational[2],
+                End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                ITime: app.ITime,
+                IDate: app.IDate,
+                ATime: app.ATime,
+                Season: app.Season
+            }
+            rows.append(data)
+        })
+        try {
+            await sheet.addRows(rows)
+
+        } catch (e) {
+            console.log(e);
+        }
+        res.status(200).json({msg: "Sent Successfully", id: app.id});
+    }).catch(() => {
+        res.status(400).json({msg: "Failed"});
+    })
+});
+
 router.get('/applicants/modal', isAuth, async function (req, res, next) {
-  let id = req.query.id;
-  let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value);
+    let id = req.query.id;
+    let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value);
     Applicant.findOne({
         where: {
             id: id,
             Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
-        if(app){
+        if (app) {
             console.log("Showing #" + app.id)
             res.render('portal/infomodal', {title: "hi", app: app, questions});
         }
@@ -549,7 +699,7 @@ router.get('/applicants/edit', isAuth, function (req, res, next) {
             Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
-        if(app){
+        if (app) {
             res.render('portal/editmodal', {app: app[0]});
         }
     }).catch(() => {
@@ -579,8 +729,8 @@ router.get('/members/profile/:id', isAuth, function (req, res, next) {
             id: id
         }
     }).then(mem => {
-        if(mem){
-            res.render('portal/MemberProfile', {title: `${mem.Name}'s Profile`,mem});
+        if (mem) {
+            res.render('portal/MemberProfile', {title: `${mem.Name}'s Profile`, mem});
         }
     }).catch(() => {
         createError(404);
@@ -626,11 +776,11 @@ router.post('/members/profile/:id', isAuth, function (req, res, next) {
 });
 
 router.post('/members/new', isAuth, async function (req, res, next) {
-    if(!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) ||req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let {Name, Phone, Email, Team} = req.body
-    if (!Team || !Name || !Phone || !Email){
+    if (!Team || !Name || !Phone || !Email) {
         createError(4500)
     }
     Member.create({
@@ -639,7 +789,7 @@ router.post('/members/new', isAuth, async function (req, res, next) {
         Email,
         Committee: Team,
         Directorate: Directorates[Team],
-        PageID: chance.integer({min:10000000, max:99999999})
+        PageID: chance.integer({min: 10000000, max: 99999999})
     }).then((newmem) => {
         res.json({msg: "Added Successfully!"});
     }).catch(() => {
@@ -648,7 +798,7 @@ router.post('/members/new', isAuth, async function (req, res, next) {
 });
 
 router.get('/profile', isAuth, function (req, res, next) {
-    res.render("portal/MyProfile",{title: "My Profile"})
+    res.render("portal/MyProfile", {title: "My Profile"})
 });
 
 router.post('/profile/image', isAuth, function (req, res, next) {

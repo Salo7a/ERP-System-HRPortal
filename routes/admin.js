@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const {User, Invite, Team, Directorate, Position, Rank, Question, Config} = require('../models');
+const {User, Invite, Team, Directorate, Position, Rank, Question, Config, Applicant} = require('../models');
 const {NotAuth, isAuth, isAdmin} = require('../utils/filters');
 const {check, validationResult, body} = require('express-validator');
 const {Op} = require('sequelize');
 const Chance = require('chance').Chance();
 const createError = require("http-errors");
+const {addSeconds} = require("date-fns");
 
 // Users List
 router.get("/users", isAdmin, (req, res, next) => {
@@ -521,4 +522,57 @@ router.post('/question/delete', isAdmin, (req, res, next) => {
     res.send({id: req.body.id, msg: `#${req.body.id} Deleted Successfully`});
 });
 
+
+// router.get('/applicant/jsonimport', isAdmin, (req, res, next) => {
+//     if (!req.user.isAdmin) {
+//         next(createError(403))
+//     }
+//     res.render('admin/importFromJson', {title: "Applicant Import"});
+// });
+
+router.get('/applicant/jsonimport', isAdmin, (req, res, next) => {
+    if (!req.user.isAdmin) {
+        next(createError(403))
+    }
+    let dataarray = [{}]
+    dataarray.forEach((data) => {
+        Applicant.findOne({where: {Email: data.email}}).then((app) => {
+            if (!app) {
+                return res.send({msg: "Not Found"})
+            }
+            let team = data['team[]'];
+            let gen = data['Gen[]'];
+            let sit = data['sit[]'];
+            sit.push(Array.isArray(data.creativity) ? data.creativity[1] : data.creativity)
+            sit.push(Array.isArray(data.effective) ? data.effective[1] : data.effective)
+            let answers = {
+                Team: team,
+                General: gen,
+                Situational: sit
+            }
+            let end = addSeconds(app.Start, parseInt(settings["FormTime"].Value) + 10)
+            app.update({
+                Name: data.name ? data.name : app.Name,
+                Age: data.age ? data.age : 0,
+                Phone: data.phone ? data.phone : app.Phone,
+                CUStudent: data.custudent,
+                State: "Applied",
+                Time: 1810,
+                Faculty: data.faculty,
+                Academic: data.academic,
+                Major: data.major,
+                Minor: data.minor,
+                English: data.english,
+                Courses: data.courses,
+                Excur: data.excur,
+                First: data.first,
+                Second: data.second,
+                Answers: answers,
+                End: end,
+            })
+            winston.warn(data.email + "Missing Data Added")
+        })
+    })
+
+});
 module.exports = router;

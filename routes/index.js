@@ -5,8 +5,9 @@ const {body, validationResult} = require('express-validator');
 const chance = require('chance').Chance();
 const querystring = require('querystring');
 const createError = require("http-errors");
-const { Op } = require("sequelize");
-const {addSeconds, differenceInSeconds, isValid, formatDuration, parseISO, parse }= require("date-fns");
+const {Op} = require("sequelize");
+const {addSeconds, differenceInSeconds, isValid, formatDuration, parseISO, parse} = require("date-fns");
+
 function formatTime(time) {
     const minutes = Math.floor(time / 60);
     let seconds = time % 60;
@@ -32,6 +33,15 @@ router.get('/contact', function (req, res, next) {
 
 router.get('/apply', function (req, res, next) {
     res.render('recruitment/apply', {title: "New Member Application"});
+});
+
+router.get('/browsererror', function (req, res, next) {
+    if (req.useragent["isFacebook"]) {
+        return res.render("recruitment/browsererror", {title: "Browser Error"});
+    } else {
+        return res.redirect('/apply');
+    }
+
 });
 
 router.post('/contact', [
@@ -61,12 +71,14 @@ router.post('/contact', [
 
 });
 
-router.post('/apply' , function (req, res, next) {
-    if (res.locals.settings['RecruitmentOpen'].Value === '0')
-    {
+router.post('/apply', function (req, res, next) {
+    if (res.locals.settings['RecruitmentOpen'].Value === '0') {
         return res.redirect('/apply');
     }
-    let {name, phone,email} = req.body;
+    if (req.useragent["isFacebook"]) {
+        return res.redirect("/browsererror")
+    }
+    let {name, phone, email} = req.body;
     req.useragent["IP"] = req.clientIp
     Applicant.findOne({where: {Email: email}}).then((app) => {
         if (!app) {
@@ -78,21 +90,21 @@ router.post('/apply' , function (req, res, next) {
                 Season: settings["CurrentSeason"].Value,
                 Info: req.useragent
             }).then((ap) => {
-              let query = querystring.stringify({
-                  "token": ap.Token
-              });
-              return res.redirect("/application?"+query);
-          }).catch(() => {
-              return res.redirect("/applicationerror?code=103");
-          })
-      }
-  }).catch((err)=>{
-      req.flash('error', 'Email Exists!');
-  })
+                let query = querystring.stringify({
+                    "token": ap.Token
+                });
+                return res.redirect("/application?" + query);
+            }).catch(() => {
+                return res.redirect("/applicationerror?code=103");
+            })
+        }
+    }).catch((err) => {
+        req.flash('error', 'Email Exists!');
+    })
 
 });
 
-router.post('/checkemail',((req, res, next) =>{
+router.post('/checkemail', ((req, res, next) => {
     let email = req.body.email;
     winston.warn(new Date() + "Check Email: " + email)
     Applicant.findOne({where: {Email: email, Season: settings["CurrentSeason"].Value}}).then((app) => {
@@ -107,11 +119,11 @@ router.post('/checkemail',((req, res, next) =>{
 }))
 
 router.get('/success', function (req, res, next) {
-  res.render('recruitment/success', {title: "Application Submitted Successfully"});
+    res.render('recruitment/success', {title: "Application Submitted Successfully"});
 });
 
 router.get('/tokenerror', function (req, res, next) {
-  res.render('recruitment/tokenerror', {title: "Application Wasn't Submitted"});
+    res.render('recruitment/tokenerror', {title: "Application Wasn't Submitted"});
 });
 
 router.get('/tokenexpired', function (req, res, next) {
@@ -124,12 +136,12 @@ router.get('/timeout', function (req, res, next) {
 
 router.get('/applicationerror', function (req, res, next) {
     let code;
-    if(req.query.code){
+    if (req.query.code) {
         code = req.query.code;
     } else {
         code = null;
     }
-  res.render('recruitment/errorinform', {title: "Application Wasn't Submitted", code: code});
+    res.render('recruitment/errorinform', {title: "Application Wasn't Submitted", code: code});
 });
 
 router.get('/application', async function (req, res, next) {
@@ -144,20 +156,22 @@ router.get('/application', async function (req, res, next) {
             questions[key].forEach((question) => TeamQuestions[key].push(question.Text))
         }
     });
-    Applicant.findOne({where:
+    Applicant.findOne({
+        where:
             {
-            Token: token,
-            End: null
-        }}).then((applicant)=>{
-            if (!applicant){
-                winston.warn(new Date() + "Wrong Token")
-                return res.redirect("/tokenerror");
+                Token: token,
+                End: null
             }
-            if(!isValid(applicant.Start)){
-                winston.warn(new Date() + "New Start Time")
-                applicant.Start = new Date();
-                applicant.save();
-            }
+    }).then((applicant) => {
+        if (!applicant) {
+            winston.warn(new Date() + "Wrong Token")
+            return res.redirect("/tokenerror");
+        }
+        if (!isValid(applicant.Start)) {
+            winston.warn(new Date() + "New Start Time")
+            applicant.Start = new Date();
+            applicant.save();
+        }
         let remaining = differenceInSeconds(addSeconds(applicant.Start, parseInt(settings["FormTime"].Value) + 10), new Date())
         if (remaining < -200) {
             winston.warn(new Date() + applicant.Email + " : Time Out App " + remaining)
@@ -168,13 +182,13 @@ router.get('/application', async function (req, res, next) {
             title: "New Member Application Questions",
             remaining: remaining, token: token, choices, questions, TeamQuestions: JSON.stringify(TeamQuestions)
         });
-    }).catch(()=>{
+    }).catch(() => {
         return res.redirect("/applicationerror?code=104");
     })
 
 });
 
-router.post('/application',function (req, res, next) {
+router.post('/application', function (req, res, next) {
     let {
         token,
         name,
@@ -205,11 +219,14 @@ router.post('/application',function (req, res, next) {
         Situational: sit
     }
     console.error(req.body);
-    if (!team) {
-        winston.warn("No Team Questions " + email + "  " + req.useragent.toString())
-        return res.redirect("/applicationerror?code=147")
-    }
     let state = "Applied"
+    let end = new Date();
+    if (!team) {
+        winston.warn("No Team Questions " + email)
+        end = null
+        state = "In Progress"
+    }
+
     Applicant.findOne({
         where: {
             Token: token,
@@ -243,17 +260,21 @@ router.post('/application',function (req, res, next) {
             First: first,
             Second: second,
             Answers: answers,
-            End: new Date(),
+            End: end,
         })
-        res.redirect('/success');
-    }).catch((err)=>{
+        if (end == null) {
+            res.redirect("/application/continue?token=" + token)
+        } else {
+            res.redirect('/success');
+        }
+    }).catch((err) => {
         winston.error(err);
         return res.redirect("/applicationerror?code=106");
     })
 
 });
 
-router.post('/applicationajax',function (req, res, next) {
+router.post('/applicationajax', function (req, res, next) {
     let {
         token,
         name,
@@ -320,56 +341,202 @@ router.post('/applicationajax',function (req, res, next) {
             End: new Date(),
         })
         res.status(200).json({msg: "Done"});
-    }).catch((err)=>{
+    }).catch((err) => {
         console.log(err);
         return res.status(400).json({msg: "Error"});
     })
 
 });
 
-router.post('/checktime',((req, res, next) =>{
+router.get('/application/continue', async function (req, res, next) {
     let token = req.query.token;
-    Applicant.findOne({where: {
+    let choices = await Team.findAll({include: Directorate, order: [['DirectorateId', 'ASC']]})
+    let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value)
+    let TeamQuestions = {}
+    let keys = Object.keys(questions);
+    await keys.forEach((key, index) => {
+        if (key !== "General" && key !== "Situational") {
+            TeamQuestions[key] = []
+            questions[key].forEach((question) => TeamQuestions[key].push(question.Text))
+        }
+    });
+    Applicant.findOne({
+        where:
+            {
+                Token: token
+            }
+    }).then((applicant) => {
+        if (!applicant) {
+            winston.warn(new Date() + "Wrong Token")
+            return res.redirect("/tokenerror");
+        }
+        if (!isValid(applicant.Start)) {
+            winston.warn(new Date() + "New Start Time")
+            applicant.Start = new Date();
+            applicant.save();
+        }
+        if (applicant.Answers.Team) {
+            return res.redirect("/applicationerror?code=134")
+        }
+        let remaining = differenceInSeconds(addSeconds(applicant.Start, parseInt(settings["FormTime"].Value) + 10), new Date())
+        // if (remaining < -200) {
+        //     winston.warn(new Date() + applicant.Email + " : Time Out App " + remaining)
+        //     res.redirect("/tokenerror");
+        // }
+        if (remaining < 240) {
+            remaining = 240
+        }
+        winston.warn(new Date() + applicant.Email + " : Team Question Start: " + applicant.Start)
+        res.render('recruitment/applicationTeamOnly', {
+            title: "New Member Application Questions, Part 2",
+            remaining: remaining,
+            token: token,
+            choices,
+            questions,
+            TeamQuestions: TeamQuestions,
+            app: applicant
+        });
+    }).catch(() => {
+        return res.redirect("/applicationerror?code=104");
+    })
+
+});
+
+router.post('/application/continue', async function (req, res, next) {
+    let token = req.body.token;
+    let team = req.body['team[]'];
+    winston.warn("Teams Submit " + req.body.email)
+    console.error(req.body)
+    Applicant.findOne({
+        where:
+            {
+                Token: token
+            }
+    }).then((applicant) => {
+        if (!applicant) {
+            winston.warn(new Date() + "Wrong Token (Teams)")
+            return res.redirect("/tokenerror");
+        }
+        let NewAnswers = applicant.Answers;
+        NewAnswers.Team = team
+        if (applicant.End == null) {
+            applicant.update({
+                Answers: NewAnswers,
+                End: new Date(),
+                State: "Applied",
+                Time: differenceInSeconds(new Date(), applicant.Start)
+            }).then(app => {
+                console.log(app)
+                res.status(200).json({msg: "Done"});
+            })
+        } else {
+            applicant.update({
+                Answers: NewAnswers,
+                Notes: "External Teams Questions"
+            }).then(app => {
+                console.log(app)
+                res.status(200).json({msg: "Done"});
+            })
+        }
+    }).catch(() => {
+        return res.status(400).json({msg: "Error"});
+    })
+
+});
+
+router.post('/application/continueajax', async function (req, res, next) {
+    let token = req.body.token;
+    let team = req.body['team[]'];
+    winston.warn("Teams Submit " + req.body.email)
+    console.error(req.body)
+    Applicant.findOne({
+        where:
+            {
+                Token: token
+            }
+    }).then((applicant) => {
+        if (!applicant) {
+            winston.warn(new Date() + "Wrong Token (Teams)")
+            return res.redirect("/tokenerror");
+        }
+        let NewAnswers = applicant.Answers;
+        NewAnswers.Team = team
+        if (applicant.End == null) {
+            applicant.update({
+                Answers: NewAnswers,
+                End: new Date(),
+                State: "Applied",
+                Time: differenceInSeconds(new Date(), applicant.Start)
+            }).then(app => {
+                console.log(app)
+                res.redirect("/success")
+            })
+        } else {
+            applicant.update({
+                Answers: NewAnswers,
+                Notes: "External Teams Questions"
+            }).then(app => {
+                console.log(app)
+                res.redirect("/success")
+            })
+        }
+    }).then(() => {
+        res.status(200).json({msg: "Done"});
+    }).catch(() => {
+        return res.redirect("/applicationerror?code=114");
+    })
+
+});
+
+router.post('/checktime', ((req, res, next) => {
+    let token = req.query.token;
+    Applicant.findOne({
+        where: {
             Token: token,
             End: null
-        }}).then((applicant)=>{
-        if (!applicant){
+        }
+    }).then((applicant) => {
+        if (!applicant) {
             return res.status(400).json({msg: "Token Not Found"});
         }
-        let remaining = differenceInSeconds(addSeconds(applicant.Start, (parseInt(settings["FormTime"].Value) + 10 )), new Date())
+        let remaining = differenceInSeconds(addSeconds(applicant.Start, (parseInt(settings["FormTime"].Value) + 10)), new Date())
         res.send({msg: "Found", remaining: remaining});
-    }).catch(()=>{
+    }).catch(() => {
         return res.status(400).json({msg: "Token Not Found"});
     })
 }))
 
 router.get('/members/performance/:PageID', function (req, res, next) {
-    Member.findOne({where:{
-        PageID: req.params.PageID
-        }}).then(mem=>{
-            if (mem.Committee === "TM" && !mem.Seen){
+    Member.findOne({
+        where: {
+            PageID: req.params.PageID
+        }
+    }).then(mem => {
+        if (mem.Committee === "TM" && !mem.Seen) {
 
-                res.render('portal/kpiprank', {title: "Performance Report", mem});
-            }else {
-                res.render('performance', {title: "Performance Report", mem});
-            }
+            res.render('portal/kpiprank', {title: "Performance Report", mem});
+        } else {
+            res.render('performance', {title: "Performance Report", mem});
+        }
 
-    }).catch(()=>{
-        createError(404);
-    }
+    }).catch(() => {
+            createError(404);
+        }
     )
 
 });
 
 router.post('/members/performance/:PageID', function (req, res, next) {
-    Member.findOne({where:{
+    Member.findOne({
+        where: {
             PageID: req.params.PageID
-        }}).then(mem=>{
+        }
+    }).then(mem => {
         mem.Seen = true;
         mem.save();
         res.send(200)
 
-    }).catch(()=>{
+    }).catch(() => {
             createError(404);
         }
     )
@@ -391,21 +558,23 @@ router.get('/members/pokenactus/:Month', function (req, res, next) {
 
 router.get('/members/leaderboard/:Directorate', function (req, res, next) {
     console.log("Hi")
-    Ranking.findAll({where:{
+    Ranking.findAll({
+        where: {
             Directorate: req.params.Directorate,
             Month: "May"
         },
         include: Member,
         order: [
             ['Ranking', 'ASC'],
-        ]}).then(members=>{
+        ]
+    }).then(members => {
         // if (members.length > 3){
         res.render('singleleaderboard', {title: "Leaderboard", members});
         // } else {
         //     res.render('message', {title: "Hmmmm"});
         // }
 
-    }).catch(()=>{
+    }).catch(() => {
             createError(404);
         }
     )
@@ -414,21 +583,23 @@ router.get('/members/leaderboard/:Directorate', function (req, res, next) {
 
 router.get('/members/leaderboard/:Directorate/:Month', function (req, res, next) {
     let Month = req.params.Month
-    Ranking.findAll({where:{
+    Ranking.findAll({
+        where: {
             Directorate: req.params.Directorate,
             Month: Month
         },
         include: Member,
         order: [
             ['Ranking', 'ASC'],
-        ]}).then(members=>{
-            // if (members.length > 3){
-                res.render('singleleaderboard', {title: "Leaderboard", members});
-            // } else {
-            //     res.render('message', {title: "Hmmmm"});
-            // }
+        ]
+    }).then(members => {
+        // if (members.length > 3){
+        res.render('singleleaderboard', {title: "Leaderboard", members});
+        // } else {
+        //     res.render('message', {title: "Hmmmm"});
+        // }
 
-        }).catch(()=>{
+    }).catch(() => {
             createError(404);
         }
     )

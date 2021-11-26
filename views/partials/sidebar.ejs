@@ -123,7 +123,7 @@
                                 <p>My Applicants</p>
                             </a>
                         </li>
-                        <% if(["Admin", "President", "Marketing VP", "HR VP", "TD Team Leader", "OD Team Leader","L&D Team Leader"].includes(user.Position.Name) || user.isAdmin){ %>
+                        <% if(["Admin", "President", "Marketing VP", "Projects VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(user.Position.Name) || user.isAdmin){ %>
                         <li class="nav-item">
                             <a href="/portal/applicants/all" class="nav-link">
                                 <i class="fas fa-users nav-icon"></i>

@@ -302,7 +302,7 @@ router.get('/members/edit/ranking', isAuth, function (req, res, next) {
 //End Ranking
 
 router.get('/applicants/all', isAuth, function (req, res, next) {
-    if (!(["Admin", "President", "Marketing VP", "Projects VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     Applicant.findAll({

@@ -305,32 +305,35 @@ router.post('/application', function (req, res, next) {
             Answers: answers,
             End: end,
         }).then(app => {
-            let data = {
-                ID: app.id,
-                Name: app.Name,
-                Age: app.Age,
-                Phone: app.Phone,
-                Email: app.Email,
-                CUStudent: app.CUStudent,
-                State: app.State,
-                Time: app.Time,
-                Faculty: app.Faculty,
-                Academic: app.Academic,
-                Major: app.Major,
-                Minor: app.Minor,
-                English: app.English,
-                Excur: app.Excur,
-                Courses: app.Courses,
-                First: app.First,
-                Second: app.Second,
-                End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
-                Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
-                ITime: app.ITime,
-                IDate: app.IDate,
-                ATime: app.ATime,
-                Season: app.Season
+            if (end) {
+                let data = {
+                    ID: app.id,
+                    Name: app.Name,
+                    Age: app.Age,
+                    Phone: app.Phone,
+                    Email: app.Email,
+                    CUStudent: app.CUStudent,
+                    State: app.State,
+                    Time: app.Time,
+                    Faculty: app.Faculty,
+                    Academic: app.Academic,
+                    Major: app.Major,
+                    Minor: app.Minor,
+                    English: app.English,
+                    Excur: app.Excur,
+                    Courses: app.Courses,
+                    First: app.First,
+                    Second: app.Second,
+                    End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                    Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                    ITime: app.ITime,
+                    IDate: app.IDate,
+                    ATime: app.ATime,
+                    Season: app.Season
+                }
+                AddToSheet(data)
             }
-            AddToSheet(data)
+
         })
 
         if (end == null) {
@@ -536,6 +539,32 @@ router.post('/application/continue', async function (req, res, next) {
                 res.redirect("/success")
             })
         }
+        let data = {
+            ID: applicant.id,
+            Name: applicant.Name,
+            Age: applicant.Age,
+            Phone: applicant.Phone,
+            Email: applicant.Email,
+            CUStudent: applicant.CUStudent,
+            State: applicant.State,
+            Time: applicant.Time,
+            Faculty: applicant.Faculty,
+            Academic: applicant.Academic,
+            Major: applicant.Major,
+            Minor: applicant.Minor,
+            English: applicant.English,
+            Excur: applicant.Excur,
+            Courses: applicant.Courses,
+            First: applicant.First,
+            Second: applicant.Second,
+            End: formatToTimeZone(applicant.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+            Start: formatToTimeZone(applicant.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+            ITime: applicant.ITime,
+            IDate: applicant.IDate,
+            ATime: applicant.ATime,
+            Season: applicant.Season
+        }
+        AddToSheet(data)
     }).catch(() => {
         return res.status(400).json({msg: "Error"});
     })

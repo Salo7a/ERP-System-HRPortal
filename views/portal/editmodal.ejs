@@ -22,9 +22,19 @@
                 >Applied
                 </option>
                 <option
+                <% if (app.State === "Called"){ %> selected
+                        <% } %>
+                >Called
+                </option>
+                <option
                 <% if (app.State === "Interviewed"){ %> selected
                         <% } %>
                 >Interviewed
+                </option>
+                <option
+                <% if (app.State === "Pending"){ %> selected
+                        <% } %>
+                >Pending
                 </option>
                 <option
                 <% if (app.State === "Accepted"){ %> selected

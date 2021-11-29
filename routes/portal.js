@@ -9,6 +9,7 @@ const sequelize = require('sequelize');
 const {GoogleSpreadsheet} = require('google-spreadsheet'),
     {promisify} = require('util'),
     creds = require('../config/Enactus21-d39432b22314.json');
+
 const {formatToTimeZone} = require("date-fns-timezone");
 
 async function AddToSheet(row) {
@@ -50,6 +51,50 @@ async function AddToSheet(row) {
     }
 }
 
+async function UpdateState(id, state) {
+    const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
+    await doc.useServiceAccountAuth(creds);
+    await doc.loadInfo()
+    let sheet = await doc.sheetsByTitle["All"];
+    let AllRows = await sheet.getRows();
+    // let FuncSheet = await doc.sheetsByTitle[row.First];
+    // let FuncSheet2 = await doc.sheetsByTitle[row.Second];
+    let start = 0, end = AllRows.length - 1, index = null;
+
+    // Iterate while start not meets end
+    while (start <= end) {
+
+        // Find the mid index
+        let mid = Math.floor((start + end) / 2);
+
+        // If element is present at mid, return True
+        if (parseInt(AllRows[mid].ID) === id) {
+            index = mid
+            break
+        }
+
+        // Else look in left or right half accordingly
+        else if (parseInt(AllRows[mid].ID) < id)
+            start = mid + 1;
+        else
+            end = mid - 1;
+    }
+    if (index != null) {
+        try {
+            AllRows[index].State = state;
+            await AllRows[index].save();
+            return true;
+        } catch (e) {
+            console.log(e);
+            winston.warn("Failed to update row")
+            return false;
+        }
+    } else {
+        winston.warn("Failed to update row, ID Not Found: " + id)
+        return false;
+    }
+
+}
 const multer = require('multer');
 const path = require('path');
 const fs = require("fs");
@@ -103,7 +148,7 @@ router.get('/', isAuth, async function (req, res, next) {
         //     raw: true,
         // })
         let Dates = await Applicant.findAll({
-            where: {End: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value},
+            where: {State: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value},
             attributes: [
                 [sequelize.literal(`DATE(End)`), 'End'],
                 [sequelize.literal(`COUNT(*)`), 'count']
@@ -307,7 +352,7 @@ router.get('/applicants/all', isAuth, function (req, res, next) {
     }
     Applicant.findAll({
         where: {
-            End: {
+            State: {
                 [Op.ne]: null
             },
             Season: settings["CurrentSeason"].Value
@@ -414,6 +459,7 @@ router.post('/editapplicant', isAuth, function (req, res, next) {
             app.ATime = ATime
         }
         await app.save()
+        await UpdateState(app.id, State)
         res.send({msg: "Saved!", id, State});
         // res.render("/portal/row", {app});
     }).catch((err) => {

@@ -7,7 +7,49 @@ const querystring = require('querystring');
 const createError = require("http-errors");
 const {Op} = require("sequelize");
 const {addSeconds, differenceInSeconds, isValid, formatDuration, parseISO, parse} = require("date-fns");
+const {GoogleSpreadsheet} = require('google-spreadsheet'),
+    {promisify} = require('util'),
+    creds = require('../config/Enactus21-d39432b22314.json');
+const {formatToTimeZone} = require("date-fns-timezone");
 
+async function AddToSheet(row) {
+    const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
+    await doc.useServiceAccountAuth(creds);
+    await doc.loadInfo()
+    let sheet = await doc.sheetsByTitle["All"];
+    if (!sheet) {
+        try {
+            sheet = await doc.addSheet({title: "All", headerValues: Object.keys(row)});
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+
+    }
+    let FuncSheet = await doc.sheetsByTitle[row.First];
+    let FuncSheet2 = await doc.sheetsByTitle[row.Second];
+    if (!FuncSheet) {
+        try {
+            FuncSheet = await doc.addSheet({title: row.First, headerValues: Object.keys(row)});
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+
+    }
+    if (row.State === "Accepted") {
+        row.State = "Filtered";
+    }
+    try {
+        await sheet.addRow(row)
+        await FuncSheet.addRow(row);
+        await FuncSheet2.addRow(row);
+        return true;
+    } catch (e) {
+        console.log(e);
+        return false;
+    }
+}
 function formatTime(time) {
     const minutes = Math.floor(time / 60);
     let seconds = time % 60;
@@ -48,7 +90,8 @@ router.post('/contact', [
     body('email').isEmail(),
     body('name').not().isEmpty(),
     body('subject').not().isEmpty(),
-    body('message').not().isEmpty()
+    body('message').not().isEmpty(),
+    body('validation').equals("Egypt").withMessage("Incorrect Answer")
 ], function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -75,9 +118,9 @@ router.post('/apply', function (req, res, next) {
     if (res.locals.settings['RecruitmentOpen'].Value === '0') {
         return res.redirect('/apply');
     }
-    if (req.useragent["isFacebook"]) {
-        return res.redirect("/browsererror")
-    }
+    // if (req.useragent["isFacebook"]) {
+    //     return res.redirect("/browsererror")
+    // }
     let {name, phone, email} = req.body;
     req.useragent["IP"] = req.clientIp
     Applicant.findOne({where: {Email: email}}).then((app) => {
@@ -261,7 +304,35 @@ router.post('/application', function (req, res, next) {
             Second: second,
             Answers: answers,
             End: end,
+        }).then(app => {
+            let data = {
+                ID: app.id,
+                Name: app.Name,
+                Age: app.Age,
+                Phone: app.Phone,
+                Email: app.Email,
+                CUStudent: app.CUStudent,
+                State: app.State,
+                Time: app.Time,
+                Faculty: app.Faculty,
+                Academic: app.Academic,
+                Major: app.Major,
+                Minor: app.Minor,
+                English: app.English,
+                Excur: app.Excur,
+                Courses: app.Courses,
+                First: app.First,
+                Second: app.Second,
+                End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                ITime: app.ITime,
+                IDate: app.IDate,
+                ATime: app.ATime,
+                Season: app.Season
+            }
+            AddToSheet(data)
         })
+
         if (end == null) {
             res.redirect("/application/continue?token=" + token)
         } else {
@@ -339,6 +410,33 @@ router.post('/applicationajax', function (req, res, next) {
             Second: second,
             Answers: answers,
             End: new Date(),
+        }).then(app => {
+            let data = {
+                ID: app.id,
+                Name: app.Name,
+                Age: app.Age,
+                Phone: app.Phone,
+                Email: app.Email,
+                CUStudent: app.CUStudent,
+                State: app.State,
+                Time: app.Time,
+                Faculty: app.Faculty,
+                Academic: app.Academic,
+                Major: app.Major,
+                Minor: app.Minor,
+                English: app.English,
+                Excur: app.Excur,
+                Courses: app.Courses,
+                First: app.First,
+                Second: app.Second,
+                End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                ITime: app.ITime,
+                IDate: app.IDate,
+                ATime: app.ATime,
+                Season: app.Season
+            }
+            AddToSheet(data)
         })
         res.status(200).json({msg: "Done"});
     }).catch((err) => {
@@ -427,7 +525,7 @@ router.post('/application/continue', async function (req, res, next) {
                 Time: differenceInSeconds(new Date(), applicant.Start)
             }).then(app => {
                 console.log(app)
-                res.status(200).json({msg: "Done"});
+                res.redirect("/success")
             })
         } else {
             applicant.update({
@@ -435,7 +533,7 @@ router.post('/application/continue', async function (req, res, next) {
                 Notes: "External Teams Questions"
             }).then(app => {
                 console.log(app)
-                res.status(200).json({msg: "Done"});
+                res.redirect("/success")
             })
         }
     }).catch(() => {
@@ -469,7 +567,7 @@ router.post('/application/continueajax', async function (req, res, next) {
                 Time: differenceInSeconds(new Date(), applicant.Start)
             }).then(app => {
                 console.log(app)
-                res.redirect("/success")
+                res.status(200).json({msg: "Done"});
             })
         } else {
             applicant.update({
@@ -477,7 +575,7 @@ router.post('/application/continueajax', async function (req, res, next) {
                 Notes: "External Teams Questions"
             }).then(app => {
                 console.log(app)
-                res.redirect("/success")
+                res.status(200).json({msg: "Done"});
             })
         }
     }).then(() => {

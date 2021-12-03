@@ -11,8 +11,13 @@ const {GoogleSpreadsheet} = require('google-spreadsheet'),
     creds = require('../config/Enactus21-d39432b22314.json');
 
 const {formatToTimeZone} = require("date-fns-timezone");
+const multer = require('multer');
+const path = require('path');
+const fs = require("fs");
+const stream = require("stream");
 
 async function AddToSheet(row) {
+    winston.warn("Adding to sheet #" + row.ID)
     const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
     await doc.useServiceAccountAuth(creds);
     await doc.loadInfo()
@@ -37,29 +42,20 @@ async function AddToSheet(row) {
         }
 
     }
-    if (row.State === "Accepted") {
-        row.State = "Filtered";
-    }
     try {
         await sheet.addRow(row)
         await FuncSheet.addRow(row);
         await FuncSheet2.addRow(row);
         return true;
     } catch (e) {
+        winston.warn("Failed to add row #" + row.ID)
         console.log(e);
         return false;
     }
 }
 
-async function UpdateState(id, state) {
-    const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
-    await doc.useServiceAccountAuth(creds);
-    await doc.loadInfo()
-    let sheet = await doc.sheetsByTitle["All"];
-    let AllRows = await sheet.getRows();
-    // let FuncSheet = await doc.sheetsByTitle[row.First];
-    // let FuncSheet2 = await doc.sheetsByTitle[row.Second];
-    let start = 0, end = AllRows.length - 1, index = null;
+async function SearchInSheet(sheet, id) {
+    let start = 0, end = sheet.length - 1, index = null
 
     // Iterate while start not meets end
     while (start <= end) {
@@ -68,37 +64,108 @@ async function UpdateState(id, state) {
         let mid = Math.floor((start + end) / 2);
 
         // If element is present at mid, return True
-        if (parseInt(AllRows[mid].ID) === id) {
+        if (parseInt(sheet[mid].ID) === id) {
             index = mid
-            break
+            return index
         }
 
         // Else look in left or right half accordingly
-        else if (parseInt(AllRows[mid].ID) < id)
+        else if (parseInt(sheet[mid].ID) < id)
             start = mid + 1;
         else
             end = mid - 1;
     }
+    if (index == null) {
+        for (let i = 0; i < sheet.length - 1; i++) {
+            if (parseInt(sheet[i].ID) === id) {
+                index = i
+                return index
+            }
+        }
+    }
+    return index
+}
+
+async function UpdateState(id, state, first, second) {
+    const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
+    await doc.useServiceAccountAuth(creds);
+    await doc.loadInfo()
+    let sheet = await doc.sheetsByTitle["All"];
+    let AllRows = await sheet.getRows();
+    let FuncSheet = await doc.sheetsByTitle[first];
+    let FirstRows = await FuncSheet.getRows();
+    let FuncSheet2 = await doc.sheetsByTitle[second];
+    let SecondRows = await FuncSheet2.getRows();
+    let index = null, index1 = null, index2 = null;
+    index = await SearchInSheet(AllRows, id)
+    index1 = await SearchInSheet(FirstRows, id)
+    index2 = await SearchInSheet(SecondRows, id)
+
     if (index != null) {
         try {
             AllRows[index].State = state;
             await AllRows[index].save();
-            return true;
         } catch (e) {
             console.log(e);
-            winston.warn("Failed to update row")
+            winston.warn("Failed to update row #" + id)
             return false;
         }
     } else {
         winston.warn("Failed to update row, ID Not Found: " + id)
+        let app = await Applicant.findOne({where: {id: id}})
+        let data = {
+            ID: app.id,
+            Name: app.Name,
+            Age: app.Age,
+            Phone: app.Phone,
+            Email: app.Email,
+            CUStudent: app.CUStudent,
+            State: app.State,
+            Time: app.Time,
+            Faculty: app.Faculty,
+            Academic: app.Academic,
+            Major: app.Major,
+            Minor: app.Minor,
+            English: app.English,
+            Excur: app.Excur,
+            Courses: app.Courses,
+            First: app.First,
+            Second: app.Second,
+            End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+            Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+            ITime: app.ITime,
+            IDate: app.IDate,
+            ATime: app.ATime,
+            Season: app.Season
+        }
+        AddToSheet(data)
         return false;
+    }
+    if (index1 != null) {
+        try {
+            FirstRows[index1].State = state;
+            await FirstRows[index1].save();
+        } catch (e) {
+            console.log(e);
+            winston.warn("Failed to update row #" + id)
+            return false;
+        }
+    }
+    if (index2 != null) {
+        try {
+            SecondRows[index2].State = state;
+            await SecondRows[index2].save();
+            return true;
+        } catch (e) {
+            console.log(e);
+            winston.warn("Failed to update row #" + id)
+            return false;
+        }
     }
 
 }
-const multer = require('multer');
-const path = require('path');
-const fs = require("fs");
-const stream = require("stream");
+
+
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -459,7 +526,7 @@ router.post('/editapplicant', isAuth, function (req, res, next) {
             app.ATime = ATime
         }
         await app.save()
-        await UpdateState(app.id, State)
+        await UpdateState(app.id, State, app.First, app.Second)
         res.send({msg: "Saved!", id, State});
         // res.render("/portal/row", {app});
     }).catch((err) => {
@@ -594,6 +661,53 @@ router.post('/sendtosheet', isAuth, function (req, res, next) {
     }).catch(() => {
         res.status(400).json({msg: "Failed"});
     })
+});
+
+router.get('/sendmissing', isAuth, async function (req, res, next) {
+    let apps = await Applicant.findAll({
+        where: {
+            State: {
+                [Op.ne]: null
+            },
+            Season: settings["CurrentSeason"].Value
+        }
+    })
+    const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
+    await doc.useServiceAccountAuth(creds);
+    await doc.loadInfo()
+    let sheet = await doc.sheetsByTitle["All"];
+    let rows = await sheet.getRows()
+    for (let app in apps) {
+        if (await SearchInSheet(rows, app.id) == null) {
+            let data = {
+                ID: app.id,
+                Name: app.Name,
+                Age: app.Age,
+                Phone: app.Phone,
+                Email: app.Email,
+                CUStudent: app.CUStudent,
+                State: app.State,
+                Time: app.Time,
+                Faculty: app.Faculty,
+                Academic: app.Academic,
+                Major: app.Major,
+                Minor: app.Minor,
+                English: app.English,
+                Excur: app.Excur,
+                Courses: app.Courses,
+                First: app.First,
+                Second: app.Second,
+                End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                ITime: app.ITime,
+                IDate: app.IDate,
+                ATime: app.ATime,
+                Season: app.Season
+            }
+            winston.warn("#" + app.id + " Missing In Sheet, Sending")
+            await AddToSheet(data)
+        }
+    }
 });
 
 router.get('/sendtosheet/:limit/:offset', isAuth, function (req, res, next) {

@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
   Ranking.init({
     Month: DataTypes.STRING,
     Rank: DataTypes.INTEGER,
-    Directorate: DataTypes.STRING
+    Directorate: DataTypes.STRING,
+    Season: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Ranking',

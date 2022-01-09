@@ -688,7 +688,8 @@ router.get('/members/leaderboard/:Directorate', function (req, res, next) {
     Ranking.findAll({
         where: {
             Directorate: req.params.Directorate,
-            Month: "May"
+            Month: settings["CurrentRankingMonth"].Value,
+            Season: settings["CurrentSeason"].Value
         },
         include: Member,
         order: [

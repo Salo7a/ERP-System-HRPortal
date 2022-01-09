@@ -130,6 +130,7 @@
                             <div class="small-12 medium-12 large-12">
                                 <h5>1st Preference - <%= app.First %></h5>
                                 <% let i = 0 %>
+                                <% if (app.First){ %>
                                 <% TeamQuestions[app.First].forEach((question) => { %>
                                 <div class="row">
                                     <div class="columns">
@@ -148,7 +149,7 @@
                                     </div><!-- /columns -->
                                 </div>
                                 <% i += 1 %>
-                                <% }) %>
+                                <% }) } %>
                             </div><!-- /col-24 -->
                         </div><!-- /columns -->
                     </div>
@@ -156,6 +157,7 @@
                         <div class="columns">
                             <div class="small-12 medium-12 large-12">
                                 <h5>2nd Preference - <%= app.Second %></h5>
+                                <% if (app.Second){ %>
                                 <% TeamQuestions[app.Second].forEach((question) => { %>
                                 <div class="row">
                                     <div class="columns">
@@ -174,7 +176,7 @@
                                     </div><!-- /columns -->
                                 </div>
                                 <% i += 1 %>
-                                <% }) %>
+                                <% })} %>
                             </div><!-- /col-24 -->
                         </div><!-- /columns -->
                     </div>

@@ -163,7 +163,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <!-- /.content -->
     </div>
-    <%if(["Admin", "President", "HR VP", "TD Team Leader"].includes(user.Position.Name) || user.isAdmin){%>
+    <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
     <div class="modal fade" id="NewMemberModal" style="display: none;" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -184,42 +184,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <label for="inputPhone">Phone</label>
                                 <input type="text" id="inputPhone" class="form-control" name="Phone" required>
                             </div>
-                        <div class="form-group">
-                            <label for="inputEmail">Email</label>
-                            <input type="email" id="inputEmail" class="form-control" name="Email" required>
-                        </div>
-                            <div class="form-group">
-                                <label for="inputTeam">Team</label>
-                                <select id="inputTeam" class="form-control custom-select" name="Team">
-                                    <option selected disabled>Select one</option>
-                                    <option>Baby Steps</option>
-                                    <option>Fishing Waste</option>
-                                    <option>Gluten-Free</option>
-                                    <option>Tourism</option>
-                                    <option>Projects</option>
-                                    <option>LD</option>
-                                    <option>TM</option>
-                                    <option>OD</option>
-                                    <option>Camera</option>
-                                    <option>Visuals</option>
-                                    <option>Presentation</option>
-                                    <option>CR</option>
-                                    <option>RM</option>
-                                    <option>Events</option>
-                                    <option>Sales</option>
-                                    <option>Marketing</option>
-                                    <option>Social</option>
-                                </select>
-                            </div>
-                        </div>
-
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
-
-
-
+                    <div class="form-group">
+                        <label for="inputEmail">Email</label>
+                        <input type="email" id="inputEmail" class="form-control" name="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputTeam">Team</label>
+                        <select id="inputTeam" class="form-control custom-select" name="Team">
+                            <option selected disabled>Select one</option>
+                            <% choices.forEach((choice)=>{ %>
+                            <option value="<%= choice.Name %>"><%= choice.DisplayName %></option>
+                            <% }) %>
+                        </select>
+                    </div>
                 </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+
+
+                    </div>
                 </form>
             </div>
             <!-- /.modal-content -->

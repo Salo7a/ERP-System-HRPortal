@@ -260,14 +260,21 @@ router.get('/members/kpi', isAuth, async function (req, res, next) {
         mem = await Member.findAll({
             where:
                 {
-                    Committee: req.user.Rep
+                    Committee: req.user.Rep,
+                    Season: settings["CurrentSeason"].Value,
                 }
         })
     } else {
-        mem = await Member.findAll()
+        mem = await Member.findAll({
+            where:
+                {
+                    Season: settings["CurrentSeason"].Value
+                }
+        })
     }
+    let choices = await Team.findAll({order: [['DisplayName', 'ASC']]})
 
-    res.render('portal/membersview', {title: "All Members", members: mem});
+    res.render('portal/membersview', {title: "All Members", members: mem, choices});
 
 
 });
@@ -280,7 +287,8 @@ router.post('/editkpi', isAuth, async function (req, res, next) {
     let {January, February, March, April, May, June, July} = req.body
     Member.findOne({
         where: {
-            id: req.body.id
+            id: req.body.id,
+            Season: settings["CurrentSeason"].Value
         }
     }).then(mem => {
         mem.KPI = {
@@ -308,7 +316,8 @@ router.get('/members/edit/kpi', isAuth, function (req, res, next) {
     console.log(id);
     Member.findOne({
         where: {
-            id: id
+            id: id,
+            Season: settings["CurrentSeason"].Value
         }
     }).then(mem => {
         if (mem) {
@@ -329,11 +338,12 @@ router.get('/members/ranking', isAuth, async function (req, res, next) {
         mem = await Member.findAll({
             where:
                 {
-                    Committee: req.user.Rep
+                    Committee: req.user.Rep,
+                    Season: settings["CurrentSeason"].Value
                 }
         })
     } else {
-        mem = await Member.findAll()
+        mem = await Member.findAll({where: {Season: settings["CurrentSeason"].Value}})
     }
 
     res.render('portal/membersrank', {title: "Set Ranking", members: mem});
@@ -396,7 +406,8 @@ router.get('/members/edit/ranking', isAuth, function (req, res, next) {
     console.log(id);
     Member.findOne({
         where: {
-            id: id
+            id: id,
+            Season: settings["CurrentSeason"].Value
         }, include: Ranking
     }).then(mem => {
         mem.Ranking = {}
@@ -678,36 +689,66 @@ router.get('/sendmissing', isAuth, async function (req, res, next) {
     let sheet = await doc.sheetsByTitle["All"];
     let rows = await sheet.getRows()
     for (let app in apps) {
-        if (await SearchInSheet(rows, app.id) == null) {
+        if (await SearchInSheet(rows, apps[app].id) == null) {
             let data = {
-                ID: app.id,
-                Name: app.Name,
-                Age: app.Age,
-                Phone: app.Phone,
-                Email: app.Email,
-                CUStudent: app.CUStudent,
-                State: app.State,
-                Time: app.Time,
-                Faculty: app.Faculty,
-                Academic: app.Academic,
-                Major: app.Major,
-                Minor: app.Minor,
-                English: app.English,
-                Excur: app.Excur,
-                Courses: app.Courses,
-                First: app.First,
-                Second: app.Second,
-                End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
-                Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
-                ITime: app.ITime,
-                IDate: app.IDate,
-                ATime: app.ATime,
-                Season: app.Season
+                ID: apps[app].id,
+                Name: apps[app].Name,
+                Age: apps[app].Age,
+                Phone: apps[app].Phone,
+                Email: apps[app].Email,
+                CUStudent: apps[app].CUStudent,
+                State: apps[app].State,
+                Time: apps[app].Time,
+                Faculty: apps[app].Faculty,
+                Academic: apps[app].Academic,
+                Major: apps[app].Major,
+                Minor: apps[app].Minor,
+                English: apps[app].English,
+                Excur: apps[app].Excur,
+                Courses: apps[app].Courses,
+                First: apps[app].First,
+                Second: apps[app].Second,
+                End: formatToTimeZone(apps[app].End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                Start: formatToTimeZone(apps[app].Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+                ITime: apps[app].ITime,
+                IDate: apps[app].IDate,
+                ATime: apps[app].ATime,
+                Season: apps[app].Season
             }
-            winston.warn("#" + app.id + " Missing In Sheet, Sending")
+            winston.warn("#" + apps[app].id + " Missing In Sheet, Sending")
             await AddToSheet(data)
         }
     }
+    res.send({msg: "Done"})
+});
+
+router.get('/sendmissingstates', isAuth, async function (req, res, next) {
+    let apps = await Applicant.findAll({
+        where: {
+            State: {
+                [Op.ne]: null
+            },
+            Season: settings["CurrentSeason"].Value
+        }
+    })
+    const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
+    await doc.useServiceAccountAuth(creds);
+    await doc.loadInfo()
+    let sheet = await doc.sheetsByTitle["All"];
+    let rows = await sheet.getRows()
+    let id = null
+    for (let app in apps) {
+        id = await SearchInSheet(rows, apps[app].id)
+        if (id != null) {
+            if (rows[id].State === "Applied" && apps[app].State !== "Applied") {
+                rows[id].State = apps[app].State
+
+            }
+            winston.warn("#" + apps[app].id + " Wrong State, Sending")
+            await AddToSheet(data)
+        }
+    }
+    res.send({msg: "Done"})
 });
 
 router.get('/sendtosheet/:limit/:offset', isAuth, function (req, res, next) {
@@ -936,7 +977,7 @@ router.post('/members/profile/:id', isAuth, function (req, res, next) {
 });
 
 router.post('/members/new', isAuth, async function (req, res, next) {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let {Name, Phone, Email, Team} = req.body
@@ -948,6 +989,7 @@ router.post('/members/new', isAuth, async function (req, res, next) {
         Phone,
         Email,
         Committee: Team,
+        Season: settings["CurrentSeason"].Value,
         Directorate: Directorates[Team],
         PageID: chance.integer({min: 10000000, max: 99999999})
     }).then((newmem) => {

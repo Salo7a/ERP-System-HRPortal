@@ -639,7 +639,7 @@ router.get('/members/performance/:PageID', function (req, res, next) {
             PageID: req.params.PageID
         }
     }).then(mem => {
-        if (mem.Committee === "TM" && !mem.Seen) {
+        if (mem.Committee === "TD" && !mem.Seen) {
 
             res.render('portal/kpiprank', {title: "Performance Report", mem});
         } else {

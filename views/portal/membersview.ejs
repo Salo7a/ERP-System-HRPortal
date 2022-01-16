@@ -103,6 +103,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <th>Team</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Profile</th>
                                 <th>Link</th>
                                 <th>Extra</th>
                             </thead>
@@ -114,8 +115,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     <td><%= mem.Committee %></td>
                                     <td><a href="mailto:<%= mem.Email %>"><%= mem.Email %></a></td>
                                     <td><a href="tel:<%= mem.Phone %>"><%= mem.Phone %></a></td>
-                                    <td><a href="https://enactus-cu.org/members/performance/<%= mem.PageID %>">Here</a></td>
-                                    <td><% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
+                                    <td><a href="/portal/members/profile/<%= mem.id %>">Profile</a></td>
+                                    <td><a href="https://enactus-cu.org/members/performance/<%= mem.PageID %>">Here</a>
+                                    </td>
+                                    <td>
+                                        <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
                                             <span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                         type="button" class="btn btn-secondary EditButton"
                                                         data-toggle="modal"
@@ -123,7 +127,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <i class="fa fa-cog"></i>
                                         </button></span>
                                             <form class="MailSend"> <span data-toggle="tooltip" data-placement="top"
-                                                                           title="Send Email">
+                                                                          title="Send Email">
                                                 <input type="hidden" name="id" value="<%= mem.id %>">
                                                 <button type="submit" class="btn btn-success"><i
                                                             class="fa fa-paper-plane"></i>

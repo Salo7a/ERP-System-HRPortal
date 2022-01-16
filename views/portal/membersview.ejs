@@ -86,7 +86,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <h3 class="card-title"><%= title %></h3>
                         <!-- /.card-tools -->
                         <div class="float-right">
-                            <%if(["Admin", "President", "HR VP"].includes(user.Position.Name) || user.isAdmin){%>
+                            <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
                             <button type="button" class="btn btn-block btn-success" data-toggle="modal"
                                     data-target="#NewMemberModal">New Member</button>
                                 <%}%>

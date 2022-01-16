@@ -980,17 +980,19 @@ router.post('/members/new', isAuth, async function (req, res, next) {
     if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
-    let {Name, Phone, Email, Team} = req.body
-    if (!Team || !Name || !Phone || !Email) {
+    let {Name, Phone, Email} = req.body
+    let TeamName = req.body.Team
+    if (!TeamName || !Name || !Phone || !Email) {
         createError(4500)
     }
+    let team = await Team.findOne({where: {Name: TeamName}, include: [Directorate]})
     Member.create({
         Name,
         Phone,
         Email,
-        Committee: Team,
+        Committee: TeamName,
         Season: settings["CurrentSeason"].Value,
-        Directorate: Directorates[Team],
+        Directorate: team.Directorate.Name,
         PageID: chance.integer({min: 10000000, max: 99999999})
     }).then((newmem) => {
         res.json({msg: "Added Successfully!"});

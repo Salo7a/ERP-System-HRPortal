@@ -31,7 +31,11 @@ module.exports = (sequelize, DataTypes) => {
     KPI: {
       type: DataTypes.JSON,
       get: function () {
-        return JSON.parse(this.getDataValue('KPI'));
+        try {
+          return JSON.parse(this.getDataValue('KPI'));
+        } catch (e) {
+          return this.getDataValue('KPI');
+        }
       },
       defaultValue: {"January":null,"February":null,"March":null,"April":null,"May":null,"June":null,"July":null}
     },

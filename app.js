@@ -23,7 +23,9 @@ const useragent = require('express-useragent');
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const portalRouter = require('./routes/portal');
+const recruitmentRouter = require('./routes/recruitment');
 const adminRouter = require('./routes/admin');
+
 const app = express();
 
 
@@ -124,6 +126,7 @@ app.use(function (req, res, next) {
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/portal', portalRouter);
+app.use('/portal', recruitmentRouter);
 app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler

@@ -18,7 +18,7 @@ let options = {
         handleExceptions: true,
         json: false,
         maxsize: 5242880, // 5MB
-        colorize: false,
+        colorize: true,
         timestamp: true
     },
     console: {
@@ -38,7 +38,12 @@ let logger = new winston.createLogger({
         new winston.transports.Console(options.console)
     ],
     exitOnError: false, // do not exit on handled exceptions,
-    format: winston.format.simple(),
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: 'DD-MM-YYYY HH:mm:ss'
+        }),
+        winston.format.simple()
+    ),
     timestamp: true
 });
 

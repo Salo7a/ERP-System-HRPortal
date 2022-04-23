@@ -28,6 +28,13 @@
             <label for="dname">Display Name</label>
             <input type="text" id="dname" class="form-control" name="dname" value="<%= team.DisplayName %>" required>
         </div>
+        <div class="custom-control custom-checkbox">
+            <input class="custom-control-input" type="checkbox" name="visible" id="visible" value="visible"
+                   <% if (team.isVisible){ %>checked
+                    <% } %>
+            >
+            <label for="visible" class="custom-control-label">Accepts Recruitment</label>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary"

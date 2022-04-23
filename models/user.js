@@ -45,9 +45,15 @@ module.exports = (sequelize, DataTypes) => {
     Season: DataTypes.STRING,
     Rep:{
       type: DataTypes.STRING,
+      defaultValue: '[]',
       get: function () {
-        return this.getDataValue('Rep').split(',');
-      }},
+        if (this.getDataValue('Rep') !== null) {
+          return this.getDataValue('Rep').split(',');
+        } else {
+          return []
+        }
+      }
+    },
     LastLogin: {
       type: DataTypes.DATE
     },

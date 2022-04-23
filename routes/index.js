@@ -189,7 +189,11 @@ router.get('/applicationerror', function (req, res, next) {
 
 router.get('/application', async function (req, res, next) {
     let token = req.query.token;
-    let choices = await Team.findAll({include: Directorate, order: [['DirectorateId', 'ASC']]})
+    let choices = await Team.findAll({
+        where: {isVisible: true},
+        include: Directorate,
+        order: [['DirectorateId', 'ASC']]
+    })
     let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value)
     let TeamQuestions = {}
     let keys = Object.keys(questions);
@@ -451,7 +455,11 @@ router.post('/applicationajax', function (req, res, next) {
 
 router.get('/application/continue', async function (req, res, next) {
     let token = req.query.token;
-    let choices = await Team.findAll({include: Directorate, order: [['DirectorateId', 'ASC']]})
+    let choices = await Team.findAll({
+        where: {isVisible: true},
+        include: Directorate,
+        order: [['DirectorateId', 'ASC']]
+    })
     let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value)
     let TeamQuestions = {}
     let keys = Object.keys(questions);

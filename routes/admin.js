@@ -287,13 +287,14 @@ router.get("/team/edit", isAdmin, async (req, res, next) => {
 
 // Edit Team Info
 router.post("/team/edit", isAdmin, async (req, res, next) => {
-    let {name, directorate, id, dname} = req.body
-    console.log(name, directorate, id, dname)
-    Team.findOne({where: {id: id}}).then(async (team)=>{
+    let {name, directorate, id, dname, visible} = req.body
+    visible = !!visible
+    Team.findOne({where: {id: id}}).then(async (team) => {
         console.log(team)
         team.Name = name
         team.DirectorateId = directorate
         team.DisplayName = dname
+        team.isVisible = visible
         await team.save()
         await team.reload()
         console.log(team)

@@ -180,15 +180,27 @@
                             </a>
                         </li>
                     </ul>
+                    <% if(["Admin", "President", "HR VP", "TD Team Leader"].includes(user.Position.Name) || user.isAdmin){ %>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/portal/reps" class="nav-link">
+                                    <i class="nav-icon fas fa-user-tie"></i>
+                                    <p>
+                                        Manage Reps
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    <% } %>
                 </li>
                 <% if(!user.Position.Name.includes("Member") && !user.Position.Name.includes("member")){ %>
-                <li class="nav-item">
-                    <a href="/portal/messages" class="nav-link">
-                        <i class="fas fa-envelope nav-icon"></i>
-                        <p>Messages</p>
-                    </a>
-                </li>
-                <%}%>
+                    <li class="nav-item">
+                        <a href="/portal/messages" class="nav-link">
+                            <i class="fas fa-envelope nav-icon"></i>
+                            <p>Messages</p>
+                        </a>
+                    </li>
+                <% } %>
                 <li class="nav-item">
                     <a href="/auth/logout" class="nav-link">
                         <i style="color: #bf0a0a" class="fas fa-user-alt-slash nav-icon"></i>

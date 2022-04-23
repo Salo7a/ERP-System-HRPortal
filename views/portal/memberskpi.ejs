@@ -17,13 +17,21 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.5.2/css/colReorder.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.6/css/fixedHeader.dataTables.min.css">
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PHC5BRL');</script>
-<!-- End Google Tag Manager -->
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PHC5BRL');</script>
+    <!-- End Google Tag Manager -->
     <style>
         h6 {
             font-size: 16px !important;
@@ -42,8 +50,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHC5BRL"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHC5BRL"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div class="wrapper">
 
@@ -87,9 +97,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <!-- /.card-tools -->
                         <div class="float-right">
                             <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
-                            <button type="button" class="btn btn-block btn-success" data-toggle="modal"
-                                    data-target="#NewMemberModal">New Member</button>
-                                <%}%>
+                                <button type="button" class="btn btn-block btn-success" data-toggle="modal"
+                                        data-target="#NewMemberModal">New Member
+                                </button>
+                            <% } %>
                         </div>
                     </div>
                     <!-- /.card-header -->
@@ -119,11 +130,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     <td><a href="https://enactus-cu.org/members/performance/<%= mem.PageID %>">Here</a>
                                     </td>
                                     <td>
+
                                         <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
-                                            <span data-toggle="tooltip" data-placement="top" title="Actions"><button
-                                                        type="button" class="btn btn-secondary EditButton"
-                                                        data-toggle="modal"
-                                                        data-target="#meme" data-id="<%= mem.id %>">
+                                            <span class="btn-group btn-group-sm"> <span data-toggle="tooltip"
+                                                                                        data-placement="top"
+                                                                                        title="Actions"><button
+                                                            type="button" class="btn btn-secondary EditButton"
+                                                            data-toggle="modal"
+                                                            data-target="#meme" data-id="<%= mem.id %>">
                                             <i class="fa fa-cog"></i>
                                         </button></span>
                                             <form class="MailSend"> <span data-toggle="tooltip" data-placement="top"
@@ -133,6 +147,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                             class="fa fa-paper-plane"></i>
                                                 </button> </span>
                                             </form>
+                                            </span>
                                         <% } %>
                                     </td>
 
@@ -168,17 +183,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- /.content -->
     </div>
     <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
-    <div class="modal fade" id="NewMemberModal" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add a New Member</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <form method="post" action="/portal/members/new" id="NewMember">
-                <div class="modal-body">
+        <div class="modal fade" id="NewMemberModal" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add a New Member</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form method="post" action="/portal/members/new" id="NewMember">
+                        <div class="modal-body">
 
                             <div class="form-group">
                                 <label for="inputName">Name</label>
@@ -188,33 +203,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <label for="inputPhone">Phone</label>
                                 <input type="text" id="inputPhone" class="form-control" name="Phone" required>
                             </div>
-                    <div class="form-group">
-                        <label for="inputEmail">Email</label>
-                        <input type="email" id="inputEmail" class="form-control" name="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputTeam">Team</label>
-                        <select id="inputTeam" class="form-control custom-select" name="Team">
-                            <option selected disabled>Select one</option>
-                            <% choices.forEach((choice)=>{ %>
-                            <option value="<%= choice.Name %>"><%= choice.DisplayName %></option>
-                            <% }) %>
-                        </select>
-                    </div>
+                            <div class="form-group">
+                                <label for="inputEmail">Email</label>
+                                <input type="email" id="inputEmail" class="form-control" name="Email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputTeam">Team</label>
+                                <select id="inputTeam" class="form-control custom-select" name="Team">
+                                    <option selected disabled>Select one</option>
+                                    <% choices.forEach((choice)=>{ %>
+                                        <option value="<%= choice.Name %>"><%= choice.DisplayName %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add</button>
+
+
+                        </div>
+                    </form>
                 </div>
-
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add</button>
-
-
-                    </div>
-                </form>
+                <!-- /.modal-content -->
             </div>
-            <!-- /.modal-content -->
+            <!-- /.modal-dialog -->
         </div>
-        <!-- /.modal-dialog -->
-    </div>
     <%}%>
     <!-- /.content-wrmemer -->
     <!--    Footer-->
@@ -385,4 +400,3 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </script>
 </body>
 </html>
-

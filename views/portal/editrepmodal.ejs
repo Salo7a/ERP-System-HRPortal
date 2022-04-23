@@ -1,0 +1,40 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">#<%= rep.id %> -
+        <%= rep.Name %>
+    </h5>
+    <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="post" class="editRep">
+    <div class="modal-body">
+        <input type="hidden" name="id" value="<%= rep.id %>">
+
+        <div class="custom-control custom-checkbox">
+            <input class="custom-control-input" type="checkbox" name="active" id="active" value="active"
+                   <% if (rep.isActive){ %>checked
+                    <% } %>
+            >
+            <label for="active" class="custom-control-label">Account Active</label>
+        </div>
+        <h4>Managed Teams</h4>
+        <% teams.forEach(team =>{ %>
+        <div class="custom-control custom-checkbox">
+            <input class="custom-control-input" type="checkbox" name="teams" id="t-<%= team.Name %>"
+                   value="<%= team.Name %>" <% if (rep.Rep.includes(team.Name)){ %>checked
+                    <% } %>
+            >
+            <label for="t-<%= team.Name %>" class="custom-control-label"><%= team.DisplayName %></label>
+        </div>
+        <% }) %>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+                data-dismiss="modal">Cancel
+        </button>
+        <input type="submit" value="Save"
+               class="btn btn-outline-success">
+    </div>
+</form>

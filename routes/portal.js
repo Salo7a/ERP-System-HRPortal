@@ -2,7 +2,7 @@ let express = require('express');
 const createError = require("http-errors");
 let router = express.Router();
 const {NotAuth, isAuth, isAdmin, imageFilter} = require('../utils/filters');
-const {Applicant, Contact, Member, Ranking, Question, Position, Rank, Directorate, Team} = require("../models");
+const {Applicant, Contact, Member, Ranking, User, Directorate, Team, Position} = require("../models");
 const chance = require('chance').Chance();
 const {Op} = require("sequelize");
 const sequelize = require('sequelize');
@@ -124,7 +124,6 @@ router.get('/members/kpi', isAuth, async function (req, res, next) {
 
 });
 
-
 router.post('/editkpi', isAuth, async function (req, res, next) {
     if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
@@ -173,6 +172,7 @@ router.get('/members/edit/kpi', isAuth, function (req, res, next) {
     })
 });
 //End KPI
+
 // Ranking Routes
 router.get('/members/ranking', isAuth, async function (req, res, next) {
     if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
@@ -272,6 +272,55 @@ router.get('/members/edit/ranking', isAuth, function (req, res, next) {
 });
 //End Ranking
 
+// Reps Management Routes
+
+// View Rep
+router.get("/reps", isAuth, async (req, res, next) => {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+        next(createError(403));
+    }
+    let reps = await User.findAll({
+        where: {
+            '$Position.Name$': 'TD Member'
+        },
+        include: [
+            {model: Position}
+        ]
+    }).catch(e => {
+        console.error(e)
+    })
+    res.render('portal/manageReps', {title: "All Reps", reps})
+})
+
+// Edit Reps Form
+router.get("/rep/edit", isAuth, async (req, res, next) => {
+    if (!req.user.isAdmin) {
+        next(createError(403))
+    }
+    let id = req.query.id
+    let rep = await User.findOne({where: {id: id}})
+    let teams = await Team.findAll().catch(e => {
+        console.error(e)
+    })
+    res.render('portal/editrepmodal', {rep, teams})
+})
+
+// Edit Rep
+router.post("/rep/edit", isAuth, async (req, res, next) => {
+    let {id, teams, active} = req.body
+    active = !!active
+    User.findOne({where: {id: id}}).then(async (user) => {
+        user.Rep = teams.toString()
+        user.isActive = active
+        await user.save()
+        await user.reload()
+        res.send({msg: "Updated Successfully"})
+    }).catch(e => {
+        console.error(e)
+    })
+})
+
+// End Reps Management Routes
 
 // router.get('/settings', isAdmin, function (req, res, next) {
 //     let id = req.query.id;

@@ -92,7 +92,7 @@ router.post('/contact', [
     body('subject').not().isEmpty(),
     body('message').not().isEmpty(),
     body('validation').equals("Egypt").withMessage("Incorrect Answer")
-], function (req, res, next) {
+], async function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({
@@ -100,17 +100,30 @@ router.post('/contact', [
             msg: "Message not sent."
         });
     }
-    let {name, email, subject, message} = req.body;
-    Contact.create({
-        Name: name,
-        Email: email,
-        Subject: subject,
-        Message: message
-    }).then(() => {
-        return res.send({msg: "We have received your message"});
-    }).catch(() => {
-        return res.status(400).json({msg: "Message not sent."});
+    const secret_key = process.env.CAPTCHA_SECRET_KEY;
+    const token = req.body['g-recaptcha-response'];
+    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
+    winston.info(`Recaptcha user token ${token}`)
+    let response = await fetch(url, {
+        method: 'post'
     })
+    let responseJSON = await response.json();
+    if (responseJSON.success) {
+        let {name, email, subject, message} = req.body;
+        Contact.create({
+            Name: name,
+            Email: email,
+            Subject: subject,
+            Message: message
+        }).then(() => {
+            return res.send({msg: "We have received your message"});
+        }).catch(() => {
+            return res.status(400).json({msg: "Message not sent."});
+        })
+    } else {
+        return res.status(400).json({msg: "Invalid Captcha"});
+    }
+
 
 });
 
@@ -194,7 +207,15 @@ router.get('/application', async function (req, res, next) {
         include: Directorate,
         order: [['DirectorateId', 'ASC']]
     })
-    let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value)
+    let season = settings["CurrentSeason"].Value
+    let questions = await Question.GetGroupedQuestions(season)
+    while (!questions || !questions.General || !questions.Situational) {
+        season -= 1
+        if (season < 2022) {
+            next(createError(403))
+        }
+        questions = await Question.GetGroupedQuestions(season)
+    }
     let TeamQuestions = {}
     let keys = Object.keys(questions);
     await keys.forEach((key, index) => {

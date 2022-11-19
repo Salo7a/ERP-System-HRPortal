@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/dist/css/adminlte.min.css">
+    <!-- Tempus Dominus Styles -->
+    <link href="https://cdn.jsdelivr.net/gh/Eonasdan/tempus-dominus@master/dist/css/tempus-dominus.css"
+          rel="stylesheet" crossorigin="anonymous">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- Custom CSS Block -->
@@ -73,16 +76,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <input type="checkbox" class="form-control" name="RecruitmentOpen" id="RecruitmentOpen" <%if (settings["RecruitmentOpen"].Value === "1") {%>checked <%}%> data-bootstrap-switch data-off-color="danger" data-on-color="success">
                             </div>
                             <div class="form-group row">
-                                <label class="col-lg-3"for="LeadershipOpen">Open Leaders Recruitment: </label>
-                                <input type="checkbox" disabled class="form-control" name="LeadershipOpen" id="LeadershipOpen"  data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                <label class="col-lg-3" for="LeadershipOpen">Open Leaders Recruitment: </label>
+                                <input type="checkbox" disabled class="form-control" name="LeadershipOpen"
+                                       id="LeadershipOpen" data-bootstrap-switch data-off-color="danger"
+                                       data-on-color="success">
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="MembershipOpen">Open Members Recruitment: </label>
-                                <input type="checkbox"  disabled class="form-control"  name="MembershipOpen" id="MembershipOpen" data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                <input type="checkbox" disabled class="form-control" name="MembershipOpen"
+                                       id="MembershipOpen" data-bootstrap-switch data-off-color="danger"
+                                       data-on-color="success">
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="Season">Current Season: </label>
-                                <input type="number" min="2020" class="form-control" name="Season" id="Season" value="2022">
+                                <input type="number" min="2020" class="form-control" name="Season" id="Season"
+                                       value="<%= settings["CurrentSeason"].Value %>">
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="CurrentForm">Current Form</label>
@@ -95,12 +103,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="SheetID">SheetID: </label>
-                                <input type="text"  name="SheetID" id="SheetID" class="form-control" value="<%=settings['SheetID'].Value%>">
-                                <p style="color: #666; font-size: 12px"> Make sure that enactus21recruitment@enactus21.iam.gserviceaccount.com (and ahmed.shemais@ieeecusb.org for backup) has Edit access to the spreadsheet!, Don't edit the created sheet name or the first row.</p>
+                                <input type="text" name="SheetID" id="SheetID" class="form-control"
+                                       value="<%= settings['SheetID'].Value %>">
+                                <p style="color: #666; font-size: 12px"> Make sure that
+                                    enactus21recruitment@enactus21.iam.gserviceaccount.com (and
+                                    ahmed.shemais@ieeecusb.org for backup) has Edit access to the spreadsheet!, Don't
+                                    edit the created sheet name or the first row.</p>
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="FormTime">Form Time (in seconds): </label>
-                                <input type="number"  class="form-control" name="FormTime" id="FormTime" value="<%=settings['FormTime'].Value%>">
+                                <input type="number" class="form-control" name="FormTime" id="FormTime"
+                                       value="<%= settings['FormTime'].Value %>">
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-12" id="htmlTarget">
+                                    <label for="datetimepicker1Input" class="form-label">Form Start Date</label>
+                                    <div class="input-group log-event" id="datetimepicker1"
+                                         data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                        <input id="datetimepicker1Input" type="text" class="form-control"
+                                               data-td-target="#datetimepicker1" name="FormStartDate"
+                                               value="<% if (settings["FormStartDate"]) { %><%= settings["FormStartDate"].Value %><% } %>">
+                                        <span class="input-group-text" data-td-target="#datetimepicker1"
+                                              data-td-toggle="datetimepicker">
+          <i class="fas fa-calendar"></i>
+        </span>
+                                    </div>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Save</button>
                         </form>
@@ -124,10 +152,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <%- block('js').toString() %>
     <!-- Bootstrap Switch -->
     <script src="/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+    <!-- Popperjs -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+            crossorigin="anonymous"></script>
+    <!-- Tempus Dominus JavaScript -->
+    <script src="https://cdn.jsdelivr.net/gh/Eonasdan/tempus-dominus@master/dist/js/tempus-dominus.js"
+            crossorigin="anonymous"></script>
     <script>
-        $("input[data-bootstrap-switch]").each(function(){
+        $("input[data-bootstrap-switch]").each(function () {
             $(this).bootstrapSwitch();
         });
+        new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'), {});
     </script>
 </body>
 </html>

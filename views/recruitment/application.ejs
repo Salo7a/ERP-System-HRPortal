@@ -501,16 +501,16 @@
                                                 </div>
                                             </div>
                                         <% } %>
-                                </div>
-                            </div><!-- /columns -->
-                        </div>
-                        <% } %>
-                    <% i += 1 %>
+                                    </div>
+                                </div><!-- /columns -->
+                            </div>
+                            <% } %>
+                            <% i += 1 %>
                     <% }) %>
                     <div class="row">
                         <div class="columns" style="text-align: center">
                             <div class="small-12 medium-12 large-12">
-                                <input type="hidden" name="token" value="<%= token %>">
+                                <input type="hidden" name="token" id="token" value="<%= token %>">
                                 <button type="submit" id="submit" class="btn hvr-bounce-to-right"
                                         style="margin-left: auto; margin-right: auto; font-size: 18px; border-radius: 2px; border-width: 2px;">
                                     Submit
@@ -602,12 +602,10 @@
         $(".teamchoice").on('change', async function () {
             let val = $(this).val()
             let id = $(this).attr('id')
-            let Qdiv, divid
+            let Qdiv
             if (id === "first") {
-                divid = "#change1"
                 Qdiv = $(`#change1`)
             } else {
-                divid = "#change2"
                 Qdiv = $(`#change2`)
             }
             Qdiv.slideDown("slow").show()
@@ -869,6 +867,24 @@
         };
 
         OtherOptionHandle.init();
+
+        function timerSync() {
+            setInterval(() => {
+                let token = document.getElementById("token").value
+                $.ajax({
+                        type: 'get',
+                        url: `/checktime?token=${token}`,
+                        success: (res) => {
+                            timePassed = res.passed
+                        }
+                    }
+                );
+
+
+            }, 30000);
+        }
+
+        timerSync();
     </script>
 
 </div>

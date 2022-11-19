@@ -181,6 +181,9 @@ router.get('/applicants/all', isAuth, function (req, res, next) {
 });
 
 router.get('/applicants/my', isAuth, async function (req, res, next) {
+    if ((["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+        res.redirect("/portal/applicants/all")
+    }
     let Position = req.user.Position;
     let rank = await Position.getRank();
     if (rank.Level < 2) {
@@ -613,11 +616,18 @@ router.get('/sendalltosheet', isAuth, async function (req, res, next) {
 
 router.get('/applicants/modal', isAuth, async function (req, res, next) {
     let id = req.query.id;
-    let questions = await Question.GetGroupedQuestions(settings["CurrentSeason"].Value);
+    let season = settings["CurrentSeason"].Value
+    let questions = await Question.GetGroupedQuestions(season);
+    while (!questions || !questions.General || !questions.Situational) {
+        season -= 1
+        if (season < 2022) {
+            next(createError(454))
+        }
+        questions = await Question.GetGroupedQuestions(season)
+    }
     Applicant.findOne({
         where: {
-            id: id,
-            Season: settings["CurrentSeason"].Value
+            id: id
         }
     }).then(app => {
         if (app) {

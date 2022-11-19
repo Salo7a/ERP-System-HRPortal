@@ -294,8 +294,8 @@ router.get("/reps", isAuth, async (req, res, next) => {
 
 // Edit Reps Form
 router.get("/rep/edit", isAuth, async (req, res, next) => {
-    if (!req.user.isAdmin) {
-        next(createError(403))
+    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+        next(createError(403));
     }
     let id = req.query.id
     let rep = await User.findOne({where: {id: id}})
@@ -307,12 +307,16 @@ router.get("/rep/edit", isAuth, async (req, res, next) => {
 
 // Edit Rep
 router.post("/rep/edit", isAuth, async (req, res, next) => {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+        next(createError(403));
+    }
     let {id, teams, active} = req.body
     active = !!active
     User.findOne({where: {id: id}}).then(async (user) => {
-        user.Rep = teams.toString()
+        user.Rep = teams ? teams.toString() : ""
         user.isActive = active
         await user.save()
+        await user.reload()
         await user.reload()
         res.send({msg: "Updated Successfully"})
     }).catch(e => {

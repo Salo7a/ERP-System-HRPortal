@@ -12,7 +12,10 @@ const engine = require('ejs-mate');
 const helmet = require('helmet');
 const Config = require('./models').Config;
 const winston = require('./config/winston');
+const socketIo = require("socket.io");
+const io = socketIo();
 let passportConfig = require('./config/passport');
+
 // initalize sequelize with session store
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
@@ -28,6 +31,7 @@ const adminRouter = require('./routes/admin');
 
 const app = express();
 
+app.io = io;
 
 //Database Connection Test
 db.sequelize

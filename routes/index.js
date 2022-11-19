@@ -62,19 +62,44 @@ function formatTime(time) {
 }
 
 router.get('/', function (req, res, next) {
-    res.render('index', {title: "Home"});
+    let formReady = null
+    if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
+
+        let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
+        formReady = (formtimeleft <= 0)
+    }
+    res.render('index', {title: "Home", formReady});
+
 });
 
 router.get('/teams', function (req, res, next) {
-    res.render('teams', {title: "Teams"});
+    let formReady = null
+    if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
+
+        let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
+        formReady = (formtimeleft <= 0)
+    }
+    res.render('teams', {title: "Teams", formReady});
 });
 
 router.get('/contact', function (req, res, next) {
-    res.render('contact', {title: "Contact Us"});
+    let formReady = null
+    if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
+
+        let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
+        formReady = (formtimeleft <= 0)
+    }
+    res.render('contact', {title: "Contact Us", formReady});
 });
 
 router.get('/apply', function (req, res, next) {
-    res.render('recruitment/apply', {title: "New Member Application"});
+    let formReady = null
+    if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
+
+        let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
+        formReady = (formtimeleft <= 0)
+    }
+    res.render('recruitment/apply', {title: "New Member Application", formReady});
 });
 
 router.get('/browsererror', function (req, res, next) {
@@ -212,7 +237,7 @@ router.get('/application', async function (req, res, next) {
     while (!questions || !questions.General || !questions.Situational) {
         season -= 1
         if (season < 2022) {
-            next(createError(403))
+            next(createError(454))
         }
         questions = await Question.GetGroupedQuestions(season)
     }
@@ -644,7 +669,7 @@ router.post('/application/continueajax', async function (req, res, next) {
 
 });
 
-router.post('/checktime', ((req, res, next) => {
+router.get('/checktime', ((req, res, next) => {
     let token = req.query.token;
     Applicant.findOne({
         where: {
@@ -655,8 +680,8 @@ router.post('/checktime', ((req, res, next) => {
         if (!applicant) {
             return res.status(400).json({msg: "Token Not Found"});
         }
-        let remaining = differenceInSeconds(addSeconds(applicant.Start, (parseInt(settings["FormTime"].Value) + 10)), new Date())
-        res.send({msg: "Found", remaining: remaining});
+        let passed = differenceInSeconds(new Date(), applicant.Start)
+        res.send({msg: "Found", passed});
     }).catch(() => {
         return res.status(400).json({msg: "Token Not Found"});
     })

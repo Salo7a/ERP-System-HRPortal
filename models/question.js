@@ -2,7 +2,6 @@
 const {
   Model
 } = require('sequelize');
-const {Question} = require("../models");
 module.exports = (sequelize, DataTypes) => {
   class Question extends Model {
     /**

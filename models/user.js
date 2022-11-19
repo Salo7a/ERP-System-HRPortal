@@ -47,11 +47,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: '[]',
       get: function () {
-        if (this.getDataValue('Rep') !== null) {
-          return this.getDataValue('Rep').split(',');
-        } else {
-          return []
+        try {
+          if (this.getDataValue('Rep') !== null) {
+            return this.getDataValue('Rep').split(',');
+          } else {
+            return []
+          }
+        } catch {
+          winston.error(`Couldn't get rep teams`)
         }
+
       }
     },
     LastLogin: {

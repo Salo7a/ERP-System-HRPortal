@@ -432,14 +432,23 @@ router.post("/settings", isAdmin, async (req, res, next) => {
             "CurrentSeason": req.body.Season,
             "SheetID": req.body.SheetID,
             "CurrentForm": req.body.CurrentForm,
-            "FormTime": req.body.FormTime
+            "FormTime": req.body.FormTime,
+            "FormStartDate": req.body.FormStartDate
         }
     let SettingsNames = Object.keys(NewSettings);
     try {
-        await SettingsNames.forEach((SettingName)=>{
-            Config.findOne({where: { Setting: SettingName}}).then((OldSetting)=>{
-                OldSetting.Value = NewSettings[SettingName]
-                OldSetting.save()
+        await SettingsNames.forEach((SettingName) => {
+            Config.findOrCreate({
+                where: {Setting: SettingName},
+                defaults: {
+                    Value: NewSettings[SettingName]
+                }
+            }).then((OldSetting) => {
+                if (OldSetting[0]) {
+                    OldSetting[0].Value = NewSettings[SettingName]
+                    OldSetting[0].save()
+                }
+
             })
         })
     } catch (e) {

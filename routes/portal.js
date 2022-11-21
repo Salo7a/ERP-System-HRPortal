@@ -357,7 +357,7 @@ router.get('/members/profile/:id', isAuth, function (req, res, next) {
 });
 
 router.post('/members/profile/:id', isAuth, function (req, res, next) {
-    let upload = multer({storage: storage, fileFilter: imageFilter}).single('profile_image');
+    let upload = multer({storage: storage, fileFilter: imageFilter, limits: {}}).single('profile_image');
     let MemberId = req.params.id
     upload(req, res, function (err) {
         // req.file contains information of uploaded file

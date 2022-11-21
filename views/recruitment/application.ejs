@@ -60,8 +60,8 @@
 <div class="main-page-wrapper">
     <section style="margin-bottom: 20px" id="contact-section">
         <div class="container send-message">
-            <form id="ApplicationForm2" method="post">
-                <!--                Personal-->
+            <form id="ApplicationForm2" method="post" enctype="multipart/form-data">
+                <!--Personal-->
                 <div class="box">
                     <div class="row">
                         <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
@@ -308,7 +308,7 @@
                         </div><!-- /columns -->
                     </div>
                 </div>
-                <!--                Team-->
+                <!--Team-->
                 <div class="box">
                     <div class="row">
                         <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
@@ -344,7 +344,7 @@
                             </div><!-- /col-24 -->
                         </div><!-- /columns -->
                     </div>
-                    <div id="change1" style="display: none">
+                    <div id="change1">
                     </div>
                     <div class="row">
                         <div class="columns">
@@ -371,57 +371,27 @@
                             </div><!-- /col-24 -->
                         </div><!-- /columns -->
                     </div>
-                    <div id="change2" style="display: none">
+                    <div id="change2">
                     </div>
                 </div>
-                <!--                General-->
-                <div class="box">
-                    <div class="row">
-                        <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
-                            <h4>General Questions</h4>
-                        </div>
-                    </div>
-                    <!--Questions-->
-                    <% let i = 1 %>
-                    <% questions["General"].forEach((question) => { %>
+                <% let i = 1 %>
+                <% if(questions["General"]) { %>
+                    <!-- General-->
+                    <div class="box">
                         <div class="row">
-                            <div class="columns">
-                                <div class="small-12 medium-12 large-12">
-                                    <label for="G<%= i %>"><%= question.Text %></label>
-                                    <div class="relative input-wrap">
-                                        <textarea id="G<%= i %>" name="Gen[]"></textarea>
-                                        <span class="icon validation small success hide">
-										<span class="fa fa-check"></span>
-									</span>
-                                        <span class="icon validation small error hide">
-										<span class="fa fa-remove"></span>
-									</span>
-                                    </div>
-                                </div>
-                            </div><!-- /columns -->
+                            <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
+                                <h4>General Questions</h4>
+                            </div>
                         </div>
-                        <% i += 1 %>
-                    <% }) %>
-                </div>
-                <!--Situational-->
-                <div class="box">
-                    <div class="row">
-                        <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
-                            <h4>Situational Questions</h4>
+                        <!--Questions-->
 
-                        </div>
-                    </div>
-                    <!--Questions-->
-
-                    <% let x = 1 %>
-                    <% questions["Situational"].forEach((question) => { %>
-                        <% if(question.Type === "textarea"){ %>
+                        <% questions["General"].forEach((question) => { %>
                             <div class="row">
                                 <div class="columns">
                                     <div class="small-12 medium-12 large-12">
-                                        <label for="S<%= x %>"><%= question.Text %></label>
+                                        <label for="G<%= i %>"><%= question.Text %></label>
                                         <div class="relative input-wrap">
-                                            <textarea id="S<%= x %>" name="sit[]"></textarea>
+                                            <textarea id="G<%= i %>" name="Gen[]"></textarea>
                                             <span class="icon validation small success hide">
 										<span class="fa fa-check"></span>
 									</span>
@@ -432,81 +402,121 @@
                                     </div>
                                 </div><!-- /columns -->
                             </div>
-                        <% } else if (question.Type === 'choice'){ %>
-                            <div class="row">
-                                <div class="columns">
-                                    <div class="small-12 medium-12 large-12">
-                                        <label for="S<%= x %>"><%= question.Text %></label>
-                                        <% if(question.Text.includes("creativity")) { %>
-                                            <div id="S<%= x %>">
-                                                <div>
-                                                    <input type="radio" name="creativity" id="choice1"
-                                                           value="Something you learn">
-                                                    <label for="choice1">Something you learn</label>
-                                                </div>
-                                                <div>
-                                                    <input type="radio" name="creativity" id="choice2"
-                                                           value="Something you have">
-                                                    <label for="choice2">Something you have</label>
-                                                </div>
+                            <% i += 1 %>
+                        <% }) %>
+                    </div>
+                <% } %>
+                <% if(questions["Situational"]) { %>
+                    <% let x = 1 %>
+                    <!--Situational-->
+                    <div class="box">
+                        <div class="row">
+                            <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
+                                <h4>Situational Questions</h4>
 
-                                                <div>
-                                                    <input type="radio" name="creativity" id="choice3" value="Other">
-                                                    <label for="choice3">Other</label>
-
-                                                    <div class="reveal-if-active">
-                                                        <input type="text" disabled class="disable-if-inactive"
-                                                               name="creativity" placeholder="Please Specify"
-                                                               data-disable-pair="#choice3">
-                                                        <span class="icon validation small success hide">
-                                                        <span class="fa fa-check"></span>
-                                                    </span>
-                                                        <span class="icon validation small error hide">
-                                                        <span class="fa fa-remove"></span>
-                                                    </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <% } else if (question.Text.includes("effective")){ %>
-                                            <div id="S<%= x %>">
-                                                <div>
-                                                    <input type="radio" name="effective" id="choice4"
-                                                           value="Understanding">
-                                                    <label for="choice4">Understanding</label>
-                                                </div>
-                                                <div>
-                                                    <input type="radio" name="effective" id="choice5" value="Respect">
-                                                    <label for="choice5">Respect</label>
-                                                </div>
-                                                <div>
-                                                    <input type="radio" name="effective" id="choice6"
-                                                           value="Transparency">
-                                                    <label for="choice6">Transparency</label>
-                                                </div>
-                                                <div>
-                                                    <input type="radio" name="effective" id="choice7" value="Other">
-                                                    <label for="choice7">Other</label>
-
-                                                    <div class="reveal-if-active">
-                                                        <input type="text" disabled class="disable-if-inactive"
-                                                               name="effective" placeholder="Please Specify"
-                                                               data-disable-pair="#choice7">
-                                                        <span class="icon validation small success hide">
-                                                        <span class="fa fa-check"></span>
-                                                    </span>
-                                                        <span class="icon validation small error hide">
-                                                        <span class="fa fa-remove"></span>
-                                                    </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <% } %>
-                                    </div>
-                                </div><!-- /columns -->
                             </div>
+                        </div>
+                        <!--Questions-->
+
+                        <% questions["Situational"].forEach((question) => { %>
+                            <% if(question.Type === "textarea"){ %>
+                                <div class="row">
+                                    <div class="columns">
+                                        <div class="small-12 medium-12 large-12">
+                                            <label for="S<%= x %>"><%= question.Text %></label>
+                                            <div class="relative input-wrap">
+                                                <textarea id="S<%= x %>" name="sit[]"></textarea>
+                                                <span class="icon validation small success hide">
+										<span class="fa fa-check"></span>
+									</span>
+                                                <span class="icon validation small error hide">
+										<span class="fa fa-remove"></span>
+									</span>
+                                            </div>
+                                        </div>
+                                    </div><!-- /columns -->
+                                </div>
+                            <% } else if (question.Type === 'choice'){ %>
+                                <div class="row">
+                                    <div class="columns">
+                                        <div class="small-12 medium-12 large-12">
+                                            <label for="S<%= x %>"><%= question.Text %></label>
+                                            <% if(question.Text.includes("creativity")) { %>
+                                                <div id="S<%= x %>">
+                                                    <div>
+                                                        <input type="radio" name="creativity" id="choice1"
+                                                               value="Something you learn">
+                                                        <label for="choice1">Something you learn</label>
+                                                    </div>
+                                                    <div>
+                                                        <input type="radio" name="creativity" id="choice2"
+                                                               value="Something you have">
+                                                        <label for="choice2">Something you have</label>
+                                                    </div>
+
+                                                    <div>
+                                                        <input type="radio" name="creativity" id="choice3"
+                                                               value="Other">
+                                                        <label for="choice3">Other</label>
+
+                                                        <div class="reveal-if-active">
+                                                            <input type="text" disabled class="disable-if-inactive"
+                                                                   name="creativity" placeholder="Please Specify"
+                                                                   data-disable-pair="#choice3">
+                                                            <span class="icon validation small success hide">
+                                                        <span class="fa fa-check"></span>
+                                                    </span>
+                                                            <span class="icon validation small error hide">
+                                                        <span class="fa fa-remove"></span>
+                                                    </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } else if (question.Text.includes("effective")){ %>
+                                                <div id="S<%= x %>">
+                                                    <div>
+                                                        <input type="radio" name="effective" id="choice4"
+                                                               value="Understanding">
+                                                        <label for="choice4">Understanding</label>
+                                                    </div>
+                                                    <div>
+                                                        <input type="radio" name="effective" id="choice5"
+                                                               value="Respect">
+                                                        <label for="choice5">Respect</label>
+                                                    </div>
+                                                    <div>
+                                                        <input type="radio" name="effective" id="choice6"
+                                                               value="Transparency">
+                                                        <label for="choice6">Transparency</label>
+                                                    </div>
+                                                    <div>
+                                                        <input type="radio" name="effective" id="choice7" value="Other">
+                                                        <label for="choice7">Other</label>
+
+                                                        <div class="reveal-if-active">
+                                                            <input type="text" disabled class="disable-if-inactive"
+                                                                   name="effective" placeholder="Please Specify"
+                                                                   data-disable-pair="#choice7">
+                                                            <span class="icon validation small success hide">
+                                                        <span class="fa fa-check"></span>
+                                                    </span>
+                                                            <span class="icon validation small error hide">
+                                                        <span class="fa fa-remove"></span>
+                                                    </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div><!-- /columns -->
+                                </div>
                             <% } %>
                             <% i += 1 %>
-                    <% }) %>
+                        <% }) %>
+
+                    </div>
+                <% } %>
+                <div class="box">
                     <div class="row">
                         <div class="columns" style="text-align: center">
                             <div class="small-12 medium-12 large-12">
@@ -523,102 +533,102 @@
             </form>
         </div>
     </section>
+</div>
 
+<!---------Footer---------->
+<footer>
+    <div class="container">
+        <a href="/" class="logo"><img src="images/logo/logo.png" alt="Logo"></a>
 
-    <!---------Footer---------->
-    <footer>
-        <div class="container">
-            <a href="/" class="logo"><img src="images/logo/logo.png" alt="Logo"></a>
-
-            <ul>
-                <li><a href="https://www.facebook.com/EnactusCairo/" class="tran3s round-border"><i
-                                class="fa fa-facebook" aria-hidden="true"></i></a></li>
-                <!--                <li><a href="#" class="tran3s round-border"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>-->
-                <li><a href="https://www.linkedin.com/company/enactus-cairo-university/" class="tran3s round-border"><i
-                                class="fa fa-linkedin" aria-hidden="true"></i></a></li>
-                <li><a href="https://www.instagram.com/enactuscairo/" class="tran3s round-border"><i
-                                class="fa fa-instagram" aria-hidden="true"></i></a></li>
-            </ul>
-        </div>
-    </footer>
-
-
-    <!---------Pre Loader---------->
-    <div id="loader-wrapper">
-        <div id="preloader_1">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+        <ul>
+            <li><a href="https://www.facebook.com/EnactusCairo/" class="tran3s round-border"><i
+                            class="fa fa-facebook" aria-hidden="true"></i></a></li>
+            <!--                <li><a href="#" class="tran3s round-border"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>-->
+            <li><a href="https://www.linkedin.com/company/enactus-cairo-university/" class="tran3s round-border"><i
+                            class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+            <li><a href="https://www.instagram.com/enactuscairo/" class="tran3s round-border"><i
+                            class="fa fa-instagram" aria-hidden="true"></i></a></li>
+        </ul>
     </div>
+</footer>
 
 
-    <!-- Timer -->
-    <!--    <div class="timer tran3s p-color-bg">-->
-    <!--        <p id="countdown"></p>-->
-    <!--    </div>-->
+<!---------Pre Loader---------->
+<div id="loader-wrapper">
+    <div id="preloader_1">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
 
-    <div id="app"></div>
-    <!-- Js Files -->
-    <!-- j Query -->
-    <script src="/javascript/jquery-3.6.0.min.js"></script>
-    <script src="/javascript/jquery-migrate-3.3.2.min.js"></script>
 
-    <!-- Bootstrap JS -->
-    <script type="text/javascript" src="/vendor/bootstrap/bootstrap.min.js"></script>
+<!-- Timer -->
+<!--    <div class="timer tran3s p-color-bg">-->
+<!--        <p id="countdown"></p>-->
+<!--    </div>-->
 
-    <!-- Foundation -->
-    <script type="text/javascript" src="/vendor/foundation.min.js"></script>
+<div id="app"></div>
+<!-- Js Files -->
+<!-- j Query -->
+<script src="/javascript/jquery-3.6.0.min.js"></script>
+<script src="/javascript/jquery-migrate-3.3.2.min.js"></script>
 
-    <!-- Wow -->
-    <script type="text/javascript" src="/vendor/wow.min.js"></script>
+<!-- Bootstrap JS -->
+<script type="text/javascript" src="/vendor/bootstrap/bootstrap.min.js"></script>
 
-    <!-- Foundation -->
-    <script type="text/javascript" src="/vendor/foundation.min.js"></script>
+<!-- Foundation -->
+<script type="text/javascript" src="/vendor/foundation.min.js"></script>
 
-    <!-- Jquery-UI -->
-    <script src="/javascript/jquery-ui.min.js"></script>
+<!-- Wow -->
+<script type="text/javascript" src="/vendor/wow.min.js"></script>
 
-    <!-- AJAXSubmit -->
-    <script type="text/javascript" src="/vendor/jquery.ajaxSubmit.min.js"></script>
+<!-- Foundation -->
+<script type="text/javascript" src="/vendor/foundation.min.js"></script>
 
-    <!-- Validation -->
-    <script type="text/javascript" src="/js/validation.js"></script>
+<!-- Jquery-UI -->
+<script src="/javascript/jquery-ui.min.js"></script>
 
-    <!--Form Persist-->
-    <script type="text/javascript" src="/js/savestorage.min.js"></script>
-    <!-- Toasts -->
-    <% include ../partials/toasts.ejs %>
+<!-- AJAXSubmit -->
+<script type="text/javascript" src="/vendor/jquery.ajaxSubmit.min.js"></script>
 
-    <!-- Main js -->
-    <script type="text/javascript" src="/js/main.js"></script>
+<!-- Validation -->
+<script type="text/javascript" src="/js/validation.js"></script>
 
-    <script>
-        let timeout = false;
-        let questions = JSON.parse(`<%- TeamQuestions %>`)
-        let i = 0
-        $(".teamchoice").on('change', async function () {
-            let val = $(this).val()
-            let id = $(this).attr('id')
-            let Qdiv
-            if (id === "first") {
-                Qdiv = $(`#change1`)
-            } else {
-                Qdiv = $(`#change2`)
-            }
-            Qdiv.slideDown("slow").show()
-            if (questions[val]) {
-                Qdiv.slideUp("fast", async () => {
-                    Qdiv.empty()
-                    await questions[val].forEach((question) => {
-                        Qdiv.append(`<div class="row">
+<!--Form Persist-->
+<script type="text/javascript" src="/js/savestorage.min.js"></script>
+<!-- Toasts -->
+<% include ../partials/toasts.ejs %>
+
+<!-- Main js -->
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script>
+    let timeout = false;
+    let questions = JSON.parse(`<%- TeamQuestions %>`)
+    let i = 0
+    let questionsHTML
+    $(".teamchoice").on('change', function () {
+        let val = $(this).val()
+        let id = $(this).attr('id')
+        let Qdiv
+        if (id === "first") {
+            Qdiv = `change1`
+        } else {
+            Qdiv = `change2`
+        }
+        questionsHTML = ''
+        if (questions[val]) {
+            for (const question of questions[val]) {
+                if (question.Type === 'textarea') {
+                    questionsHTML = questionsHTML + `<div class="row">
                             <div class="columns">
                                 <div class="small-12 medium-12 large-12">
-                                    <label for="T${i}">${question}</label>
+                                    <label for="T${i}">${question.Text}</label>
                                     <div class="relative input-wrap">
-                                        <textarea id="T{i}" name="team[]"></textarea>
+                                        <textarea id="T${i}" name="team[]"></textarea>
                                         <span class="icon validation small success hide">
                                             <span class="fa fa-check"></span>
                                         </span>
@@ -627,74 +637,94 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div><!-- /columns -->
-                        </div>`)
-                        i += 1
-                    })
-                    Qdiv.slideDown("fast").show()
-                })
-            } else {
-                Qdiv.slideUp("fast", () => {
-                    Qdiv.empty()
-                })
-            }
-        })
+                            </div>
+                        </div>`
+                } else if (question.Type === 'image') {
+                    questionsHTML = questionsHTML + `
+                                <div class="row">
+                                    <div class="form-group columns small-12 medium-12 large-12">
+                                     <label for="T${i}" class="col-md-12 col-form-label">${question.Text}</label>
+                                        <p style="color: #666; font-size: 12px">Only JPG, JPEG, GIF, PNG files are allowed, Max file size: 15MB</p>
+                                     <div class="col-ms-12">
+                                          <input id="T${i}" type="file" name="${val}/${question.id}" accept="image/jpeg, image/png, image/gif" onchange="SizeCheck(this)"/>
+                                     </div>
+                                    </div>
+                                </div>`
+                } else if (question.Type === 'choice') {
 
-        function format(time) {
-            // Hours, minutes and seconds
-            let hrs = ~~(time / 3600);
-            let mins = ~~((time % 3600) / 60);
-            let secs = ~~time % 60;
+                } else if (question.Type === 'voice') {
 
-            // Output like "1:01" or "4:03:59" or "123:03:59"
-            let ret = "";
-            if (hrs > 0) {
-                ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+                }
+                i += 1
             }
-            ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-            ret += "" + secs;
-            return ret;
+            document.getElementById(`${Qdiv}`).innerHTML = questionsHTML
+        } else {
+            document.getElementById(`${Qdiv}`).innerHTML = ''
         }
+    })
 
-        let remaining = <%= remaining %>;
+    function SizeCheck(t) {
+        if (t.files[0].size > 15728640) {
+            toastr.error("File is too big!");
+            t.value = "";
+        }
+    }
 
-        // $(document).on('change', '#first', ()=>{
-        //     $('#change1q').fadeIn(500).text(questions[$('#first').val()][0]);
-        //     $('#change1').slideDown(500).show();
-        //
-        // })
-        // $(document).on('change', '#second', ()=>{
-        //     $('#change2q').text(questions[$('#second').val()][0]).fadeIn(500);
-        //     $('#change2').slideDown(500).show();
-        // });
+    function format(time) {
+        // Hours, minutes and seconds
+        let hrs = ~~(time / 3600);
+        let mins = ~~((time % 3600) / 60);
+        let secs = ~~time % 60;
 
-        // Credit: Mateusz Rybczonec
+        // Output like "1:01" or "4:03:59" or "123:03:59"
+        let ret = "";
+        if (hrs > 0) {
+            ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+        }
+        ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+        ret += "" + secs;
+        return ret;
+    }
 
-        const FULL_DASH_ARRAY = 283;
-        const WARNING_THRESHOLD = 120;
-        const ALERT_THRESHOLD = 30;
+    let remaining = <%= remaining %>;
 
-        const COLOR_CODES = {
-            info: {
-                color: "green"
-            },
-            warning: {
-                color: "orange",
-                threshold: WARNING_THRESHOLD
-            },
-            alert: {
-                color: "red",
-                threshold: ALERT_THRESHOLD
-            }
-        };
+    // $(document).on('change', '#first', ()=>{
+    //     $('#change1q').fadeIn(500).text(questions[$('#first').val()][0]);
+    //     $('#change1').slideDown(500).show();
+    //
+    // })
+    // $(document).on('change', '#second', ()=>{
+    //     $('#change2q').text(questions[$('#second').val()][0]).fadeIn(500);
+    //     $('#change2').slideDown(500).show();
+    // });
 
-        const TIME_LIMIT = <%= parseInt(settings["FormTime"].Value) + 10 %>;
-        let timePassed = TIME_LIMIT - <%= remaining %>;
-        let timeLeft = <%= remaining %>;
-        let timerInterval = null;
-        let remainingPathColor = COLOR_CODES.info.color;
+    // Credit: Mateusz Rybczonec
 
-        document.getElementById("app").innerHTML = `
+    const FULL_DASH_ARRAY = 283;
+    const WARNING_THRESHOLD = 120;
+    const ALERT_THRESHOLD = 30;
+
+    const COLOR_CODES = {
+        info: {
+            color: "green"
+        },
+        warning: {
+            color: "orange",
+            threshold: WARNING_THRESHOLD
+        },
+        alert: {
+            color: "red",
+            threshold: ALERT_THRESHOLD
+        }
+    };
+
+    const TIME_LIMIT = <%= parseInt(settings["FormTime"].Value) + 10 %>;
+    let timePassed = TIME_LIMIT - <%= remaining %>;
+    let timeLeft = <%= remaining %>;
+    let timerInterval = null;
+    let remainingPathColor = COLOR_CODES.info.color;
+
+    document.getElementById("app").innerHTML = `
         <div class="base-timer">
           <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <g class="base-timer__circle">
@@ -713,180 +743,180 @@
             </g>
           </svg>
           <span id="base-timer-label" class="base-timer__label">${formatTime(
-            timeLeft
-        )}</span>
+        timeLeft
+    )}</span>
         </div>
         `;
 
-        startTimer();
+    startTimer();
 
-        function onTimesUp() {
-            clearInterval(timerInterval);
-            toastr.error("The time has ended, you have 60 seconds to submit");
-            let pass = 60;
+    function onTimesUp() {
+        clearInterval(timerInterval);
+        toastr.error("The time has ended, you have 60 seconds to submit");
+        let pass = 60;
 
-            function timer2() {
-                timerInterval = setInterval(() => {
-                        pass--;
-                        if (pass === 30) {
-                            toastr.error("30 seconds Left");
-                        }
-                        if (pass < 10 && pass > 0) {
-                            toastr.error(pass + " seconds Left");
-                        }
-                        if (pass === 0) {
-                            toastr.error("Timeout");
-                            $.ajax({
-                                    type: 'POST',
-                                    url: '/applicationajax',
-                                    data: $('#ApplicationForm2').serialize(),
-                                    success: (res) => {
-                                        toastr.success(res.msg);
-                                        $(location).attr('href', '/timeout');
-                                    },
-                                    error: () => {
-                                        $(location).attr('href', '/tokenerror');
-                                    }
-                                }
-                            );
-                        }
-                    }
-                    , 1000);
-            }
-
-            timer2();
-        }
-
-        function startTimer() {
+        function timer2() {
             timerInterval = setInterval(() => {
-                timePassed = timePassed += 1;
-                timeLeft = TIME_LIMIT - timePassed;
-                document.getElementById("base-timer-label").innerHTML = formatTime(
-                    timeLeft
-                );
-                setCircleDasharray();
-                setRemainingPathColor(timeLeft);
-
-                if (timeLeft === 0) {
-                    onTimesUp();
+                    pass--;
+                    if (pass === 30) {
+                        toastr.error("30 seconds Left");
+                    }
+                    if (pass < 10 && pass > 0) {
+                        toastr.error(pass + " seconds Left");
+                    }
+                    if (pass === 0) {
+                        toastr.error("Timeout");
+                        $.ajax({
+                                type: 'POST',
+                                url: '/applicationajax',
+                                data: $('#ApplicationForm2').serialize(),
+                                success: (res) => {
+                                    toastr.success(res.msg);
+                                    $(location).attr('href', '/timeout');
+                                },
+                                error: () => {
+                                    $(location).attr('href', '/tokenerror');
+                                }
+                            }
+                        );
+                    }
                 }
-            }, 1000);
+                , 1000);
         }
 
-        function formatTime(time) {
-            const minutes = Math.floor(time / 60);
-            let seconds = time % 60;
+        timer2();
+    }
 
-            if (seconds < 10) {
-                seconds = `0${seconds}`;
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timePassed = timePassed += 1;
+            timeLeft = TIME_LIMIT - timePassed;
+            document.getElementById("base-timer-label").innerHTML = formatTime(
+                timeLeft
+            );
+            setCircleDasharray();
+            setRemainingPathColor(timeLeft);
+
+            if (timeLeft === 0) {
+                onTimesUp();
             }
+        }, 1000);
+    }
 
-            return `${minutes}:${seconds}`;
+    function formatTime(time) {
+        const minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        if (seconds < 10) {
+            seconds = `0${seconds}`;
         }
 
-        function setRemainingPathColor(timeLeft) {
-            const {alert, warning, info} = COLOR_CODES;
-            if (timeLeft <= alert.threshold) {
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.remove(warning.color);
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.add(alert.color);
-            } else if (timeLeft <= warning.threshold) {
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.remove(info.color);
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.add(warning.color);
-            }
-        }
+        return `${minutes}:${seconds}`;
+    }
 
-        function calculateTimeFraction() {
-            const rawTimeFraction = timeLeft / TIME_LIMIT;
-            return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
-        }
-
-        function setCircleDasharray() {
-            const circleDasharray = `${(
-                calculateTimeFraction() * FULL_DASH_ARRAY
-            ).toFixed(0)} 283`;
+    function setRemainingPathColor(timeLeft) {
+        const {alert, warning, info} = COLOR_CODES;
+        if (timeLeft <= alert.threshold) {
             document
                 .getElementById("base-timer-path-remaining")
-                .setAttribute("stroke-dasharray", circleDasharray);
+                .classList.remove(warning.color);
+            document
+                .getElementById("base-timer-path-remaining")
+                .classList.add(alert.color);
+        } else if (timeLeft <= warning.threshold) {
+            document
+                .getElementById("base-timer-path-remaining")
+                .classList.remove(info.color);
+            document
+                .getElementById("base-timer-path-remaining")
+                .classList.add(warning.color);
         }
+    }
 
-        let VerifyInput = () => {
-            let valid = true;
-            $("#ApplicationForm2 input").each(function () {
-                if (!$(this).parent().hasClass("is-valid") && $(this).parent().hasClass("is-required")) {
-                    valid = false;
-                    $(this).trigger("blur");
-                }
-            });
-            $("#ApplicationForm2 textarea").each(function () {
-                if (!$(this).parent().hasClass("is-valid") && $(this).parent().hasClass("is-required")) {
-                    valid = false;
-                    $(this).trigger("blur");
-                }
-            });
-            return valid;
-        }
-        // $('#ApplicationForm2').saveStorage({
-        //     exclude: ['password','hidden']
-        // });
-        let OtherOptionHandle = {
+    function calculateTimeFraction() {
+        const rawTimeFraction = timeLeft / TIME_LIMIT;
+        return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+    }
 
-            init: function () {
-                // kick it off once, in case the radio is already checked when the page loads
-                this.applyConditionalRequired();
-                this.bindUIActions();
-            },
+    function setCircleDasharray() {
+        const circleDasharray = `${(
+            calculateTimeFraction() * FULL_DASH_ARRAY
+        ).toFixed(0)} 283`;
+        document
+            .getElementById("base-timer-path-remaining")
+            .setAttribute("stroke-dasharray", circleDasharray);
+    }
 
-            bindUIActions: function () {
-                // when a radio or checkbox changes value, click or otherwise
-                $("input[type='radio'], input[type='checkbox']").on("change", this.applyConditionalRequired);
-            },
-
-            applyConditionalRequired: function () {
-                // find each input that may be hidden or not
-                $(".disable-if-inactive").each(function () {
-                    let el = $(this);
-                    // find the pairing radio or checkbox
-                    if ($(el.data("disable-pair")).is(":checked")) {
-                        // if its checked, the field should be enabled
-                        el.prop("disabled", false);
-                    } else {
-                        // otherwise it should not
-                        el.prop("disabled", true);
-                    }
-                });
+    let VerifyInput = () => {
+        let valid = true;
+        $("#ApplicationForm2 input").each(function () {
+            if (!$(this).parent().hasClass("is-valid") && $(this).parent().hasClass("is-required")) {
+                valid = false;
+                $(this).trigger("blur");
             }
+        });
+        $("#ApplicationForm2 textarea").each(function () {
+            if (!$(this).parent().hasClass("is-valid") && $(this).parent().hasClass("is-required")) {
+                valid = false;
+                $(this).trigger("blur");
+            }
+        });
+        return valid;
+    }
+    // $('#ApplicationForm2').saveStorage({
+    //     exclude: ['password','hidden']
+    // });
+    let OtherOptionHandle = {
 
-        };
+        init: function () {
+            // kick it off once, in case the radio is already checked when the page loads
+            this.applyConditionalRequired();
+            this.bindUIActions();
+        },
 
-        OtherOptionHandle.init();
+        bindUIActions: function () {
+            // when a radio or checkbox changes value, click or otherwise
+            $("input[type='radio'], input[type='checkbox']").on("change", this.applyConditionalRequired);
+        },
 
-        function timerSync() {
-            setInterval(() => {
-                let token = document.getElementById("token").value
-                $.ajax({
-                        type: 'get',
-                        url: `/checktime?token=${token}`,
-                        success: (res) => {
-                            timePassed = res.passed
-                        }
-                    }
-                );
-
-
-            }, 30000);
+        applyConditionalRequired: function () {
+            // find each input that may be hidden or not
+            $(".disable-if-inactive").each(function () {
+                let el = $(this);
+                // find the pairing radio or checkbox
+                if ($(el.data("disable-pair")).is(":checked")) {
+                    // if its checked, the field should be enabled
+                    el.prop("disabled", false);
+                } else {
+                    // otherwise it should not
+                    el.prop("disabled", true);
+                }
+            });
         }
 
-        timerSync();
-    </script>
+    };
 
-</div>
+    OtherOptionHandle.init();
+
+    function timerSync() {
+        setInterval(() => {
+            let token = document.getElementById("token").value
+            $.ajax({
+                    type: 'get',
+                    url: `/checktime?token=${token}`,
+                    success: (res) => {
+                        timePassed = res.passed
+                    }
+                }
+            );
+
+
+        }, 30000);
+    }
+
+    timerSync();
+</script>
+
+
 </body>
 </html>

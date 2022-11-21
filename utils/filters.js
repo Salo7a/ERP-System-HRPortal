@@ -48,9 +48,17 @@ module.exports = {
     },
     imageFilter: function (req, file, cb) {
         // Accept images only
-        if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+        if (!file.originalname.toLowerCase().match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
             req.fileValidationError = 'Only image files are allowed!';
             return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+    },
+    imageOrAudioFilter: function (req, file, cb) {
+        // Accept images only
+        if (!file.originalname.toLowerCase().match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF|mp3|MP3|wav|WAV|ogg|OGG|amr|AMR|pjp|pjpeg|jfif)$/)) {
+            req.fileValidationError = 'Only image/audio files files are allowed!';
+            return cb(new Error('Only image/audio files files are allowed!'), false);
         }
         cb(null, true);
     }

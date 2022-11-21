@@ -11,6 +11,19 @@ const {GoogleSpreadsheet} = require('google-spreadsheet'),
     {promisify} = require('util'),
     creds = require('../config/Enactus21-d39432b22314.json');
 const {formatToTimeZone} = require("date-fns-timezone");
+const multer = require("multer");
+const path = require("path");
+const {imageOrAudioFilter} = require('../utils/filters')
+
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/submissions/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname.replace('/', '-') + '-' + Date.now() + path.extname(file.originalname))
+    }
+});
+let upload = multer({storage: storage, fileFilter: imageOrAudioFilter, limits: {fileSize: 15728640, files: 6}})
 
 async function AddToSheet(row) {
     const doc = new GoogleSpreadsheet(settings["SheetID"].Value);
@@ -50,6 +63,7 @@ async function AddToSheet(row) {
         return false;
     }
 }
+
 function formatTime(time) {
     const minutes = Math.floor(time / 60);
     let seconds = time % 60;
@@ -62,7 +76,7 @@ function formatTime(time) {
 }
 
 router.get('/', function (req, res, next) {
-    let formReady = null
+    let formReady = true
     if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
 
         let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
@@ -73,7 +87,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/teams', function (req, res, next) {
-    let formReady = null
+    let formReady = true
     if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
 
         let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
@@ -83,7 +97,7 @@ router.get('/teams', function (req, res, next) {
 });
 
 router.get('/contact', function (req, res, next) {
-    let formReady = null
+    let formReady = true
     if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
 
         let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
@@ -93,7 +107,7 @@ router.get('/contact', function (req, res, next) {
 });
 
 router.get('/apply', function (req, res, next) {
-    let formReady = null
+    let formReady = true
     if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
 
         let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
@@ -246,7 +260,12 @@ router.get('/application', async function (req, res, next) {
     await keys.forEach((key, index) => {
         if (key !== "General" && key !== "Situational") {
             TeamQuestions[key] = []
-            questions[key].forEach((question) => TeamQuestions[key].push(question.Text))
+            questions[key].forEach((question) => TeamQuestions[key].push({
+                id: question.id,
+                Text: question.Text,
+                Type: question.Type,
+                Extra: question.Extra
+            }))
         }
     });
     Applicant.findOne({
@@ -281,7 +300,7 @@ router.get('/application', async function (req, res, next) {
 
 });
 
-router.post('/application', function (req, res, next) {
+router.post('/application', upload.any(), function (req, res, next) {
     let {
         token,
         name,
@@ -301,9 +320,9 @@ router.post('/application', function (req, res, next) {
         creativity,
         effective
     } = req.body;
-    let team = req.body['team[]'];
-    let gen = req.body['Gen[]'];
-    let sit = req.body['sit[]'];
+    let team = req.body['team'];
+    let gen = req.body['Gen'];
+    let sit = req.body['sit'];
     sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
     sit.push(Array.isArray(effective) ? effective[1] : effective)
     let answers = {
@@ -311,7 +330,23 @@ router.post('/application', function (req, res, next) {
         General: gen,
         Situational: sit
     }
+    if (req.file) {
+        answers["Files"] = [req.file.filename]
+    } else if (req.files) {
+        answers["Files"] = {}
+        for (const singleFile of req.files) {
+            answers["Files"][`${singleFile.mimetype.split('/')[0]}`] = []
+            answers["Files"][`${singleFile.mimetype.split('/')[0]}`].push(
+                {
+                    filename: singleFile.filename,
+                    questionId: singleFile.fieldname.split('/')[1],
+                    category: singleFile.fieldname.split('/')[0]
+                })
+            winston.info(`${token} uploaded ${singleFile.filename}`)
+        }
+    }
     console.error(req.body);
+    winston.info(req.body);
     let state = "Applied"
     let end = new Date();
     if (!team) {

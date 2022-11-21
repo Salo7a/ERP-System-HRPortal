@@ -479,10 +479,10 @@ router.get("/questions", isAdmin, async (req, res, next) => {
 
 // Add Question
 router.post("/questions/add", isAdmin, async (req, res, next) => {
-    let {choice, form, text} = req.body
+    let {choice, type, text} = req.body
     Question.create({
         Text: text,
-        Type: "textarea",
+        Type: type,
         Choice: choice,
         isGeneral: true,
         isVisible: true,
@@ -510,10 +510,11 @@ router.get("/question/edit", isAdmin, async (req, res, next) => {
 
 // Edit Question
 router.post("/question/edit", isAdmin, async (req, res, next) => {
-    let {id, choice, text} = req.body
+    let {id, choice, text, type} = req.body
     Question.findOne({where: {id}}).then((question)=>{
         question.Choice = choice
         question.Text = text
+        question.Type = type
         question.save()
         res.send({msg: "Updated Successfully"})
     })

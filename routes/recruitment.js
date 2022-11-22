@@ -190,10 +190,8 @@ router.get('/applicants/my', isAuth, async function (req, res, next) {
         next(createError(403));
     }
     let team = await Position.getTeam();
-    let state = "Accepted";
-    if (team.Name === "Marketing" || team.Name === "Visuals" || team.Name === "Projects") {
-        state = ["Accepted", "Rejected"];
-    }
+    let state = ["Accepted", "Filtered", "Rejected"];
+
     Applicant.findAll({
         where: {
             State: state,
@@ -359,6 +357,7 @@ router.post('/applicants/incomplete', isAuth, function (req, res, next) {
     })
 
 });
+
 router.post('/sendtosheet', isAuth, function (req, res, next) {
     let {id} = req.body;
     console.log("Sheet");
@@ -383,18 +382,6 @@ router.post('/sendtosheet', isAuth, function (req, res, next) {
             Courses: app.Courses,
             First: app.First,
             Second: app.Second,
-            // Answers: app.Answers,
-            // Q1: app.Answers.Team[0],
-            // Q2: app.Answers.Team[1],
-            // Q3: app.Answers.Team[2],
-            // Q4: app.Answers.Team[3],
-            // General1: app.Answers.General[0],
-            // General2: app.Answers.General[1],
-            // General3: app.Answers.General[2],
-            // General4: app.Answers.General[3],
-            // Situational1: app.Answers.Situational[0],
-            // Situational2: app.Answers.Situational[1],
-            // Situational3: app.Answers.Situational[2],
             End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
             Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
             ITime: app.ITime,
@@ -649,6 +636,33 @@ router.get('/applicants/edit', isAuth, function (req, res, next) {
     }).then(app => {
         if (app) {
             res.render('portal/editmodal', {app: app[0]});
+        }
+    }).catch(() => {
+        createError(404);
+    })
+});
+
+router.get('/applicants/profile/:id', isAuth, async function (req, res, next) {
+    let id = req.params.id;
+    let season = settings["CurrentSeason"].Value
+    let questions = await Question.GetGroupedQuestions(season);
+    while (!questions || !questions.General || !questions.Situational) {
+        season -= 1
+        if (season < 2022) {
+            next(createError(454))
+        }
+        questions = await Question.GetGroupedQuestions(season)
+    }
+    Applicant.findOne({
+        where: {
+            id: id,
+            Season: season
+        }
+    }).then(app => {
+        if (app) {
+            res.render('portal/applicantprofile', {title: `${app.Name}'s Profile`, app: app, questions});
+        } else {
+            next(createError(404));
         }
     }).catch(() => {
         createError(404);

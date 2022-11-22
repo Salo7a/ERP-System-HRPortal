@@ -384,8 +384,9 @@
                             </div>
                         </div>
                         <!--Questions-->
-
+                        <% let choiceCount = 1 %>
                         <% questions["General"].forEach((question) => { %>
+                        <% if(question.Type === "textarea") { %>
                             <div class="row">
                                 <div class="columns">
                                     <div class="small-12 medium-12 large-12">
@@ -402,7 +403,57 @@
                                     </div>
                                 </div><!-- /columns -->
                             </div>
-                            <% i += 1 %>
+                        <% } else if (question.Type === 'choice' && question.Extra){ %>
+                            <%
+                                let cont = true
+                                let Extra = JSON.parse(question.Extra)
+                            %>
+                            <% if (cont) { %>
+                                <div class="row">
+                                    <div class="columns">
+                                        <div class="small-12 medium-12 large-12">
+                                            <label for="G<%= i %>"><%= question.Text %></label>
+
+                                            <div id="G<%= i %>">
+                                                <% Extra.choices.forEach(choice=>{ %>
+                                                    <div>
+                                                        <input type="radio" name="choice-<%= question.id %>"
+                                                               id="choice<%= choiceCount %>"
+                                                               value="<%= choice %>">
+                                                        <label for="choice<%= choiceCount %>"><%= choice %></label>
+                                                    </div>
+                                                    <% choiceCount += 1 %>
+                                                <% }) %>
+                                                <% choiceCount += 1 %>
+                                                <% if(Extra['custom'] === '1'){ %>
+
+                                                    <div>
+                                                        <input type="radio" name="choice-<%= question.id %>"
+                                                               id="choice<%= question.id %>"
+                                                               value="Other">
+                                                        <label for="choice<%= question.id %>">Other</label>
+
+                                                        <div class="reveal-if-active">
+                                                            <input type="text" disabled class="disable-if-inactive"
+                                                                   name="choice-<%= question.id %>"
+                                                                   placeholder="Please Specify"
+                                                                   data-disable-pair="#choice<%= question.id %>">
+                                                            <span class="icon validation small success hide">
+                                                                     <span class="fa fa-check"></span>
+                                                                </span>
+                                                            <span class="icon validation small error hide">
+                                                                    <span class="fa fa-remove"></span>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div><!-- /columns -->
+                                </div>
+                            <% } %>
+                        <% } %>
+                        <% i += 1 %>
                         <% }) %>
                     </div>
                 <% } %>
@@ -436,82 +487,56 @@
                                         </div>
                                     </div><!-- /columns -->
                                 </div>
-                            <% } else if (question.Type === 'choice'){ %>
-                                <div class="row">
-                                    <div class="columns">
-                                        <div class="small-12 medium-12 large-12">
-                                            <label for="S<%= x %>"><%= question.Text %></label>
-                                            <% if(question.Text.includes("creativity")) { %>
+                            <% } else if (question.Type === 'choice' && question.Extra){ %>
+                                <%
+                                    let cont = true
+                                    let Extra = JSON.parse(question.Extra)
+                                %>
+                                <% if (cont) { %>
+                                    <div class="row">
+                                        <div class="columns">
+                                            <div class="small-12 medium-12 large-12">
+                                                <label for="S<%= x %>"><%= question.Text %></label>
                                                 <div id="S<%= x %>">
-                                                    <div>
-                                                        <input type="radio" name="creativity" id="choice1"
-                                                               value="Something you learn">
-                                                        <label for="choice1">Something you learn</label>
-                                                    </div>
-                                                    <div>
-                                                        <input type="radio" name="creativity" id="choice2"
-                                                               value="Something you have">
-                                                        <label for="choice2">Something you have</label>
-                                                    </div>
-
-                                                    <div>
-                                                        <input type="radio" name="creativity" id="choice3"
-                                                               value="Other">
-                                                        <label for="choice3">Other</label>
-
-                                                        <div class="reveal-if-active">
-                                                            <input type="text" disabled class="disable-if-inactive"
-                                                                   name="creativity" placeholder="Please Specify"
-                                                                   data-disable-pair="#choice3">
-                                                            <span class="icon validation small success hide">
-                                                        <span class="fa fa-check"></span>
-                                                    </span>
-                                                            <span class="icon validation small error hide">
-                                                        <span class="fa fa-remove"></span>
-                                                    </span>
+                                                    <% Extra.choices.forEach(choice=>{ %>
+                                                        <div>
+                                                            <input type="radio" name="choice-<%= question.id %>"
+                                                                   id="choice<%= choiceCount %>"
+                                                                   value="<%= choice %>">
+                                                            <label for="choice<%= choiceCount %>"><%= choice %></label>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            <% } else if (question.Text.includes("effective")){ %>
-                                                <div id="S<%= x %>">
-                                                    <div>
-                                                        <input type="radio" name="effective" id="choice4"
-                                                               value="Understanding">
-                                                        <label for="choice4">Understanding</label>
-                                                    </div>
-                                                    <div>
-                                                        <input type="radio" name="effective" id="choice5"
-                                                               value="Respect">
-                                                        <label for="choice5">Respect</label>
-                                                    </div>
-                                                    <div>
-                                                        <input type="radio" name="effective" id="choice6"
-                                                               value="Transparency">
-                                                        <label for="choice6">Transparency</label>
-                                                    </div>
-                                                    <div>
-                                                        <input type="radio" name="effective" id="choice7" value="Other">
-                                                        <label for="choice7">Other</label>
+                                                        <% choiceCount += 1 %>
+                                                    <% }) %>
+                                                    <% choiceCount += 1 %>
+                                                    <% if(Extra['custom'] === '1'){ %>
 
-                                                        <div class="reveal-if-active">
-                                                            <input type="text" disabled class="disable-if-inactive"
-                                                                   name="effective" placeholder="Please Specify"
-                                                                   data-disable-pair="#choice7">
-                                                            <span class="icon validation small success hide">
-                                                        <span class="fa fa-check"></span>
-                                                    </span>
-                                                            <span class="icon validation small error hide">
-                                                        <span class="fa fa-remove"></span>
-                                                    </span>
+                                                        <div>
+                                                            <input type="radio" name="choice-<%= question.id %>"
+                                                                   id="choice<%= question.id %>"
+                                                                   value="Other">
+                                                            <label for="choice<%= question.id %>">Other</label>
+
+                                                            <div class="reveal-if-active">
+                                                                <input type="text" disabled class="disable-if-inactive"
+                                                                       name="choice-<%= question.id %>"
+                                                                       placeholder="Please Specify"
+                                                                       data-disable-pair="#choice<%= question.id %>">
+                                                                <span class="icon validation small success hide">
+                                                                     <span class="fa fa-check"></span>
+                                                                </span>
+                                                                <span class="icon validation small error hide">
+                                                                    <span class="fa fa-remove"></span>
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    <% } %>
                                                 </div>
-                                            <% } %>
-                                        </div>
-                                    </div><!-- /columns -->
-                                </div>
+                                            </div>
+                                        </div><!-- /columns -->
+                                    </div>
+                                <% } %>
                             <% } %>
-                            <% i += 1 %>
+                            <% x += 1 %>
                         <% }) %>
 
                     </div>
@@ -752,8 +777,12 @@
 
     function onTimesUp() {
         clearInterval(timerInterval);
+
         toastr.error("The time has ended, you have 60 seconds to submit");
         let pass = 60;
+        if (timeLeft < 0) {
+            pass = pass + timeLeft
+        }
 
         function timer2() {
             timerInterval = setInterval(() => {
@@ -764,17 +793,17 @@
                     if (pass < 10 && pass > 0) {
                         toastr.error(pass + " seconds Left");
                     }
-                    if (pass === 0) {
+                    if (pass <= 0) {
                         toastr.error("Timeout");
                         $.ajax({
-                                type: 'POST',
-                                url: '/applicationajax',
-                                data: $('#ApplicationForm2').serialize(),
-                                success: (res) => {
-                                    toastr.success(res.msg);
-                                    $(location).attr('href', '/timeout');
-                                },
-                                error: () => {
+                            type: 'POST',
+                            url: '/applicationajax',
+                            data: $('#ApplicationForm2').serialize(),
+                            success: (res) => {
+                                toastr.success(res.msg);
+                                $(location).attr('href', '/timeout');
+                            },
+                            error: () => {
                                     $(location).attr('href', '/tokenerror');
                                 }
                             }
@@ -791,13 +820,19 @@
         timerInterval = setInterval(() => {
             timePassed = timePassed += 1;
             timeLeft = TIME_LIMIT - timePassed;
-            document.getElementById("base-timer-label").innerHTML = formatTime(
-                timeLeft
-            );
+            if (timeLeft > 0) {
+                document.getElementById("base-timer-label").innerHTML = formatTime(
+                    timeLeft
+                );
+
+            } else {
+                document.getElementById("base-timer-label").innerHTML = formatTime(0);
+            }
+
             setCircleDasharray();
             setRemainingPathColor(timeLeft);
 
-            if (timeLeft === 0) {
+            if (timeLeft <= 0) {
                 onTimesUp();
             }
         }, 1000);
@@ -897,15 +932,20 @@
     };
 
     OtherOptionHandle.init();
+    let timerSyncInterval;
 
     function timerSync() {
-        setInterval(() => {
+        timerSyncInterval = setInterval(() => {
             let token = document.getElementById("token").value
             $.ajax({
                     type: 'get',
                     url: `/checktime?token=${token}`,
                     success: (res) => {
-                        timePassed = res.passed
+                        if (res.passed > 0) {
+                            timePassed = res.passed
+                        }
+
+
                     }
                 }
             );

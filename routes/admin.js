@@ -21,7 +21,7 @@ router.get("/users", isAdmin, (req, res, next) => {
                 users
             });
         }
-    ).catch(e=>{
+    ).catch(e => {
         console.error(e)
     })
 });
@@ -35,7 +35,7 @@ router.post('/delete', isAdmin, (req, res, next) => {
         where: {
             id: req.body.UserId
         }
-    }).catch(e=>{
+    }).catch(e => {
         console.error(e)
     });
     res.send({id: req.body.UserId, msg: `#${req.body.UserId} Deleted Successfully`});
@@ -61,7 +61,7 @@ router.get("/invites", isAdmin, async (req, res, next) => {
                 positions
             });
         }
-    ).catch(e=>{
+    ).catch(e => {
         console.error(e)
     })
 });
@@ -73,13 +73,15 @@ router.post("/invites/add", isAdmin, (req, res, next) => {
     Invite.create({
         Code: code,
         PositionId: position,
-        isAdmin: admin ? 1:0,
+        isAdmin: admin ? 1 : 0,
         Season: settings["CurrentSeason"].Value
     }).then(async invite => {
         let position = await invite.getPosition()
-        res.send({id: invite.id, Code: invite.Code, isUsed: invite.isUsed, isAdmin: invite.isAdmin,
-            Season: invite.Season, Position: position.Name, msg: "Invite Successfully Created!"})
-    }).catch((e)=>{
+        res.send({
+            id: invite.id, Code: invite.Code, isUsed: invite.isUsed, isAdmin: invite.isAdmin,
+            Season: invite.Season, Position: position.Name, msg: "Invite Successfully Created!"
+        })
+    }).catch((e) => {
         console.error(e)
     })
 });
@@ -93,7 +95,7 @@ router.post('/invite/delete', isAdmin, (req, res, next) => {
         where: {
             id: req.body.id
         }
-    }).catch(e=>{
+    }).catch(e => {
         console.error(e)
     });
     res.send({id: req.body.id, msg: `#${req.body.id} Deleted Successfully`});
@@ -110,7 +112,7 @@ router.get("/ranks", isAdmin, async (req, res, next) => {
     if (!req.user.isAdmin) {
         next(createError(403))
     }
-    let ranks = await Rank.findAll().catch(e=>{
+    let ranks = await Rank.findAll().catch(e => {
         console.error(e)
     })
     res.render('admin/ranksView', {title: "All Ranks", ranks})
@@ -126,8 +128,8 @@ router.get("/rank/edit", isAdmin, async (req, res, next) => {
             where: {
                 id: req.query.id
             }
-        }).catch(e=>{
-            console.error(e)
+        }).catch(e => {
+        console.error(e)
     })
     res.render('admin/rankEdit', {rank})
 })
@@ -135,15 +137,15 @@ router.get("/rank/edit", isAdmin, async (req, res, next) => {
 // Edit Rank Info
 router.post("/rank/edit", isAdmin, async (req, res, next) => {
     let {id, name, level, internal, directorate, team} = req.body
-    Rank.findOne({where: {id}}).then((rank)=>{
+    Rank.findOne({where: {id}}).then((rank) => {
         rank.Name = name
-        rank.Level= level
-        rank.isInternal= internal ? 1 : 0
-        rank.isDirectorateOnly= directorate ? 1 : 0
+        rank.Level = level
+        rank.isInternal = internal ? 1 : 0
+        rank.isDirectorateOnly = directorate ? 1 : 0
         rank.isTeamOnly = team ? 1 : 0
         rank.save()
         res.send({msg: "Updated Successfully"})
-    }).catch(e=>{
+    }).catch(e => {
         console.error(e)
     })
 })
@@ -161,9 +163,17 @@ router.post("/ranks/add", isAdmin, async (req, res, next) => {
         isDirectorateOnly: directorate ? 1 : 0,
         isTeamOnly: team ? 1 : 0
     }).then((rank => {
-        res.send({id: rank.id, Name: rank.Name, isInternal: rank.isInternal, Level: rank.Level, isDirectorateOnly: rank.isDirectorateOnly
-            , isTeamOnly: rank.isTeamOnly, msg: "Rank Successfully Added"})
-    })).catch(e=>{
+        res.send({
+            id: rank.id,
+            Name: rank.Name,
+            isInternal: rank.isInternal,
+            Level: rank.Level,
+            isDirectorateOnly: rank.isDirectorateOnly
+            ,
+            isTeamOnly: rank.isTeamOnly,
+            msg: "Rank Successfully Added"
+        })
+    })).catch(e => {
         console.error(e)
     })
 })
@@ -179,7 +189,7 @@ router.get("/directorates", isAdmin, async (req, res, next) => {
     if (!req.user.isAdmin) {
         next(createError(403))
     }
-    let directorates = await Directorate.findAll().catch(e=>{
+    let directorates = await Directorate.findAll().catch(e => {
         console.error(e)
     })
     res.render('admin/directoratesView', {title: "All Directorates", directorates})
@@ -195,7 +205,7 @@ router.get("/directorate/edit", isAdmin, async (req, res, next) => {
             where: {
                 id: req.query.id
             }
-        }).catch(e=>{
+        }).catch(e => {
         console.error(e)
     })
     res.render('admin/directorateEdit', {directorate})
@@ -204,12 +214,12 @@ router.get("/directorate/edit", isAdmin, async (req, res, next) => {
 // Edit Directorate Info
 router.post("/directorate/edit", isAdmin, async (req, res, next) => {
     let {name, dname, id} = req.body
-    Directorate.findOne({where: {id}}).then((dir)=>{
+    Directorate.findOne({where: {id}}).then((dir) => {
         dir.Name = name
         dir.DisplayName = dname
         dir.save()
         res.send({msg: "Updated Successfully"})
-    }).catch(e=>{
+    }).catch(e => {
         console.error(e)
     })
 })
@@ -224,8 +234,13 @@ router.post("/directorates/add", isAdmin, async (req, res, next) => {
         Name: name,
         DisplayName: dname
     }).then((directorate => {
-        res.send({id: directorate.id, Name: directorate.Name, DisplayName: directorate.DisplayName ,msg: "Directorate Successfully Added"})
-    })).catch(e=>{
+        res.send({
+            id: directorate.id,
+            Name: directorate.Name,
+            DisplayName: directorate.DisplayName,
+            msg: "Directorate Successfully Added"
+        })
+    })).catch(e => {
         console.error(e)
     })
 })
@@ -241,10 +256,10 @@ router.get("/teams", isAdmin, async (req, res, next) => {
     if (!req.user.isAdmin) {
         next(createError(403))
     }
-    let teams = await Team.findAll({include: Directorate}).catch(e=>{
+    let teams = await Team.findAll({include: Directorate}).catch(e => {
         console.error(e)
     })
-    let directorates = await Directorate.findAll().catch(e=>{
+    let directorates = await Directorate.findAll().catch(e => {
         console.error(e)
     })
     res.render('admin/teamsView', {title: "All Teams", teams, directorates})
@@ -252,15 +267,22 @@ router.get("/teams", isAdmin, async (req, res, next) => {
 
 // Add New Team
 router.post("/teams/add", isAdmin, async (req, res, next) => {
-    let {name, directorate, dname} = req.body
+    let {name, directorate, dname, description} = req.body
     Team.create({
         Name: name,
         DirectorateId: directorate,
-        DisplayName: dname
+        DisplayName: dname,
+        Description: description
     }, {include: Directorate}).then((async team => {
         let directorate = await team.getDirectorate()
-        res.send({id: team.id, Name: team.Name, DisplayName: team.DisplayName, directorate: directorate.Name, msg: "Team Successfully Added"})
-    })).catch(e=>{
+        res.send({
+            id: team.id,
+            Name: team.Name,
+            DisplayName: team.DisplayName,
+            directorate: directorate.Name,
+            msg: "Team Successfully Added"
+        })
+    })).catch(e => {
         console.error(e)
     })
 })
@@ -270,7 +292,7 @@ router.get("/team/edit", isAdmin, async (req, res, next) => {
     if (!req.user.isAdmin) {
         next(createError(403))
     }
-    let directorates = await Directorate.findAll().catch(e=>{
+    let directorates = await Directorate.findAll().catch(e => {
         console.error(e)
     })
     let team = await Team.findOne(
@@ -279,7 +301,7 @@ router.get("/team/edit", isAdmin, async (req, res, next) => {
                 id: req.query.id
             },
             include: Directorate
-        }).catch(e=>{
+        }).catch(e => {
         console.error(e)
     })
     res.render('admin/teamEdit', {team, directorates})
@@ -287,7 +309,7 @@ router.get("/team/edit", isAdmin, async (req, res, next) => {
 
 // Edit Team Info
 router.post("/team/edit", isAdmin, async (req, res, next) => {
-    let {name, directorate, id, dname, visible} = req.body
+    let {name, directorate, id, dname, visible, description} = req.body
     visible = !!visible
     Team.findOne({where: {id: id}}).then(async (team) => {
         console.log(team)
@@ -295,11 +317,12 @@ router.post("/team/edit", isAdmin, async (req, res, next) => {
         team.DirectorateId = directorate
         team.DisplayName = dname
         team.isVisible = visible
+        team.Description = description
         await team.save()
         await team.reload()
         console.log(team)
         res.send({msg: "Updated Successfully"})
-    }).catch(e=>{
+    }).catch(e => {
         console.error(e)
     })
 })
@@ -313,7 +336,7 @@ router.post('/team/delete', isAdmin, (req, res, next) => {
         where: {
             id: req.body.id
         }
-    }).catch(e=>{
+    }).catch(e => {
         console.error(e)
     });
     res.send({id: req.body.id, msg: `#${req.body.id} Deleted Successfully`});
@@ -330,7 +353,7 @@ router.get("/positions", isAdmin, async (req, res, next) => {
     if (!req.user.isAdmin) {
         next(createError(403))
     }
-    let positions = await Position.findAll({include: [Rank, Directorate, Team]}).catch(e=>{
+    let positions = await Position.findAll({include: [Rank, Directorate, Team]}).catch(e => {
         console.error(e)
     })
     let ranks = await Rank.findAll()
@@ -344,18 +367,25 @@ router.post("/positions/add", isAdmin, async (req, res, next) => {
     let {name, rank, directorate, team, visible} = req.body
     Position.create({
         Name: name,
-        RankId: rank?rank: null,
-        DirectorateId: directorate?directorate: null,
-        TeamId: team?team: null,
+        RankId: rank ? rank : null,
+        DirectorateId: directorate ? directorate : null,
+        TeamId: team ? team : null,
         isVisible: visible ? 1 : 0
     }, {include: [Rank, Directorate, Team]}).then((async position => {
         console.log(position)
         let directorate = await position.getDirectorate()
         let team = await position.getTeam()
         let rank = await position.getRank()
-        res.send({id: position.id, Name: position.Name, Directorate: directorate?directorate.Name:"None",
-            Team: team?team.Name:"None", isVisible:position.isVisible, Rank: rank?rank.Name:"None" , msg: "Position Successfully Added"})
-    })).catch(e=>{
+        res.send({
+            id: position.id,
+            Name: position.Name,
+            Directorate: directorate ? directorate.Name : "None",
+            Team: team ? team.Name : "None",
+            isVisible: position.isVisible,
+            Rank: rank ? rank.Name : "None",
+            msg: "Position Successfully Added"
+        })
+    })).catch(e => {
         console.error(e)
     })
 })
@@ -374,7 +404,7 @@ router.get("/position/edit", isAdmin, async (req, res, next) => {
                 id: req.query.id
             },
             include: [Rank, Directorate, Team]
-        }).catch(e=>{
+        }).catch(e => {
         console.error(e)
     })
     res.render('admin/positionEdit', {position, directorates, ranks, teams})
@@ -383,15 +413,15 @@ router.get("/position/edit", isAdmin, async (req, res, next) => {
 // Edit Position Info
 router.post("/position/edit", isAdmin, async (req, res, next) => {
     let {name, directorate, id, rank, team, visible} = req.body
-    Position.findOne({where: {id: id}}).then((position)=>{
+    Position.findOne({where: {id: id}}).then((position) => {
         position.Name = name
-        position.RankId = rank?rank: null
-        position.DirectorateId = directorate?directorate: null
-        position.TeamId = team?team: null
+        position.RankId = rank ? rank : null
+        position.DirectorateId = directorate ? directorate : null
+        position.TeamId = team ? team : null
         position.isVisible = visible ? 1 : 0
         position.save()
         res.send({msg: "Updated Successfully"})
-    }).catch(e=>{
+    }).catch(e => {
         console.error(e)
     })
 })
@@ -405,7 +435,7 @@ router.post('/position/delete', isAdmin, (req, res, next) => {
         where: {
             id: req.body.id
         }
-    }).catch(e=>{
+    }).catch(e => {
         console.error(e)
     });
     res.send({id: req.body.id, msg: `#${req.body.id} Deleted Successfully`});
@@ -433,7 +463,10 @@ router.post("/settings", isAdmin, async (req, res, next) => {
             "SheetID": req.body.SheetID,
             "CurrentForm": req.body.CurrentForm,
             "FormTime": req.body.FormTime,
-            "FormStartDate": req.body.FormStartDate
+            "FormStartDate": req.body.FormStartDate,
+            "FormEndDate": req.body.FormEndDate,
+            "EnableOvertime": req.body.EnableOvertime ? 1 : 0,
+            "SendAllToSheet": req.body.SendAllToSheet ? 1 : 0
         }
     let SettingsNames = Object.keys(NewSettings);
     try {
@@ -479,17 +512,27 @@ router.get("/questions", isAdmin, async (req, res, next) => {
 
 // Add Question
 router.post("/questions/add", isAdmin, async (req, res, next) => {
-    let {choice, type, text} = req.body
+    let {choice, type, text, extra, custom} = req.body
     Question.create({
         Text: text,
         Type: type,
         Choice: choice,
         isGeneral: true,
         isVisible: true,
-        Season: settings["CurrentSeason"].Value
+        Season: settings["CurrentSeason"].Value,
+        Extra: {
+            choices: extra ? extra.split(",") : null,
+            custom: custom
+        }
     }).then((async question => {
-        res.send({id: question.id, Text: question.Text, Choice: question.Choice, isVisible: question.isVisible
-            , msg: "Question Successfully Added"})
+        res.send({
+            id: question.id,
+            Text: question.Text,
+            Choice: question.Choice,
+            isVisible: question.isVisible,
+            Season: question.Season,
+            msg: "Question Successfully Added"
+        })
     }))
 })
 
@@ -510,11 +553,15 @@ router.get("/question/edit", isAdmin, async (req, res, next) => {
 
 // Edit Question
 router.post("/question/edit", isAdmin, async (req, res, next) => {
-    let {id, choice, text, type} = req.body
-    Question.findOne({where: {id}}).then((question)=>{
+    let {id, choice, text, type, extra, custom} = req.body
+    Question.findOne({where: {id}}).then((question) => {
         question.Choice = choice
         question.Text = text
         question.Type = type
+        question.Extra = {
+            choices: extra.split(","),
+            custom: custom
+        }
         question.save()
         res.send({msg: "Updated Successfully"})
     })

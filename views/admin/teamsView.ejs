@@ -114,7 +114,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     data-toggle="modal"
                                                     data-target="#dire" data-id="<%= team.id %>">
                                             <i class="fa fa-cog"></i>
-                                        </button></span><form method="post" action="/team/delete" class="Delete">
+                                        </button></span>
+                                        <form method="post" action="team/delete" class="Delete">
                                             <input type="hidden" name="id" value="<%= team.id %>">
                                             <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                         </form>
@@ -165,12 +166,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <label for="dname">Display Name</label>
                         <input type="text" id="dname" class="form-control" name="dname" required>
                     </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="custom-control-input" type="checkbox" name="description"
+                                  id="description"></textarea>
+                    </div>
                 </div>
 
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
                 </form>
             </div>
             <!-- /.modal-content -->
@@ -255,7 +261,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     data-toggle="modal"
                                                     data-target="#dire" data-id="${res.id}">
                                             <i class="fa fa-cog"></i></span></button>
-                                           <form method="post" action="/team/delete" class="Delete">
+                                           <form method="post" action="team/delete" class="Delete">
                                             <input type="hidden" name="id" value="${res.id}">
                                             <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                         </form>`

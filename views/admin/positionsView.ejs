@@ -130,7 +130,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     data-toggle="modal"
                                                     data-target="#dire" data-id="<%= position.id %>">
                                             <i class="fa fa-cog"></i>
-                                        </button></span><form method="post" action="/position/delete" class="Delete">
+                                        </button></span>
+                                        <form method="post" action="position/delete" class="Delete">
                                             <input type="hidden" name="id" value="<%= position.id %>">
                                             <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                         </form>
@@ -294,7 +295,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     data-toggle="modal"
                                                     data-target="#dire" data-id="${res.id}">
                                             <i class="fa fa-cog"></i></span></button>
-                                           <form method="post" action="/position/delete" class="Delete">
+                                           <form method="post" action="position/delete" class="Delete">
                                             <input type="hidden" name="id" value="${res.id}">
                                             <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                         </form>`

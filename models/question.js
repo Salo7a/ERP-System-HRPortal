@@ -21,7 +21,16 @@ module.exports = (sequelize, DataTypes) => {
     isVisible: DataTypes.BOOLEAN,
     Season: DataTypes.STRING,
     Form: DataTypes.STRING,
-    Extra: DataTypes.JSON
+    Extra: {
+      type: DataTypes.JSON,
+      get: function () {
+        try {
+          return JSON.parse(this.getDataValue('Extra'));
+        } catch (e) {
+          return this.getDataValue('Extra');
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Question',

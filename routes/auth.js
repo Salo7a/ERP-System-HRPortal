@@ -147,7 +147,7 @@ router.get('/logout', isAuth, function (req, res, next) {
 });
 
 
-router.get('/invalidinvite', NotAuth, function (req, res, next) {
+router.get('/invalidinvite', function (req, res, next) {
     res.render('/auth/invalidinvite');
 });
 

@@ -116,7 +116,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     <td><% if (invite.isUsed){ %> Yes <%} else { %> No <%}%></td>
                                     <td><% if (invite.isAdmin){ %> Yes <%} else { %> No <%}%></td>
                                     <td><%=invite.Season%></td>
-                                    <td></span><form method="post" action="/invite/delete" class="Delete">
+                                    <td></span>
+                                        <form method="post" action="invite/delete" class="Delete">
                                             <input type="hidden" name="id" value="<%= invite.id %>">
                                             <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                         </form>
@@ -243,7 +244,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     console.log(res.id + " " + res.State);
                     this.tryCount = 0;
                     toastr.success(res.msg);
-                    let Button = `</button><form method="post" action="/invite/delete" class="Delete">
+                    let Button = `</button><form method="post" action="invite/delete" class="Delete">
                                             <input type="hidden" name="id" value="${res.id}">
                                             <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                         </form>`

@@ -27,8 +27,10 @@
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHC5BRL"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHC5BRL"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div class="wrapper">
 
@@ -73,33 +75,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <form method="post">
                             <div class="form-group row">
                                 <label class="col-lg-3" for="RecruitmentOpen">Enable Recruitment: </label>
-                                <input type="checkbox" class="form-control" name="RecruitmentOpen" id="RecruitmentOpen" <%if (settings["RecruitmentOpen"].Value === "1") {%>checked <%}%> data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                <input type="checkbox" class="form-control" name="RecruitmentOpen" id="RecruitmentOpen"
+                                       <% if (settings["RecruitmentOpen"].Value === "1") { %>checked
+                                        <% } %>
+                                       data-bootstrap-switch data-off-color="danger" data-on-color="success">
                             </div>
                             <div class="form-group row">
-                                <label class="col-lg-3" for="LeadershipOpen">Open Leaders Recruitment: </label>
-                                <input type="checkbox" disabled class="form-control" name="LeadershipOpen"
-                                       id="LeadershipOpen" data-bootstrap-switch data-off-color="danger"
+                                <label class="col-lg-3" for="EnableOvertime">Enable Form Overtime: </label>
+                                <input type="checkbox" class="form-control" name="EnableOvertime"
+                                       <% if (settings["EnableOvertime"].Value === "1") { %>checked
+                                        <% } %>
+                                       id="EnableOvertime" data-bootstrap-switch data-off-color="danger"
                                        data-on-color="success">
                             </div>
                             <div class="form-group row">
-                                <label class="col-lg-3" for="MembershipOpen">Open Members Recruitment: </label>
-                                <input type="checkbox" disabled class="form-control" name="MembershipOpen"
-                                       id="MembershipOpen" data-bootstrap-switch data-off-color="danger"
+                                <label class="col-lg-3" for="SendAllToSheet">Automatically Send All New Applicants To
+                                    Sheet: </label>
+                                <input type="checkbox" class="form-control" name="SendAllToSheet"
+                                       <% if (settings["SendAllToSheet"].Value === "1") { %>checked
+                                        <% } %>
+                                       id="SendAllToSheet" data-bootstrap-switch data-off-color="danger"
                                        data-on-color="success">
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="Season">Current Season: </label>
                                 <input type="number" min="2020" class="form-control" name="Season" id="Season"
                                        value="<%= settings["CurrentSeason"].Value %>">
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-lg-3" for="CurrentForm">Current Form</label>
-                                <select class="custom-select form-control" name="CurrentForm" id="CurrentForm"
-                                        required disabled>
-                                    <option class="hidden" disabled value="">Select The Form</option>
-                                    <option value="leadership">Leadership</option>
-                                    <option value="membership">Members</option>
-                                </select>
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-3" for="SheetID">SheetID: </label>
@@ -125,8 +126,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                value="<% if (settings["FormStartDate"]) { %><%= settings["FormStartDate"].Value %><% } %>">
                                         <span class="input-group-text" data-td-target="#datetimepicker1"
                                               data-td-toggle="datetimepicker">
-          <i class="fas fa-calendar"></i>
-        </span>
+                                          <i class="fas fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-12" id="htmlTarget">
+                                    <label for="datetimepicker2Input" class="form-label">Form End Date</label>
+                                    <div class="input-group log-event" id="datetimepicker2"
+                                         data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                        <input id="datetimepicker2Input" type="text" class="form-control"
+                                               data-td-target="#datetimepicker2" name="FormEndDate"
+                                               value="<% if (settings["FormEndDate"]) { %><%= settings["FormEndDate"].Value %><% } %>">
+                                        <span class="input-group-text" data-td-target="#datetimepicker2"
+                                              data-td-toggle="datetimepicker">
+                                          <i class="fas fa-calendar"></i>
+                                        </span>
                                     </div>
                                 </div>
                             </div>

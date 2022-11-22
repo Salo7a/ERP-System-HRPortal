@@ -175,7 +175,7 @@ router.post('/apply', function (req, res, next) {
     // }
     let {name, phone, email} = req.body;
     req.useragent["IP"] = req.clientIp
-    Applicant.findOne({where: {Email: email}}).then((app) => {
+    Applicant.findOne({where: {Email: email, Season: settings["CurrentSeason"].Value}}).then((app) => {
         if (!app) {
             Applicant.create({
                 Name: name,
@@ -285,9 +285,9 @@ router.get('/application', async function (req, res, next) {
             applicant.save();
         }
         let remaining = differenceInSeconds(addSeconds(applicant.Start, parseInt(settings["FormTime"].Value) + 10), new Date())
-        if (remaining < -200) {
+        if (remaining < 0) {
             winston.warn(new Date() + applicant.Email + " : Time Out App " + remaining)
-            res.redirect("/tokenerror");
+            res.redirect("/tokenexpired");
         }
         winston.warn(new Date() + applicant.Email + " : Start: " + applicant.Start)
         res.render('recruitment/application', {
@@ -316,23 +316,29 @@ router.post('/application', upload.any(), function (req, res, next) {
         courses,
         excur,
         first,
-        second,
-        creativity,
-        effective
+        second
     } = req.body;
     let team = req.body['team'];
     let gen = req.body['Gen'];
     let sit = req.body['sit'];
-    sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
-    sit.push(Array.isArray(effective) ? effective[1] : effective)
+    let choices = []
+    for (let key in req.body) {
+        if (key.match(/^choice/)) {
+            choices.push({
+                questionId: key.split('-')[1],
+                answer: Array.isArray(req.body[key]) ? req.body[key][1] : req.body[key]
+            })
+        }
+    }
     let answers = {
         Team: team,
         General: gen,
-        Situational: sit
+        Situational: sit,
+        Choices: choices
     }
     if (req.file) {
         answers["Files"] = [req.file.filename]
-    } else if (req.files) {
+    } else if (req.files && (req.files.length > 0)) {
         answers["Files"] = {}
         for (const singleFile of req.files) {
             answers["Files"][`${singleFile.mimetype.split('/')[0]}`] = []
@@ -346,7 +352,6 @@ router.post('/application', upload.any(), function (req, res, next) {
         }
     }
     console.error(req.body);
-    winston.info(req.body);
     let state = "Applied"
     let end = new Date();
     if (!team) {
@@ -366,10 +371,14 @@ router.post('/application', upload.any(), function (req, res, next) {
             return res.redirect("/tokenerror");
         }
         let secs = differenceInSeconds(new Date(), applicant.Start);
-        if (secs > (parseInt(settings["FormTime"].Value) * 1.1)) {
+        if (secs > (parseInt(settings["FormTime"].Value) * 1.08)) {
             winston.warn(new Date() + email + ": Timed Out " + secs);
-            // return res.redirect("/tokenerror");
-            state = "Overtime"
+            if (settings["EnableOvertime"].Value === "0") {
+                return res.redirect("/tokenexpired");
+            } else {
+                state = "Overtime"
+            }
+
         }
         applicant.update({
             Name: name ? name : applicant.Name,
@@ -416,7 +425,9 @@ router.post('/application', upload.any(), function (req, res, next) {
                     ATime: app.ATime,
                     Season: app.Season
                 }
-                AddToSheet(data)
+                if (settings["SendAllToSheet"].Value === "1") {
+                    AddToSheet(data)
+                }
             }
 
         })
@@ -476,7 +487,7 @@ router.post('/applicationajax', function (req, res, next) {
             return res.status(400).json({msg: "Error"});
         }
         let secs = differenceInSeconds(new Date(), applicant.Start);
-        if (secs > (parseInt(settings["FormTime"].Value) * 1.14)) {
+        if (secs > (parseInt(settings["FormTime"].Value) * 1.08)) {
             state = "Overtime"
             return res.status(400).json({msg: "Error"});
         }
@@ -524,7 +535,10 @@ router.post('/applicationajax', function (req, res, next) {
                 ATime: app.ATime,
                 Season: app.Season
             }
-            AddToSheet(data)
+
+            if (settings["SendAllToSheet"].Value === "1") {
+                AddToSheet(data)
+            }
         })
         res.status(200).json({msg: "Done"});
     }).catch((err) => {
@@ -569,10 +583,12 @@ router.get('/application/continue', async function (req, res, next) {
             return res.redirect("/applicationerror?code=134")
         }
         let remaining = differenceInSeconds(addSeconds(applicant.Start, parseInt(settings["FormTime"].Value) + 10), new Date())
-        // if (remaining < -200) {
-        //     winston.warn(new Date() + applicant.Email + " : Time Out App " + remaining)
-        //     res.redirect("/tokenerror");
-        // }
+        if (remaining < -200) {
+            winston.warn(new Date() + applicant.Email + " : Time Out App " + remaining)
+            if (settings["EnableOvertime"].Value === "0") {
+                return res.redirect("/tokenexpired");
+            }
+        }
         if (remaining < 240) {
             remaining = 240
         }
@@ -653,7 +669,10 @@ router.post('/application/continue', async function (req, res, next) {
             ATime: applicant.ATime,
             Season: applicant.Season
         }
-        AddToSheet(data)
+        if (settings["SendAllToSheet"].Value === "1") {
+            AddToSheet(data)
+        }
+
     }).catch(() => {
         return res.status(400).json({msg: "Error"});
     })

@@ -15,8 +15,14 @@
             <select class="custom-select form-control" name="choice" id="choice"
                     required>
                 <option class="hidden" selected disabled value="">Select The Category</option>
-                <option>General</option>
-                <option>Situational</option>
+                <option <% if(question.Choice === "General"){ %>selected
+                        <% } %>
+                >General
+                </option>
+                <option <% if(question.Choice === "Situational"){ %>selected
+                        <% } %>
+                >Situational
+                </option>
                 <% teams.forEach(team =>{ %>
                     <option <% if(team.Name === question.Choice){ %>selected
                             <% } %>
@@ -26,7 +32,7 @@
         </div>
         <div class="form-group">
             <label for="choice">Type</label>
-            <select class="custom-select form-control" name="type" id="type"
+            <select class="custom-select form-control" name="type" id="type" onchange="ShowCustom(this)"
                     required>
                 <option class="hidden" selected disabled value="">Select The Input Type</option>
                 <option <% if(question.Type === `textarea`){ %>selected
@@ -51,6 +57,23 @@
             <label for="Text">Text</label>
             <input type="text" id="text" class="form-control" name="text" value="<%= question.Text %>">
         </div>
+        <div id="custom" <% if(question.Type !== `choice`){ %>hidden
+                <% } %>
+        >
+
+            <div class="form-group">
+                <label for="choices">Choices, Each option Separated by a comma "," without spaces</label>
+                <input type="text" id="choices" class="form-control" name="extra"
+                       value="<%= question.Extra ? question.Extra.choices : null %>">
+            </div>
+            <div class="custom-control custom-checkbox">
+                <input class="custom-control-input" type="checkbox" name="custom" id="custome" value="1"
+                       <% if (question.Extra ? question.Extra.custom : null){ %>checked
+                        <% } %>
+                >
+                <label for="custome" class="custom-control-label">Add a custom input "Other"</label>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary"
@@ -60,3 +83,8 @@
                class="btn btn-outline-success">
     </div>
 </form>
+<script>
+    function ShowCustomEdit(t) {
+        document.getElementById(`custome`).hidden = t.value !== "choice";
+    }
+</script>

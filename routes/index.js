@@ -9,7 +9,7 @@ const {Op} = require("sequelize");
 const {addSeconds, differenceInSeconds, isValid, formatDuration, parseISO, parse} = require("date-fns");
 const {GoogleSpreadsheet} = require('google-spreadsheet'),
     {promisify} = require('util'),
-    creds = require('../config/Enactus21-d39432b22314.json');
+    creds = require('../config/GoogleCreds.json');
 const {formatToTimeZone} = require("date-fns-timezone");
 const multer = require("multer");
 const path = require("path");
@@ -772,7 +772,7 @@ router.get('/members/leaderboards/', function (req, res, next) {
 
 router.get('/members/leaderboards/:Month', function (req, res, next) {
     let Month = req.params.Month
-    res.render('leaderboard', {title: "Pokenactus Leaderboard", Month});
+    res.render('leaderboard', {title: "Leaderboard", Month});
 });
 
 router.get('/members/leaderboard/:Directorate', function (req, res, next) {

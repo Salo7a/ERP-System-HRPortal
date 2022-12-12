@@ -6,7 +6,7 @@ const {Applicant, Question} = require("../models");
 const {Op} = require("sequelize");
 const {GoogleSpreadsheet} = require('google-spreadsheet'),
     {promisify} = require('util'),
-    creds = require('../config/Enactus21-d39432b22314.json');
+    creds = require('../config/GoogleCreds.json');
 
 const {formatToTimeZone} = require("date-fns-timezone");
 

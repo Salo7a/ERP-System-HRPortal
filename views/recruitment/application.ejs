@@ -309,6 +309,7 @@
                     </div>
                 </div>
                 <!--Team-->
+                <% let choiceCount = 1 %>
                 <div class="box">
                     <div class="row">
                         <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
@@ -384,7 +385,7 @@
                             </div>
                         </div>
                         <!--Questions-->
-                        <% let choiceCount = 1 %>
+
                         <% questions["General"].forEach((question) => { %>
                         <% if(question.Type === "textarea") { %>
                             <div class="row">
@@ -795,10 +796,14 @@
                     }
                     if (pass <= 0) {
                         toastr.error("Timeout");
+                        let form = document.getElementById("ApplicationForm2")
+                        let data = new FormData(form);
                         $.ajax({
                             type: 'POST',
                             url: '/applicationajax',
-                            data: $('#ApplicationForm2').serialize(),
+                            processData: false,  // do not process the data as url encoded params
+                            contentType: false,   // by default jQuery sets this to urlencoded string
+                            data: data,
                             success: (res) => {
                                 toastr.success(res.msg);
                                 $(location).attr('href', '/timeout');
@@ -808,6 +813,7 @@
                                 }
                             }
                         );
+                        clearInterval(timerInterval);
                     }
                 }
                 , 1000);

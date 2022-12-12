@@ -16,13 +16,9 @@
                     required>
                 <option class="hidden" selected disabled value="">Select The Category</option>
                 <option <% if(question.Choice === "General"){ %>selected
-                        <% } %>
-                >General
-                </option>
+                        <% } %>>General</option>
                 <option <% if(question.Choice === "Situational"){ %>selected
-                        <% } %>
-                >Situational
-                </option>
+                        <% } %>>Situational</option>
                 <% teams.forEach(team =>{ %>
                     <option <% if(team.Name === question.Choice){ %>selected
                             <% } %>
@@ -58,13 +54,12 @@
             <input type="text" id="text" class="form-control" name="text" value="<%= question.Text %>">
         </div>
         <div id="custom" <% if(question.Type !== `choice`){ %>hidden
-                <% } %>
-        >
+                <% } %>>
 
             <div class="form-group">
                 <label for="choices">Choices, Each option Separated by a comma "," without spaces</label>
                 <input type="text" id="choices" class="form-control" name="extra"
-                       value="<%= question.Extra ? question.Extra.choices : null %>">
+                       value="<%= question.Extra?question.Extra.choices:null%>">
             </div>
             <div class="custom-control custom-checkbox">
                 <input class="custom-control-input" type="checkbox" name="custom" id="custome" value="1"

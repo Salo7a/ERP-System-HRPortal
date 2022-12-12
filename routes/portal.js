@@ -40,6 +40,12 @@ router.get('/', isAuth, async function (req, res, next) {
                 Season: settings["CurrentSeason"].Value
             }
         })
+        let pending = await Applicant.count({
+            where: {
+                State: "Pending",
+                Season: settings["CurrentSeason"].Value
+            }
+        })
         let rejected = await Applicant.count({where: {State: "Rejected", Season: settings["CurrentSeason"].Value}})
         let First = await Applicant.findAll({
             where: {State: {[Op.ne]: null}, First: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value},
@@ -76,7 +82,8 @@ router.get('/', isAuth, async function (req, res, next) {
             rejected: rejected,
             first: First,
             second: Second,
-            dates: Dates
+            dates: Dates,
+            pending
         });
     }
 

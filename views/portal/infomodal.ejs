@@ -44,31 +44,30 @@
                         <% } else { %>
                             <h6 class="text-red"> No Answers Found in DB</h6>
                         <% } %>
+                        <% q = q + 1 %>
                     </div>
+                <% }  else if (question.Type === 'image' && app.Answers.Files && app.Answers.Files.image) { %>
+                        <div class="form-group">
+                            <label><%= question.Text %></label>
+                            <% let ans = app.Answers.Files.image.find(a => a.questionId == question.id);%>
+                            <% if(ans){ %>
+                                <img class="row" style="max-width: 40vw" src="/submissions/<%=ans.filename%>" alt="<%= question.Text %>">
+                            <% } else { %>
+                                <h6 class="text-red"> No Image Uploaded</h6>
+                            <% } %>
+                        </div>
+                <% } else if (question.Type === 'choice' && app.Answers.Choices) { %>
+                        <div class="form-group">
+                            <label><%= question.Text %></label>
+                            <% let ans = app.Answers.Choices.find(a => a.questionId == question.id);%>
+                            <% if(ans){ %>
+                                <input type="text" class="form-control" disabled value="<%=ans.answer%>">
+                            <% } else { %>
+                                <h6 class="text-red"> No Choice Selected</h6>
+                            <% } %>
+                        </div>
                 <% } %>
-                <% else if (question.Type === 'image') { %>
-                    <div class="form-group">
-                        <label><%= question.Text %></label>
-                        <% let ans = app.Answers.Files.find(a => a.questionId === question.id); %>
-                        <% if(ans){ %>
-                            <img src="/submissions/<%= filename %>" alt="<%= question.Text %>">
-                        <% } else { %>
-                            <h6 class="text-red"> No Image Uploaded</h6>
-                        <% } %>
-                    </div>
-                <% } %>
-                <% else if (question.Type === 'choice') { %>
-                    <div class="form-group">
-                        <label><%= question.Text %></label>
-                        <% let ans = app.Answers.Choice.find(a => a.questionId === question.id); %>
-                        <% if(ans){ %>
-                            <input type="text" disabled value="<%= ans.answer %>">
-                        <% } else { %>
-                            <h6 class="text-red"> No Choice Selected</h6>
-                        <% } %>
-                    </div>
-                <% } %>
-                <% q = q + 1 %>
+
             <% }) %>
         <% } %>
         <br>
@@ -85,98 +84,93 @@
                             <h6 class="text-red"> No Answers Found in DB</h6>
                         <% } %>
                     </div>
-                <% } %>
-                <% else if (question.Type === 'image') { %>
-                    <div class="form-group">
-                        <label><%= question.Text %></label>
-                        <% let ans = app.Answers.Files.find(a => a.questionId === question.id); %>
-                        <% if(ans){ %>
-                            <img src="/submissions/<%= filename %>" alt="<%= question.Text %>">
-                        <% } else { %>
-                            <h6 class="text-red"> No Image Uploaded</h6>
-                        <% } %>
-                    </div>
-                <% } %>
-                <% else if (question.Type === 'choice') { %>
-                    <div class="form-group">
-                        <label><%= question.Text %></label>
-                        <% let ans = app.Answers.Choice.find(a => a.questionId === question.id); %>
-                        <% if(ans){ %>
-                            <input type="text" disabled value="<%= ans.answer %>">
-                        <% } else { %>
-                            <h6 class="text-red"> No Choice Selected</h6>
-                        <% } %>
-                    </div>
-                <% } %>
-                <% q = q + 1 %>
+                    <% q = q + 1 %>
+                <% } else if (question.Type === 'image' && app.Answers.Files && app.Answers.Files.image) { %>
+                        <div class="form-group">
+                            <label><%= question.Text %></label>
+                            <% let ans = app.Answers.Files.image.find(a => a.questionId == question.id);%>
+                            <% if(ans){ %>
+                            <img class="row" style="max-width: 40vw" src="/submissions/<%=ans.filename%>" alt="<%= question.Text %>">
+                            <% } else { %>
+                                <h6 class="text-red"> No Image Uploaded</h6>
+                            <% } %>
+                        </div>
+                    <% } else if (question.Type === 'choice' && app.Answers.Choices) { %>
+                        <div class="form-group">
+                            <label><%= question.Text %></label>
+                            <% let ans = app.Answers.Choices.find(a => a.questionId == question.id);%>
+                            <% if(ans){ %>
+                            <input type="text" class="form-control" disabled value="<%=ans.answer%>">
+                            <% } else { %>
+                                <h6 class="text-red"> No Choice Selected</h6>
+                            <% } %>
+                        </div>
+                    <% } %>
+
             <% }) %>
         <% } %>
         <br><h6>General</h6>
         <hr>
         <% questions["General"].forEach((question, index) => { %>
-            <% if (question.Type === 'textarea') { %>
-                <div class="form-group">
-                    <label><%= question.Text %></label>
-                    <textarea disabled
-                              class="form-control"><%= app.Answers.General[index] %></textarea>
-                </div>
-            <% } %>
-            <% else if (question.Type === 'image') { %>
-                <div class="form-group">
-                    <label><%= question.Text %></label>
-                    <% let ans = app.Answers.Files.find(a => a.questionId === question.id); %>
-                    <% if(ans){ %>
-                        <img src="/submissions/<%= filename %>" alt="<%= question.Text %>">
-                    <% } else { %>
-                        <h6 class="text-red"> No Image Uploaded</h6>
-                    <% } %>
-                </div>
-            <% } %>
-            <% else if (question.Type === 'choice') { %>
-                <div class="form-group">
-                    <label><%= question.Text %></label>
-                    <% let ans = app.Answers.Choice.find(a => a.questionId === question.id); %>
-                    <% if(ans){ %>
-                        <input type="text" disabled value="<%= ans.answer %>">
-                    <% } else { %>
-                        <h6 class="text-red"> No Choice Selected</h6>
-                    <% } %>
-                </div>
-            <% } %>
+        <%if (question.Type === 'textarea') { %>
+            <div class="form-group">
+                <label><%= question.Text %></label>
+                <textarea disabled
+                          class="form-control"><%= app.Answers.General[index] %></textarea>
+            </div>
+            <% }else if (question.Type === 'image' && app.Answers.Files) { %>
+            <div class="form-group">
+                <label><%= question.Text %></label>
+                <% let ans = app.Answers.Files.image.find(a => a.questionId == question.id);%>
+                <% if(ans){ %>
+                <img class="row" style="max-width: 40vw" src="/submissions/<%=ans.filename%>" alt="<%= question.Text %>">
+                <% } else { %>
+                    <h6 class="text-red"> No Image Uploaded</h6>
+                <% } %>
+            </div>
+        <% }  else if (question.Type === 'choice' && app.Answers.Choices) { %>
+            <div class="form-group">
+                <label><%= question.Text %></label>
+                <% let ans = app.Answers.Choices.find(a => a.questionId == question.id);%>
+                <% if(ans){ %>
+                <input type="text" class="form-control" disabled value="<%=ans.answer%>">
+                <% } else { %>
+                    <h6 class="text-red"> No Choice Selected</h6>
+                <% } %>
+            </div>
+        <% } %>
         <% }) %>
         <br>
         <h6>Situational</h6>
         <hr>
         <% questions["Situational"].forEach((question, index) => { %>
-            <% if (question.Type === 'textarea') { %>
-                <div class="form-group">
-                    <label><%= question.Text %></label>
-                    <textarea disabled
-                              class="form-control"><%= app.Answers.Situational[index] %></textarea>
-                </div>
-            <% } %>
-            <% else if (question.Type === 'image') { %>
-                <div class="form-group">
-                    <label><%= question.Text %></label>
-                    <% let ans = app.Answers.Files.find(a => a.questionId === question.id); %>
-                    <% if(ans){ %>
-                        <img src="/submissions/<%= filename %>" alt="<%= question.Text %>">
-                    <% } else { %>
-                        <h6 class="text-red"> No Image Uploaded</h6>
-                    <% } %>
-                </div>
-            <% } %>
-            <% else if (question.Type === 'choice') { %>
-                <div class="form-group">
-                    <label><%= question.Text %></label>
-                    <% let ans = app.Answers.Choice.find(a => a.questionId === question.id); %>
-                    <% if(ans){ %>
-                        <input type="text" disabled value="<%= ans.answer %>">
-                    <% } else { %>
-                        <h6 class="text-red"> No Choice Selected</h6>
-                    <% } %>
-                </div>
-            <% } %>
+        <%if (question.Type === 'textarea') { %>
+            <div class="form-group">
+                <label><%= question.Text %></label>
+                <textarea disabled
+                          class="form-control"><%= app.Answers.Situational[index] %></textarea>
+            </div>
+        <%}  else if (question.Type === 'image' && app.Answers.Files) { %>
+            <div class="form-group">
+                <label><%= question.Text %></label>
+                <% let ans = app.Answers.Files.image.find(a => a.questionId == question.id);%>
+                <% if(ans){ %>
+                <img class="row" style="max-width: 40vw" src="/submissions/<%=ans.filename%>" alt="<%= question.Text %>">
+                <% } else { %>
+                    <h6 class="text-red"> No Image Uploaded</h6>
+                <% } %>
+            </div>
+        <% } else if (question.Type === 'choice' && app.Answers.Choices) { %>
+            <div class="form-group">
+                <label><%= question.Text %></label>
+                <% let ans = app.Answers.Choices.find(a => a.questionId == question.id);%>
+                <% if(ans){ %>
+                <input type="text" class="form-control" disabled value="<%=ans.answer%>">
+                <% } else { %>
+                    <h6 class="text-red"> No Choice Selected</h6>
+                <% } %>
+            </div>
+        <% } %>
         <% }) %>
     </form>
 </div>

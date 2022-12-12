@@ -50,9 +50,7 @@ async function AddToSheet(row) {
         }
 
     }
-    if (row.State === "Accepted") {
-        row.State = "Filtered";
-    }
+
     try {
         await sheet.addRow(row)
         await FuncSheet.addRow(row);
@@ -76,34 +74,12 @@ function formatTime(time) {
 }
 
 router.get('/', function (req, res, next) {
-    let formReady = true
-    if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
+    res.redirect("/portal");
 
-        let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
-        formReady = (formtimeleft <= 0)
-    }
-    res.render('index', {title: "Home", formReady});
-
-});
-
-router.get('/teams', function (req, res, next) {
-    let formReady = true
-    if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
-
-        let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
-        formReady = (formtimeleft <= 0)
-    }
-    res.render('teams', {title: "Teams", formReady});
 });
 
 router.get('/contact', function (req, res, next) {
-    let formReady = true
-    if (parseInt(settings["RecruitmentOpen"].Value) && settings["FormStartDate"]) {
-
-        let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
-        formReady = (formtimeleft <= 0)
-    }
-    res.render('contact', {title: "Contact Us", formReady});
+    res.render('contact', {title: "Contact Us"});
 });
 
 router.get('/apply', function (req, res, next) {
@@ -113,7 +89,7 @@ router.get('/apply', function (req, res, next) {
         let formtimeleft = differenceInSeconds(new Date(settings["FormStartDate"].Value), new Date())
         formReady = (formtimeleft <= 0)
     }
-    res.render('recruitment/apply', {title: "New Member Application", formReady});
+    res.render('recruitment/apply', {title: "New Application", formReady});
 });
 
 router.get('/browsererror', function (req, res, next) {
@@ -162,17 +138,12 @@ router.post('/contact', [
     } else {
         return res.status(400).json({msg: "Invalid Captcha"});
     }
-
-
 });
 
 router.post('/apply', function (req, res, next) {
     if (res.locals.settings['RecruitmentOpen'].Value === '0') {
         return res.redirect('/apply');
     }
-    // if (req.useragent["isFacebook"]) {
-    //     return res.redirect("/browsererror")
-    // }
     let {name, phone, email} = req.body;
     req.useragent["IP"] = req.clientIp
     Applicant.findOne({where: {Email: email, Season: settings["CurrentSeason"].Value}}).then((app) => {
@@ -285,7 +256,7 @@ router.get('/application', async function (req, res, next) {
             applicant.save();
         }
         let remaining = differenceInSeconds(addSeconds(applicant.Start, parseInt(settings["FormTime"].Value) + 10), new Date())
-        if (remaining < 0) {
+        if (remaining < 60) {
             winston.warn(new Date() + applicant.Email + " : Time Out App " + remaining)
             res.redirect("/tokenexpired");
         }
@@ -359,7 +330,6 @@ router.post('/application', upload.any(), function (req, res, next) {
         end = null
         state = "In Progress"
     }
-
     Applicant.findOne({
         where: {
             Token: token,
@@ -371,8 +341,8 @@ router.post('/application', upload.any(), function (req, res, next) {
             return res.redirect("/tokenerror");
         }
         let secs = differenceInSeconds(new Date(), applicant.Start);
-        if (secs > (parseInt(settings["FormTime"].Value) * 1.08)) {
-            winston.warn(new Date() + email + ": Timed Out " + secs);
+        if (secs > ((parseInt(settings["FormTime"].Value) * 1.12) + 60)) {
+            winston.warn(new Date() + email + ": Timed Out : " + secs);
             if (settings["EnableOvertime"].Value === "0") {
                 return res.redirect("/tokenexpired");
             } else {
@@ -444,7 +414,7 @@ router.post('/application', upload.any(), function (req, res, next) {
 
 });
 
-router.post('/applicationajax', function (req, res, next) {
+router.post('/applicationajax', upload.any(), function (req, res, next) {
     let {
         token,
         name,
@@ -460,19 +430,40 @@ router.post('/applicationajax', function (req, res, next) {
         courses,
         excur,
         first,
-        second,
-        creativity,
-        effective
+        second
     } = req.body;
-    let team = req.body['team[]'];
-    let gen = req.body['Gen[]'];
-    let sit = req.body['sit[]'];
-    sit.push(Array.isArray(creativity) ? creativity[1] : creativity)
-    sit.push(Array.isArray(effective) ? effective[1] : effective)
+    let team = req.body['team'];
+    let gen = req.body['Gen'];
+    let sit = req.body['sit'];
+    let choices = []
+    for (let key in req.body) {
+        if (key.match(/^choice/)) {
+            choices.push({
+                questionId: key.split('-')[1],
+                answer: Array.isArray(req.body[key]) ? req.body[key][1] : req.body[key]
+            })
+        }
+    }
     let answers = {
         Team: team,
         General: gen,
-        Situational: sit
+        Situational: sit,
+        Choices: choices
+    }
+    if (req.file) {
+        answers["Files"] = [req.file.filename]
+    } else if (req.files && (req.files.length > 0)) {
+        answers["Files"] = {}
+        for (const singleFile of req.files) {
+            answers["Files"][`${singleFile.mimetype.split('/')[0]}`] = []
+            answers["Files"][`${singleFile.mimetype.split('/')[0]}`].push(
+                {
+                    filename: singleFile.filename,
+                    questionId: singleFile.fieldname.split('/')[1],
+                    category: singleFile.fieldname.split('/')[0]
+                })
+            winston.info(`${token} uploaded ${singleFile.filename}`)
+        }
     }
     winston.warn("AppAJAX: " + email + new Date());
     console.error(req.body);
@@ -487,8 +478,9 @@ router.post('/applicationajax', function (req, res, next) {
             return res.status(400).json({msg: "Error"});
         }
         let secs = differenceInSeconds(new Date(), applicant.Start);
-        if (secs > (parseInt(settings["FormTime"].Value) * 1.08)) {
+        if (secs > ((parseInt(settings["FormTime"].Value) * 1.12) + 80)) {
             state = "Overtime"
+            winston.warn(new Date() + email + ": Timed Out AJAX: " + secs);
             return res.status(400).json({msg: "Error"});
         }
         applicant.update({
@@ -672,7 +664,6 @@ router.post('/application/continue', async function (req, res, next) {
         if (settings["SendAllToSheet"].Value === "1") {
             AddToSheet(data)
         }
-
     }).catch(() => {
         return res.status(400).json({msg: "Error"});
     })
@@ -747,13 +738,7 @@ router.get('/members/performance/:PageID', function (req, res, next) {
             PageID: req.params.PageID
         }
     }).then(mem => {
-        if (mem.Committee === "TD" && !mem.Seen) {
-
-            res.render('portal/kpiprank', {title: "Performance Report", mem});
-        } else {
             res.render('performance', {title: "Performance Report", mem});
-        }
-
     }).catch(() => {
             createError(404);
         }
@@ -778,15 +763,14 @@ router.post('/members/performance/:PageID', function (req, res, next) {
 
 });
 
-router.get('/members/pokenactus/', function (req, res, next) {
+router.get('/members/leaderboards/', function (req, res, next) {
     let d = new Date();
     let month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let Month = month[d.getMonth()];
-    console.log(Month)
-    res.render('leaderboard', {title: "Pokenactus Leaderboard", Month});
+    res.render('leaderboard', {title: "Leaderboard", Month});
 });
 
-router.get('/members/pokenactus/:Month', function (req, res, next) {
+router.get('/members/leaderboards/:Month', function (req, res, next) {
     let Month = req.params.Month
     res.render('leaderboard', {title: "Pokenactus Leaderboard", Month});
 });
@@ -804,17 +788,11 @@ router.get('/members/leaderboard/:Directorate', function (req, res, next) {
             ['Ranking', 'ASC'],
         ]
     }).then(members => {
-        // if (members.length > 3){
         res.render('singleleaderboard', {title: "Leaderboard", members});
-        // } else {
-        //     res.render('message', {title: "Hmmmm"});
-        // }
-
     }).catch(() => {
             createError(404);
         }
     )
-
 });
 
 router.get('/members/leaderboard/:Directorate/:Month', function (req, res, next) {
@@ -829,17 +807,11 @@ router.get('/members/leaderboard/:Directorate/:Month', function (req, res, next)
             ['Ranking', 'ASC'],
         ]
     }).then(members => {
-        // if (members.length > 3){
         res.render('singleleaderboard', {title: "Leaderboard", members});
-        // } else {
-        //     res.render('message', {title: "Hmmmm"});
-        // }
-
     }).catch(() => {
             createError(404);
         }
     )
-
 });
 
 module.exports = router;

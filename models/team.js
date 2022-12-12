@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Team.belongsTo(models.Directorate)
       Team.hasMany(models.Position)
-      // Team.belongsToMany(models.Rank, { through: models.Position })
     }
   }
   Team.init({

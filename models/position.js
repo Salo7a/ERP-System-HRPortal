@@ -11,10 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // Position.belongsTo(models.Rank)
-      // Position.belongsTo(models.Directorate)
-      // Position.belongsTo(models.Team)
-      Position.hasMany(models.Invite)
+      Position.hasMany(models.Invite, { onDelete: 'CASCADE', onUpdate: 'CASCADE', hooks: true })
       Position.hasMany(models.User)
       Position.belongsTo(models.Rank)
       Position.belongsTo(models.Team)

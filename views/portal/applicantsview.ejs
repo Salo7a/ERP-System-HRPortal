@@ -150,7 +150,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     data-target="#par">
                                             <i class="fa fa-info"></i>
                                         </button></span>
-                                        <% if(["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(user.Position.Name) || user.isAdmin){ %>
+                                        <% if(["Admin", "President", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(user.Position.Name) || user.isAdmin){ %>
                                             <span data-toggle="tooltip" data-placement="top" title="Actions"><button
                                                         type="button" class="btn btn-secondary EditButton"
                                                         data-toggle="modal"
@@ -303,6 +303,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             let ParId = $(this).data("id");
             console.log(ParId);
             $("#EditModalContent").load(`/portal/applicants/edit?id=${ParId}`);
+        });
+        $('body').on('hidden.bs.modal', '.modal', function () {
+            $(this).removeData('bs.modal');
         });
     </script>
     <script> $(function () {

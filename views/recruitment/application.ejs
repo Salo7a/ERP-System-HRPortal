@@ -25,38 +25,12 @@
 
     <!-- Other -->
     <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
-    <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            });
-            var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src =
-                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-PHC5BRL');</script>
-    <!-- End Google Tag Manager -->
 
-    <!-- Fix Internet Explorer -->
-
-    <!--    &lt;!&ndash;[if lt IE 9]>-->
-    <script src="/vendor/html5shiv.js"></script>
-    <script src="/vendor/respond.js"></script>
-    <!--    <![endif]&ndash;&gt;-->
 
 </head>
 
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHC5BRL"
-            height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
-<!-- End Google Tag Manager (noscript) -->
+
 <div class="main-page-wrapper">
     <section style="margin-bottom: 20px" id="contact-section">
         <div class="container send-message">
@@ -66,7 +40,6 @@
                     <div class="row">
                         <div style="margin-right: auto; margin-left: auto" class="small-12 medium-12 large-12">
                             <h4>Personal Info</h4>
-                            <p>For Cairo University Students Only</p>
                         </div>
                     </div>
                     <!-- Personal Questions-->
@@ -567,12 +540,12 @@
         <a href="/" class="logo"><img src="images/logo/logo.png" alt="Logo"></a>
 
         <ul>
-            <li><a href="https://www.facebook.com/EnactusCairo/" class="tran3s round-border"><i
+        <li><a href="<%=settings['Facebook'].Value%>" class="tran3s round-border"><i
                             class="fa fa-facebook" aria-hidden="true"></i></a></li>
             <!--                <li><a href="#" class="tran3s round-border"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>-->
-            <li><a href="https://www.linkedin.com/company/enactus-cairo-university/" class="tran3s round-border"><i
+        <li><a href="<%=settings['LinkedIn'].Value%" class="tran3s round-border"><i
                             class="fa fa-linkedin" aria-hidden="true"></i></a></li>
-            <li><a href="https://www.instagram.com/enactuscairo/" class="tran3s round-border"><i
+        <li><a href="<%=settings['Instagram'].Value%" class="tran3s round-border"><i
                             class="fa fa-instagram" aria-hidden="true"></i></a></li>
         </ul>
     </div>

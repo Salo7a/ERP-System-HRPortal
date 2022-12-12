@@ -1,0 +1,31 @@
+{
+  "development": {
+    "username": "root",
+    "password": "",
+    "database": "portaldev",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "timezone": "local"
+    },
+    "timezone": "Africa/Cairo"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "",
+    "database": "portalprod",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "timezone": "local"
+    },
+    "timezone": "Africa/Cairo"
+  }
+}

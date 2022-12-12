@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel='icon' href='/favicon.ico' type='image/x-icon'/>
+    <title> <%= settings["WebsiteName"].Value %> || <%= title %></title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <!-- Custom CSS Block -->
+    <%- block('css').toString() %>
+
+</head>
+<body class="hold-transition sidebar-mini">
+
+    <!-- Navbar -->
+    <% include ../partials/navbar.ejs %>
+    <!-- /.navbar -->
+
+    <!-- Sidebar -->
+    <% include ../partials/sidebar.ejs %>
+    <!-- /.sidebar -->
+
+    <!-- Content wrapper Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark"><%= title %></h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-body">
+                            <form class="infoForm">
+                                <h6>Personal Info</h6>
+                                <hr>
+                                <ul>
+                                    <li>Age: <%= app.Age %></li>
+                                    <li>CU Student: <%= app.CUStudent %></li>
+                                    <li>Academic Year: <%= app.Academic %></li>
+                                    <li>Faculty: <%= app.Faculty %></li>
+                                    <li>Major: <%= app.Major %></li>
+                                    <li>Minor: <%= app.Minor %></li>
+                                    <li>English: <%= app.English %></li>
+                                    <li>Application Start: <%= app.Start %></li>
+                                    <li>Application End: <%= app.End %></li>
+                                </ul>
+                                <label>Extra-Curricular Activities</label>
+                                <textarea disabled class="form-control"><%= app.Excur %></textarea>
+                                <div class="form-group">
+                                    <label>Courses & Workshops Attended</label>
+                                    <textarea disabled
+                                              class="form-control"><%= app.Courses %></textarea>
+                                </div>
+                                <br>
+                                <% let q = 0 %>
+                                <label>Team</label>
+                                <hr>
+                                <br><h6>Questions: <%= app.First %></h6>
+                                <% if(questions[app.First]) { %>
+                                    <% questions[app.First].forEach((question, index) => { %>
+                                        <% if (question.Type === 'textarea'){ %>
+                                            <div class="form-group">
+                                                <label><%= question.Text %></label>
+                                                <% if(app.Answers.Team){ %>
+                                                    <textarea disabled
+                                                              class="form-control"><%= app.Answers.Team[q] %> </textarea>
+                                                <% } else { %>
+                                                    <h6 class="text-red"> No Answers Found in DB</h6>
+                                                <% } %>
+                                            </div>
+                                            <% q = q + 1 %>
+                                        <% }  else if (question.Type === 'image' && app.Answers.Files && app.Answers.Files.image) { %>
+                                            <div class="form-group">
+                                                <label><%= question.Text %></label>
+                                                <% let ans = app.Answers.Files.image.find(a => a.questionId == question.id);%>
+                                                <% if(ans){ %>
+                                                    <img class="row" style="max-width: 40vw" src="/submissions/<%=ans.filename%>" alt="<%= question.Text %>">
+                                                <% } else { %>
+                                                    <h6 class="text-red"> No Image Uploaded</h6>
+                                                <% } %>
+                                            </div>
+                                        <% } else if (question.Type === 'choice' && app.Answers.Choices) { %>
+                                            <div class="form-group">
+                                                <label><%= question.Text %></label>
+                                                <% let ans = app.Answers.Choices.find(a => a.questionId == question.id);%>
+                                                <% if(ans){ %>
+                                                <input type="text" class="form-control" disabled value="<%=ans.answer%>">
+                                                <% } else { %>
+                                                    <h6 class="text-red"> No Choice Selected</h6>
+                                                <% } %>
+                                            </div>
+                                        <% } %>
+
+                                    <% }) %>
+                                <% } %>
+                                <br>
+                                <h6>Questions: <%= app.Second %></h6>
+                                <% if(questions[app.Second]) { %>
+                                    <% questions[app.Second].forEach((question, index) => { %>
+                                        <% if (question.Type === 'textarea'){ %>
+                                            <div class="form-group">
+                                                <label><%= question.Text %></label>
+                                                <% if(app.Answers.Team){ %>
+                                                    <textarea disabled
+                                                              class="form-control"><%= app.Answers.Team[q] %> </textarea>
+                                                <% } else { %>
+                                                    <h6 class="text-red"> No Answers Found in DB</h6>
+                                                <% } %>
+                                            </div>
+                                            <% q = q + 1 %>
+                                        <% } else if (question.Type === 'image' && app.Answers.Files && app.Answers.Files.image) { %>
+                                            <div class="form-group">
+                                                <label><%= question.Text %></label>
+                                                <% let ans = app.Answers.Files.image.find(a => a.questionId == question.id);%>
+                                                <% if(ans){ %>
+                                                <img class="row" style="max-width: 40vw" src="/submissions/<%=ans.filename%>" alt="<%= question.Text %>">
+                                                <% } else { %>
+                                                    <h6 class="text-red"> No Image Uploaded</h6>
+                                                <% } %>
+                                            </div>
+                                        <% } else if (question.Type === 'choice' && app.Answers.Choices) { %>
+                                            <div class="form-group">
+                                                <label><%= question.Text %></label>
+                                                <% let ans = app.Answers.Choices.find(a => a.questionId == question.id);%>
+                                                <% if(ans){ %>
+                                                <input type="text" class="form-control" disabled value="<%=ans.answer%>">
+                                                <% } else { %>
+                                                    <h6 class="text-red"> No Choice Selected</h6>
+                                                <% } %>
+                                            </div>
+                                        <% } %>
+
+                                    <% }) %>
+                                <% } %>
+                                <br><h6>General</h6>
+                                <hr>
+                                <% questions["General"].forEach((question, index) => { %>
+                                <%if (question.Type === 'textarea') { %>
+                                    <div class="form-group">
+                                        <label><%= question.Text %></label>
+                                        <textarea disabled
+                                                  class="form-control"><%= app.Answers.General[index] %></textarea>
+                                    </div>
+                                <% }else if (question.Type === 'image' && app.Answers.Files) { %>
+                                    <div class="form-group">
+                                        <label><%= question.Text %></label>
+                                        <% let ans = app.Answers.Files.image.find(a => a.questionId == question.id);%>
+                                        <% if(ans){ %>
+                                        <img class="row" style="max-width: 40vw" src="/submissions/<%=ans.filename%>" alt="<%= question.Text %>">
+                                        <% } else { %>
+                                            <h6 class="text-red"> No Image Uploaded</h6>
+                                        <% } %>
+                                    </div>
+                                <% }  else if (question.Type === 'choice' && app.Answers.Choices) { %>
+                                    <div class="form-group">
+                                        <label><%= question.Text %></label>
+                                        <% let ans = app.Answers.Choices.find(a => a.questionId == question.id);%>
+                                        <% if(ans){ %>
+                                        <input type="text" class="form-control" disabled value="<%=ans.answer%>">
+                                        <% } else { %>
+                                            <h6 class="text-red"> No Choice Selected</h6>
+                                        <% } %>
+                                    </div>
+                                <% } %>
+                                <% }) %>
+                                <br>
+                                <h6>Situational</h6>
+                                <hr>
+                                <% questions["Situational"].forEach((question, index) => { %>
+                                <%if (question.Type === 'textarea') { %>
+                                    <div class="form-group">
+                                        <label><%= question.Text %></label>
+                                        <textarea disabled
+                                                  class="form-control"><%= app.Answers.Situational[index] %></textarea>
+                                    </div>
+                                <%}  else if (question.Type === 'image' && app.Answers.Files) { %>
+                                    <div class="form-group">
+                                        <label><%= question.Text %></label>
+                                        <% let ans = app.Answers.Files.image.find(a => a.questionId == question.id);%>
+                                        <% if(ans){ %>
+                                        <img class="row" style="max-width: 40vw" src="/submissions/<%=ans.filename%>" alt="<%= question.Text %>">
+                                        <% } else { %>
+                                            <h6 class="text-red"> No Image Uploaded</h6>
+                                        <% } %>
+                                    </div>
+                                <% } else if (question.Type === 'choice' && app.Answers.Choices) { %>
+                                    <div class="form-group">
+                                        <label><%= question.Text %></label>
+                                        <% let ans = app.Answers.Choices.find(a => a.questionId == question.id);%>
+                                        <% if(ans){ %>
+                                        <input type="text" class="form-control" disabled value="<%=ans.answer%>">
+                                        <% } else { %>
+                                            <h6 class="text-red"> No Choice Selected</h6>
+                                        <% } %>
+                                    </div>
+                                <% } %>
+                                <% }) %>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+            </div>
+
+
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+
+    <!-- /.content-wrapper -->
+    <!--    Footer-->
+    <% include ../partials/footer.ejs %>
+
+    <!-- Toasts -->
+    <% include ../partials/toasts.ejs %>
+    <!-- Custom JS Block -->
+    <%- block('js').toString() %>
+    <!-- AJAXSubmit -->
+    <script type="text/javascript" src="/vendor/jquery.ajaxSubmit.min.js"></script>
+    <script>
+        function UpdatePreview(){
+            $('#ImagePreview').attr('src', URL.createObjectURL(event.target.files[0]));
+        }
+
+    </script>
+</body>
+</html>
+

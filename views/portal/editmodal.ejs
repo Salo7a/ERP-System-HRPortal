@@ -22,6 +22,11 @@
                 >Applied
                 </option>
                 <option
+                <% if (app.State === "Filtered"){ %> selected
+                        <% } %>
+                >Filtered
+                </option>
+                <option
                 <% if (app.State === "Called"){ %> selected
                         <% } %>
                 >Called

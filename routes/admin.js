@@ -559,7 +559,7 @@ router.post("/question/edit", isAdmin, async (req, res, next) => {
         question.Text = text
         question.Type = type
         question.Extra = {
-            choices: extra.split(","),
+            choices: extra ? extra.split(",") : null,
             custom: custom
         }
         question.save()
@@ -579,14 +579,6 @@ router.post('/question/delete', isAdmin, (req, res, next) => {
     });
     res.send({id: req.body.id, msg: `#${req.body.id} Deleted Successfully`});
 });
-
-
-// router.get('/applicant/jsonimport', isAdmin, (req, res, next) => {
-//     if (!req.user.isAdmin) {
-//         next(createError(403))
-//     }
-//     res.render('admin/importFromJson', {title: "Applicant Import"});
-// });
 
 router.get('/applicant/jsonimport', isAdmin, (req, res, next) => {
     if (!req.user.isAdmin) {

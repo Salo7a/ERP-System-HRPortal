@@ -5,21 +5,26 @@ RememberMeStrategy = require('passport-remember-me-extended').Strategy;
 const Chance = require('chance');
 
 passport.use(new LocalStrategy({usernameField: 'email'}, function (email, password, done) {
+    winston.warn(`${email} Login`)
     User
         .findOne({where: {Email: email}, include: [Position]})
         .then(function (user) { // successful query to database
             if (!user) {
+                winston.warn(`${email} Email is Not Registered'`)
                 return done(null, false, {message: 'Email is Not Registered'});
             } else {
                 if (!user.isActive){
+                    winston.warn(`${email} Account isn\'t activated`)
                     return done(null, false, {message: 'Account isn\'t activated'});
                 }
                 else if (user.comparePass(password)) {
+                    winston.warn(`${email} Logged In Successfully`)
                     user.LastLogin = new Date();
                     user.save()
                     return done(null, user, {message: 'Logged In Successfully'});
                 }
                 else{
+                    winston.warn(`${email} Wrong Password`)
                     return done(null, false, {message: 'Wrong Password'});
                 }
             }

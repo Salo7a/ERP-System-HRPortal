@@ -105,58 +105,59 @@ async function UpdateState(id, state, first, second) {
             winston.warn("Failed to update row #" + id)
             return false;
         }
-    } else {
-        winston.warn("Failed to update row, ID Not Found: " + id)
-        let app = await Applicant.findOne({where: {id: id}})
-        let data = {
-            ID: app.id,
-            Name: app.Name,
-            Age: app.Age,
-            Phone: app.Phone,
-            Email: app.Email,
-            CUStudent: app.CUStudent,
-            State: app.State,
-            Time: app.Time,
-            Faculty: app.Faculty,
-            Academic: app.Academic,
-            Major: app.Major,
-            Minor: app.Minor,
-            English: app.English,
-            Excur: app.Excur,
-            Courses: app.Courses,
-            First: app.First,
-            Second: app.Second,
-            End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
-            Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
-            ITime: app.ITime,
-            IDate: app.IDate,
-            ATime: app.ATime,
-            Season: app.Season
-        }
-        AddToSheet(data)
-        return false;
     }
-    if (index1 != null) {
-        try {
-            FirstRows[index1].State = state;
-            await FirstRows[index1].save();
-        } catch (e) {
-            console.log(e);
-            winston.warn("Failed to update row #" + id)
-            return false;
-        }
-    }
-    if (index2 != null) {
-        try {
-            SecondRows[index2].State = state;
-            await SecondRows[index2].save();
-            return true;
-        } catch (e) {
-            console.log(e);
-            winston.warn("Failed to update row #" + id)
-            return false;
-        }
-    }
+    // else {
+    //     winston.warn("Failed to update row, ID Not Found: " + id)
+    //     let app = await Applicant.findOne({where: {id: id}})
+    //     let data = {
+    //         ID: app.id,
+    //         Name: app.Name,
+    //         Age: app.Age,
+    //         Phone: app.Phone,
+    //         Email: app.Email,
+    //         CUStudent: app.CUStudent,
+    //         State: app.State,
+    //         Time: app.Time,
+    //         Faculty: app.Faculty,
+    //         Academic: app.Academic,
+    //         Major: app.Major,
+    //         Minor: app.Minor,
+    //         English: app.English,
+    //         Excur: app.Excur,
+    //         Courses: app.Courses,
+    //         First: app.First,
+    //         Second: app.Second,
+    //         End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+    //         Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
+    //         ITime: app.ITime,
+    //         IDate: app.IDate,
+    //         ATime: app.ATime,
+    //         Season: app.Season
+    //     }
+    //     AddToSheet(data)
+    //     return false;
+    // }
+    // if (index1 != null) {
+    //     try {
+    //         FirstRows[index1].State = state;
+    //         await FirstRows[index1].save();
+    //     } catch (e) {
+    //         console.log(e);
+    //         winston.warn("Failed to update row #" + id)
+    //         return false;
+    //     }
+    // }
+    // if (index2 != null) {
+    //     try {
+    //         SecondRows[index2].State = state;
+    //         await SecondRows[index2].save();
+    //         return true;
+    //     } catch (e) {
+    //         console.log(e);
+    //         winston.warn("Failed to update row #" + id)
+    //         return false;
+    //     }
+    // }
 
 }
 
@@ -190,7 +191,7 @@ router.get('/applicants/my', isAuth, async function (req, res, next) {
         next(createError(403));
     }
     let team = await Position.getTeam();
-    let state = ["Accepted", "Filtered", "Rejected"];
+    let state = ["Accepted"];
 
     Applicant.findAll({
         where: {
@@ -506,18 +507,6 @@ router.get('/sendtosheet/:limit/:offset', isAuth, function (req, res, next) {
                     Courses: app.Courses,
                     First: app.First,
                     Second: app.Second,
-                    // Answers: app.Answers,
-                    // Q1: app.Answers.Team[0],
-                    // Q2: app.Answers.Team[1],
-                    // Q3: app.Answers.Team[2],
-                    // Q4: app.Answers.Team[3],
-                    // General1: app.Answers.General[0],
-                    // General2: app.Answers.General[1],
-                    // General3: app.Answers.General[2],
-                    // General4: app.Answers.General[3],
-                    // Situational1: app.Answers.Situational[0],
-                    // Situational2: app.Answers.Situational[1],
-                    // Situational3: app.Answers.Situational[2],
                     End: formatToTimeZone(app.End, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
                     Start: formatToTimeZone(app.Start, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (z)", {timeZone: 'Africa/Cairo'}),
                     ITime: app.ITime,
@@ -656,7 +645,7 @@ router.get('/applicants/profile/:id', isAuth, async function (req, res, next) {
     Applicant.findOne({
         where: {
             id: id,
-            Season: season
+            Season: settings["CurrentSeason"].Value
         }
     }).then(app => {
         if (app) {

@@ -91,21 +91,19 @@ module.exports = (sequelize, DataTypes) => {
 
   });
   User.beforeUpdate((User, options) => {
-    // if(User.Password.length > 6)
-    // {
-    //     return bcrypt.genSalt(10).then(async salt => {
-    //         await bcrypt.hash(User.Password, salt).then(async hash => {
-    //                 User.Password = hash;
-    //             }
-    //         ).catch(err => {
-    //             throw new Error();
-    //         })
-    //     }).catch(err => {
-    //         throw new Error();
-    //     })
-    // }
-
-
+     if(User.Password.length > 6)
+     {
+         return bcrypt.genSalt(10).then(async salt => {
+             await bcrypt.hash(User.Password, salt).then(async hash => {
+                     User.Password = hash;
+                 }
+             ).catch(err => {
+                 throw new Error();
+             })
+         }).catch(err => {
+             throw new Error();
+         })
+     }
   });
 
   User.prototype.comparePass = function (password) {

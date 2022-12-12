@@ -91,11 +91,11 @@ module.exports = (sequelize, DataTypes) => {
 
   });
   User.beforeUpdate((User, options) => {
-     if(User.Password.length > 6)
+      if(User.changed('Password') && User.Password.length > 6)
      {
          return bcrypt.genSalt(10).then(async salt => {
              await bcrypt.hash(User.Password, salt).then(async hash => {
-                     User.Password = hash;
+                 User.setDataValue('Password', hash);
                  }
              ).catch(err => {
                  throw new Error();

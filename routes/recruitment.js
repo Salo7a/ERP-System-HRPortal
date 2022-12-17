@@ -163,7 +163,7 @@ async function UpdateState(id, state, first, second) {
 
 
 router.get('/applicants/all', isAuth, function (req, res, next) {
-    if (!(["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     Applicant.findAll({
@@ -182,7 +182,7 @@ router.get('/applicants/all', isAuth, function (req, res, next) {
 });
 
 router.get('/applicants/my', isAuth, async function (req, res, next) {
-    if ((["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if ((["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal/applicants/all")
     }
     let Position = req.user.Position;
@@ -222,7 +222,7 @@ router.get('/applicants/bydate/', isAuth, function (req, res, next) {
         }
     }).then(app => {
         console.log(app);
-        res.render('portal/applicantsiview', {title: `Today's Interviews`, applicants: app});
+        res.render('portal/applicantsview', {title: `Today's Interviews`, applicants: app});
     }).catch(() => {
         createError(404);
     })

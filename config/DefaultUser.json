@@ -1,0 +1,11 @@
+{
+  "Username": "admin",
+  "Name": "The Admin",
+  "Email": "admin@hrportal.com",
+  "Position": "Admin",
+  "Phone": "011",
+  "Password": "password123",
+  "Photo": "default.png",
+  "isActive": true,
+  "isAdmin": true
+}

@@ -38,7 +38,7 @@ module.exports = {
     },
     isPos: function (Positions, req, res, next) {
         Positions.concat(["Admin", "President"])
-        if(!(Positions.includes(req.user.Position.Name) || req.user.isAdmin)) {
+        if(!(Positions.includes(req.user.Position?.Name) || req.user.isAdmin)) {
             req.flash('error', 'Unauthorized');
             next(createError(403))
         } else {

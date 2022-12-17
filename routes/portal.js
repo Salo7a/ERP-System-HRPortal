@@ -29,7 +29,7 @@ function isNumeric(str) {
 
 // Portal Home (For Non-Members)
 router.get('/', isAuth, async function (req, res, next) {
-    if (req.user.Position.Name === 'TD Member') {
+    if (req.user.Position?.Name === 'TD Member') {
         res.redirect("/portal/members/kpi");
     } else {
         let applied = await Applicant.count({where: {State: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value}});
@@ -103,12 +103,12 @@ router.get('/messages', isAuth, async function (req, res, next) {
 
 // Main KPI Route, Lists All Members
 router.get('/members/kpi', isAuth, async function (req, res, next) {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
 
     let mem;
-    if (req.user.Position.Name === "TD Member") {
+    if (req.user.Position?.Name === "TD Member") {
         mem = await Member.findAll({
             where:
                 {
@@ -132,7 +132,7 @@ router.get('/members/kpi', isAuth, async function (req, res, next) {
 });
 
 router.post('/editkpi', isAuth, async function (req, res, next) {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let {January, February, March, April, May, June, July} = req.body
@@ -160,7 +160,7 @@ router.post('/editkpi', isAuth, async function (req, res, next) {
 });
 
 router.get('/members/edit/kpi', isAuth, function (req, res, next) {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let id = req.query.id;
@@ -182,11 +182,11 @@ router.get('/members/edit/kpi', isAuth, function (req, res, next) {
 
 // Ranking Routes
 router.get('/members/ranking', isAuth, async function (req, res, next) {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let mem;
-    if (req.user.Position.Name === "TD Member") {
+    if (req.user.Position?.Name === "TD Member") {
         mem = await Member.findAll({
             where:
                 {
@@ -204,7 +204,7 @@ router.get('/members/ranking', isAuth, async function (req, res, next) {
 });
 
 router.post('/editranking', isAuth, async function (req, res, next) {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
 
@@ -251,7 +251,7 @@ router.post('/editranking', isAuth, async function (req, res, next) {
 });
 
 router.get('/members/edit/ranking', isAuth, function (req, res, next) {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let id = req.query.id;
@@ -283,7 +283,7 @@ router.get('/members/edit/ranking', isAuth, function (req, res, next) {
 
 // View Rep
 router.get("/reps", isAuth, async (req, res, next) => {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         next(createError(403));
     }
     let reps = await User.findAll({
@@ -301,7 +301,7 @@ router.get("/reps", isAuth, async (req, res, next) => {
 
 // Edit Reps Form
 router.get("/rep/edit", isAuth, async (req, res, next) => {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         next(createError(403));
     }
     let id = req.query.id
@@ -314,7 +314,7 @@ router.get("/rep/edit", isAuth, async (req, res, next) => {
 
 // Edit Rep
 router.post("/rep/edit", isAuth, async (req, res, next) => {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         next(createError(403));
     }
     let {id, teams, active} = req.body
@@ -402,7 +402,7 @@ router.post('/members/profile/:id', isAuth, function (req, res, next) {
 });
 
 router.post('/members/new', isAuth, async function (req, res, next) {
-    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position.Name) || req.user.isAdmin)) {
+    if (!(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(req.user.Position?.Name) || req.user.isAdmin)) {
         res.redirect("/portal")
     }
     let {Name, Phone, Email} = req.body

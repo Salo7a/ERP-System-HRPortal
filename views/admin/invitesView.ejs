@@ -112,7 +112,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <tr role="row" id="row-<% invite.id %>">
                                     <td><%=invite.id %></td>
                                     <td><%=invite.Code %></td>
-                                    <td><%=invite.Position.Name %></td>
+                                    <td><%=invite.Position?.Name %></td>
                                     <td><% if (invite.isUsed){ %> Yes <%} else { %> No <%}%></td>
                                     <td><% if (invite.isAdmin){ %> Yes <%} else { %> No <%}%></td>
                                     <td><%=invite.Season%></td>
@@ -155,7 +155,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 required>
                             <option class="hidden" selected disabled value="">Select The Position</option>
                             <% positions.forEach(position =>{ %>
-                                <option value="<%=position.id%>"><%=position.Name%></option>
+                                <option value="<%=position.id%>"><%=Position?.Name%></option>
                             <%}) %>
                         </select>
                     </div>

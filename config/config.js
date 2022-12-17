@@ -1,7 +1,7 @@
-{
+module.exports = {
   "development": {
     "username": "root",
-    "password": "",
+    "password": "mysql",
     "database": "portaldev",
     "host": "127.0.0.1",
     "dialect": "mysql",
@@ -18,14 +18,15 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": "",
-    "database": "portalprod",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
+    "username": process.env.PROD_DB_USERNAME || "root",
+    "password": process.env.PROD_DB_PASSWORD || "",
+    "database": process.env.PROD_DB_NAME || "portalprod",
+    "host": process.env.PROD_DB_HOST || "127.0.0.1",
+    "dialect": process.env.PROD_DB_DIALECT || "mysql",
     "dialectOptions": {
       "timezone": "local"
     },
-    "timezone": "Africa/Cairo"
+    "timezone": process.env.PROD_DB_TMZ || "Africa/Cairo"
   }
 }
+

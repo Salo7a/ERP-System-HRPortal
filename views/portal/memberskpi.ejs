@@ -96,7 +96,7 @@
                         <h3 class="card-title"><%= title %></h3>
                         <!-- /.card-tools -->
                         <div class="float-right">
-                            <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
+                            <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position?.Name) || user.isAdmin){ %>
                                 <button type="button" class="btn btn-block btn-success" data-toggle="modal"
                                         data-target="#NewMemberModal">New Member
                                 </button>
@@ -131,7 +131,7 @@
                                     </td>
                                     <td>
 
-                                        <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
+                                        <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position?.Name) || user.isAdmin){ %>
                                             <span class="btn-group btn-group-sm"> <span data-toggle="tooltip"
                                                                                         data-placement="top"
                                                                                         title="Actions"><button
@@ -182,7 +182,7 @@
         </div>
         <!-- /.content -->
     </div>
-    <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position.Name) || user.isAdmin){ %>
+    <% if(["Admin", "President", "HR VP", "TD Team Leader", "TD Member"].includes(user.Position?.Name) || user.isAdmin){ %>
         <div class="modal fade" id="NewMemberModal" style="display: none;" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

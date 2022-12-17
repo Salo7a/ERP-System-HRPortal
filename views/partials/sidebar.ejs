@@ -1,9 +1,9 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/portal" class="brand-link">
-        <img src="/images/<%=settings["WebsiteLogo"].value%>" alt="Enactus Logo" class="brand-image"
+        <img src="/images/<%=settings["WebsiteLogo"].Value%>" alt="HRPortal Logo" class="brand-image"
              style="opacity: .8">
-        <span class="brand-text font-weight-light">Member's Portal</span>
+        <span class="brand-text font-weight-light">HR Portal</span>
     </a>
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
@@ -13,7 +13,7 @@
             </div>
             <div class="info">
                 <a class="d-block"><%= user.Name %></a>
-                <p  style="font-size: 0.8rem; color: #d0d0d0; margin: 0;"><%= user.Position.Name %></p>
+                <p  style="font-size: 0.8rem; color: #d0d0d0; margin: 0;"><%= user.Position?.Name %></p>
             </div>
         </div>
 
@@ -89,14 +89,6 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    <i class="nav-icon fa fa-lightbulb" aria-hidden="true"></i>
-                                    <p>
-                                        Manage Workshops
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="/admin/settings" class="nav-link">
                                     <i class="nav-icon fas fa-cogs" aria-hidden="true"></i>
                                     <p>
@@ -107,7 +99,7 @@
                         </ul>
                     </li>
                 <% } %>
-                <% if(!user.Position.Name.includes("Member") && !user.Position.Name.includes("member")){ %>
+                <% if(!user.Position?.Name?.includes("Member") && !user.Position?.Name?.includes("member")){ %>
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-user-tie"></i>
@@ -123,7 +115,7 @@
                                 <p>My Applicants</p>
                             </a>
                         </li>
-                        <% if(["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(user.Position.Name) || user.isAdmin){ %>
+                        <% if(["Admin", "President", "Marketing VP", "Projects VP", "Financial VP", "Multimedia VP", "HR VP", "TD Team Leader", "OD Team Leader", "L&D Team Leader"].includes(user.Position?.Name) || user.isAdmin){ %>
                         <li class="nav-item">
                             <a href="/portal/applicants/all" class="nav-link">
                                 <i class="fas fa-users nav-icon"></i>
@@ -142,12 +134,6 @@
                                 <p>Unfiltered</p>
                             </a>
                         </li>
-                            <li class="nav-item">
-                                <a href="/portal/applicants/Incomplete" class="nav-link">
-                                    <i class="fas fa-users-slash nav-icon"></i>
-                                    <p>Incomplete</p>
-                                </a>
-                            </li>
                         <% } %>
                     </ul>
                 </li>
@@ -180,7 +166,7 @@
                             </a>
                         </li>
                     </ul>
-                    <% if(["Admin", "President", "HR VP", "TD Team Leader"].includes(user.Position.Name) || user.isAdmin){ %>
+                    <% if(["Admin", "President", "HR VP", "TD Team Leader"].includes(user.Position?.Name) || user.isAdmin){ %>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="/portal/reps" class="nav-link">
@@ -193,7 +179,7 @@
                         </ul>
                     <% } %>
                 </li>
-                <% if(!user.Position.Name.includes("Member") && !user.Position.Name.includes("member")){ %>
+                <% if(!user.Position?.Name.includes("Member") && !user.Position?.Name.includes("member")){ %>
                     <li class="nav-item">
                         <a href="/portal/messages" class="nav-link">
                             <i class="fas fa-envelope nav-icon"></i>

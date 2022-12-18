@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const {User, Invite, Team, Directorate, Position, Rank, Question, Config, Applicant} = require('../models');
 const {NotAuth, isAuth, isAdmin} = require('../utils/filters');
+const {syncSettings} = require('../utils/helpers')
 const {check, validationResult, body} = require('express-validator');
 const {Op} = require('sequelize');
 const Chance = require('chance').Chance();
@@ -484,6 +485,7 @@ router.post("/settings", isAdmin, async (req, res, next) => {
 
             })
         })
+        syncSettings()
     } catch (e) {
         req.flash("error", "An Error Has Occurred");
     } finally {

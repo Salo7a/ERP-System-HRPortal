@@ -15,6 +15,7 @@ const winston = require('./config/winston');
 const socketIo = require("socket.io");
 const io = socketIo();
 let passportConfig = require('./config/passport');
+const {syncSettings} = require('./utils/helpers')
 
 // initalize sequelize with session store
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
@@ -80,10 +81,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.authenticate('remember-me'));
 
-app.use(function (req, res, next) {
-    res.locals.user = req.user;
-    next();
-});
 //Flash
 app.use(flash());
 app.use((req, res, next) => {
@@ -109,22 +106,16 @@ app.use((req, res, next) => {
 // // now call the new middleware function in your app
 //
 // app.use(setCache)
+
 // Middleware for settings
-app.use(function (req, res, next) {
+app.use(async function (req, res, next) {
     if (req.isAuthenticated()) {
         res.locals.user = req.user;
     }
-    Config.findAll({raw: true}).then(async r => {
-            let settings = {};
-            await r.forEach(setting => {
-                settings[setting.Setting] = setting;
-            });
-            global.settings = settings
-            res.locals.settings = settings;
-            next();
-
-        }
-    )
+    if (!settings) {
+        await syncSettings();
+    }
+    res.locals.settings = global.settings;
 });
 
 app.use('/', indexRouter);

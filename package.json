@@ -6,7 +6,7 @@
     "start": "node ./bin/www --trace-warnings",
     "Nodemon": "nodemon ./bin/www --trace-warnings",
     "debug": "nodemon --inspect --trace-warnings ./bin/www",
-    "build": "node ./dbSync.js"
+    "build": "node ./utils/dbSync.js"
   },
   "dependencies": {
     "@eonasdan/tempus-dominus": "^6.2.7",

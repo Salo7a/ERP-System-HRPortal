@@ -8,7 +8,6 @@ module.exports = {
                     settings[setting.Setting] = setting;
                 });
                 global.settings = settings
-                next();
             }
         )
     }

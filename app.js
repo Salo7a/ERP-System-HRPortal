@@ -112,10 +112,16 @@ app.use(async function (req, res, next) {
     if (req.isAuthenticated()) {
         res.locals.user = req.user;
     }
-    if (!settings) {
-        await syncSettings();
-    }
-    res.locals.settings = global.settings;
+    Config.findAll({raw: true}).then(async r => {
+        let settings = {};
+        await r.forEach(setting => {
+            settings[setting.Setting] = setting;
+        });
+        global.settings = settings;
+        res.locals.settings = global.settings;
+        next();
+    })
+    
 });
 
 app.use('/', indexRouter);

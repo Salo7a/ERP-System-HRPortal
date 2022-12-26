@@ -1,7 +1,7 @@
 [![Docker Image CI](https://github.com/Salo7a/HRPortal/actions/workflows/docker-image.yml/badge.svg)](https://github.com/Salo7a/HRPortal/actions/workflows/docker-image.yml)
 
 # Personnel Recruitment & KPI Monitoring Website - HRPortal
-A recruitment system for student organizations, made ofor some organization in Cairo University
+A recruitment system for student organizations, made for some organization in Cairo University
 
 
 ## Features

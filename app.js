@@ -12,8 +12,8 @@ const engine = require('ejs-mate');
 const helmet = require('helmet');
 const Config = require('./models').Config;
 const winston = require('./config/winston');
-const socketIo = require("socket.io");
-const io = socketIo();
+// const socketIo = require("socket.io");
+// const io = socketIo();
 let passportConfig = require('./config/passport');
 const {syncSettings} = require('./utils/helpers')
 
@@ -32,7 +32,7 @@ const adminRouter = require('./routes/admin');
 
 const app = express();
 
-app.io = io;
+// app.io = io;
 
 //Database Connection Test
 db.sequelize

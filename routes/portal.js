@@ -68,10 +68,10 @@ router.get('/', isAuth, async function (req, res, next) {
         let Dates = await Applicant.findAll({
             where: {State: {[Op.ne]: null}, Season: settings["CurrentSeason"].Value},
             attributes: [
-                [sequelize.literal(`DATE(End)`), 'End'],
+                [sequelize.literal(`"End"::DATE`), 'End'],
                 [sequelize.literal(`COUNT(*)`), 'count']
             ],
-            group: [sequelize.literal(`DATE(End)`)],
+            group: [sequelize.literal(`"End"::DATE`)],
             raw: true
         });
         res.render('portal/home', {

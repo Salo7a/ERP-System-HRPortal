@@ -8,15 +8,16 @@ let DefaultUser = require('../config/DefaultUser.json');
  * to edit the structure of all tables to match the models.
  * */
 
+
 models.sequelize.sync({alter: false}).then(function () {
     /**
      * Verify Settings.
      */
     try {
-        DefaultSettings.forEach((setting)=>{
+        DefaultSettings.forEach((setting) => {
             Config.findOne({where: {Setting: setting.Setting}})
-                .then((result)=>{
-                    if (!result){
+                .then((result) => {
+                    if (!result) {
                         Config.create(
                             {
                                 "Setting": setting.Setting,
@@ -28,18 +29,18 @@ models.sequelize.sync({alter: false}).then(function () {
                 })
         })
     } catch (e) {
-        console.error(e)
+        console.log(e)
     }
     /**
      * Add Default User If None Exists.
      */
-    try {
-        User.count().then(count =>{
-            if (count === 0){
-                User.create(DefaultUser)
-            }
-        })
-    } catch (e) {
-        console.error(e)
-    }
+
+    User.count().then(count => {
+        if (count === 0) {
+            User.create(DefaultUser)
+        }
+    }).catch(e => {
+        console.log(e);
+    })
+
 });

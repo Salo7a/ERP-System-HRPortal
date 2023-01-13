@@ -4,7 +4,6 @@ const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
-// const sassMiddleware = require('node-sass-middleware');
 const db = require('./models/index');
 const flash = require('express-flash');
 const passport = require('passport');
@@ -12,8 +11,6 @@ const engine = require('ejs-mate');
 const helmet = require('helmet');
 const Config = require('./models').Config;
 const winston = require('./config/winston');
-// const socketIo = require("socket.io");
-// const io = socketIo();
 let passportConfig = require('./config/passport');
 const {syncSettings} = require('./utils/helpers')
 
@@ -32,8 +29,6 @@ const adminRouter = require('./routes/admin');
 
 const app = express();
 
-// app.io = io;
-
 //Database Connection Test
 db.sequelize
     .authenticate()
@@ -50,12 +45,6 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser('keyboard'));
-// app.use(sassMiddleware({
-//     src: path.join(__dirname, 'public'),
-//     dest: path.join(__dirname, 'public'),
-//     indentedSyntax: false, // true = .sass and false = .scss
-//     sourceMap: true
-// }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/dist', express.static(path.join(__dirname, 'node_modules/admin-lte/dist')));
 app.use('/plugins', express.static(path.join(__dirname, 'node_modules/admin-lte/plugins')));
@@ -63,19 +52,22 @@ app.use(helmet({
     contentSecurityPolicy: false,
 }))
 
-app.use(requestIp.mw())
+app.use(requestIp.mw());
 app.use(useragent.express());
+
+const sessionStore = new SequelizeStore({
+    db: db.sequelize,
+});
 
 //Express Session
 app.use(session({
     secret: "keyboard",
     cookie: {maxAge: 60000},
-    store: new SequelizeStore({
-        db: db.sequelize,
-    }),
+    store: sessionStore,
     resave: false,
     saveUninitialized: false
 }));
+
 // Auth Middleware
 app.use(passport.initialize());
 app.use(passport.session());

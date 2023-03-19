@@ -10,7 +10,7 @@ WORKDIR /usr/hrportal
 
 COPY --chown=node:node package.json .
 
-RUN npm i --only=production
+RUN npm i --omit=dev
 
 COPY . .
 

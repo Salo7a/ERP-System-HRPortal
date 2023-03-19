@@ -1,0 +1,1 @@
+const {Config, User} = require('../models');

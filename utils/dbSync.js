@@ -8,39 +8,44 @@ let DefaultUser = require('../config/DefaultUser.json');
  * to edit the structure of all tables to match the models.
  * */
 
-
-models.sequelize.sync({alter: false}).then(function () {
-    /**
-     * Verify Settings.
-     */
-    try {
-        DefaultSettings.forEach((setting) => {
-            Config.findOne({where: {Setting: setting.Setting}})
-                .then((result) => {
-                    if (!result) {
-                        Config.create(
-                            {
-                                "Setting": setting.Setting,
-                                "Value": setting.Value,
-                                "Description": setting.Description
-                            }
-                        )
-                    }
-                })
-        })
-    } catch (e) {
-        console.log(e)
-    }
-    /**
-     * Add Default User If None Exists.
-     */
-
-    User.count().then(count => {
-        if (count === 0) {
-            User.create(DefaultUser)
+const syncDefaults = async () => {
+    await models.sequelize.sync({alter: false}).then(async function () {
+        /**
+         * Verify Settings.
+         */
+        try {
+            DefaultSettings.forEach((setting) => {
+                Config.findOne({where: {Setting: setting.Setting}})
+                    .then((result) => {
+                        if (!result) {
+                            Config.create(
+                                {
+                                    "Setting": setting.Setting,
+                                    "Value": setting.Value,
+                                    "Description": setting.Description
+                                }
+                            )
+                        }
+                    })
+            })
+        } catch (e) {
+            console.log(e)
         }
-    }).catch(e => {
-        console.log(e);
-    })
+        /**
+         * Add Default User If None Exists.
+         */
 
-});
+        User.count().then(count => {
+            if (count === 0) {
+                User.create(DefaultUser)
+            }
+        }).catch(e => {
+            console.log(e);
+        })
+
+    });
+}
+
+await syncDefaults();
+
+module.exports = {syncDefaults}

@@ -14,7 +14,7 @@ const winston = require('./config/winston');
 let passportConfig = require('./config/passport');
 const {syncSettings} = require('./utils/helpers')
 
-// initalize sequelize with session store
+// initialize sequelize with session store
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
 // Debugging
@@ -104,16 +104,9 @@ app.use(async function (req, res, next) {
     if (req.isAuthenticated()) {
         res.locals.user = req.user;
     }
-    Config.findAll({raw: true}).then(async r => {
-        let settings = {};
-        await r.forEach(setting => {
-            settings[setting.Setting] = setting;
-        });
-        global.settings = settings;
-        res.locals.settings = global.settings;
-        next();
-    })
-    
+    await syncSettings();
+    res.locals.settings = global.settings;
+    next();
 });
 
 app.use('/', indexRouter);

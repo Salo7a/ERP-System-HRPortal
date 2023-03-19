@@ -46,6 +46,6 @@ const syncDefaults = async () => {
     });
 }
 
-await syncDefaults();
+syncDefaults();
 
 module.exports = {syncDefaults}

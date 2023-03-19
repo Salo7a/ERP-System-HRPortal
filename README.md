@@ -13,6 +13,10 @@ A recruitment system for student organizations, made for some organization in Ca
 * KPIs monitoring
 * Leaderboards
 
+## Demo
+* You can try it out [here](https://hrportal-68b6.onrender.com)
+* Use the demo account `admin@hrportal.com:password123`
+
 ## Usage
 1. Clone the repo
 2. Run `npm i`
